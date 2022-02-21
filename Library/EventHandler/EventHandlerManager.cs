@@ -1,7 +1,6 @@
 ﻿using Library.Configuration.Module.EventHandler;
-using System.Reflection;
 
-namespace Library
+namespace Library.EventHandler
 {
     public class EventHandlerManager
     {
@@ -20,7 +19,7 @@ namespace Library
                 _eventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventHandler);
         }
 
-        public void CallEventHandler(EventHandlerType eventHandlerType, EventHandlerContext context)
+        public void CallEventHandlers(EventHandlerType eventHandlerType, EventHandlerContext context)
         {
             for (int i = 0; i < _eventHandlers[eventHandlerType].Count; i++)
                 _eventHandlers[eventHandlerType][i](context);

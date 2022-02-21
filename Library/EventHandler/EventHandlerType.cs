@@ -1,4 +1,4 @@
-﻿namespace Library.Configuration.Module.EventHandler
+﻿namespace Library.EventHandler
 {
     public enum EventHandlerType
     {

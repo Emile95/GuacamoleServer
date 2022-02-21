@@ -2,8 +2,9 @@
 using System.Text.Json;
 using App.Exceptions;
 using Library;
-using Library.Configuration.Module.EventHandler;
+using Library.EventHandler;
 using Library.Logger;
+using Library.Module;
 
 namespace App
 {
@@ -61,10 +62,9 @@ namespace App
         {
             ActionRunLogger logger = new ActionRunLogger(action);
             EventHandlerContext context = new EventHandlerContext();
-            EventHandlerManager.CallEventHandler(EventHandlerType.BeforeActionRun, context);
+            EventHandlerManager.CallEventHandlers(EventHandlerType.BeforeActionRun, context);
             RunResult result = func(action, logger);
-            EventHandlerManager.CallEventHandler(EventHandlerType.AfterActionRun, context);
-            if (result == null) return null;
+            EventHandlerManager.CallEventHandlers(EventHandlerType.AfterActionRun, context);
             logger.Log("run succeded");
             return result.Result;
         }

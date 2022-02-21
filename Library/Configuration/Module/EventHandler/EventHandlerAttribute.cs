@@ -1,4 +1,6 @@
-﻿namespace Library.Configuration.Module.EventHandler
+﻿using Library.EventHandler;
+
+namespace Library.Configuration.Module.EventHandler
 {
     public class EventHandlerAttribute : Attribute
     {

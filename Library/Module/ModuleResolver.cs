@@ -1,7 +1,8 @@
 ﻿using Library.Configuration.Module.EventHandler;
+using Library.EventHandler;
 using System.Reflection;
 
-namespace Library
+namespace Library.Module
 {
     public class ModuleResolver
     {

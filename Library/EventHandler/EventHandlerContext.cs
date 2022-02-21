@@ -1,4 +1,4 @@
-﻿namespace Library
+﻿namespace Library.EventHandler
 {
     public class EventHandlerContext
     {
