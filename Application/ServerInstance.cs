@@ -62,6 +62,7 @@ namespace App
         {
             ActionRunLogger logger = new ActionRunLogger(action);
             EventHandlerContext context = new EventHandlerContext();
+            context.Action = action;
             EventHandlerManager.CallEventHandlers(EventHandlerType.BeforeActionRun, context);
             RunResult result = func(action, logger);
             EventHandlerManager.CallEventHandlers(EventHandlerType.AfterActionRun, context);
