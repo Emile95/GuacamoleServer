@@ -4,7 +4,6 @@
     {
         public Configuration Config { get; set; }
 
-
         public abstract string GetModuleID();
         public abstract string GetModuleName();
         public abstract string GetModuleDescription();

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using App.Exceptions;
 using Library;
+using Library.Configuration.Module.EventHandler;
 using Library.Logger;
 
 namespace App
@@ -14,11 +15,16 @@ namespace App
 
         public List<IModule> Modules { get; set; }
 
+        public EventHandlerManager EventHandlerManager { get; set; }
+        public ModuleResolver ModuleResolver { get; set; }
+
         public ServerInstance()
         {
             _pluginLoader = new PluginLoader();
             Actions = new List<IAction>();
             Modules = new List<IModule>();
+            EventHandlerManager = new EventHandlerManager();
+            ModuleResolver = new ModuleResolver();
         }
 
         public void LoadPlugins()
@@ -33,23 +39,33 @@ namespace App
 
             VerifyActionIDs();
             VerifyModuleIDs();
+
+            for(int i = 0; i < Modules.Count; i++)
+            {
+                object module = Modules[i];
+                ModuleResolver.ResolveEventHandlers(EventHandlerManager, module);
+            }
         }
 
         public object RunAction(IAction action, JsonElement runParameter)
         {
-            ActionRunLogger logger = new ActionRunLogger(action);
-            RunResult result = action.Run(runParameter, logger);
-            if (result == null) return null;
-            logger.Log("run succeded");
-            return result.Result;
+            return _RunAction(action, (act, logger) => act.Run(runParameter, logger));
         }
 
         public object RunAction(IAction action)
         {
+            return _RunAction(action, (act, logger) => act.Run(logger));
+        }
+
+        private object _RunAction(IAction action, Func<IAction, ActionRunLogger, RunResult> func)
+        {
             ActionRunLogger logger = new ActionRunLogger(action);
-            RunResult result = action.Run(logger);
+            EventHandlerContext context = new EventHandlerContext();
+            EventHandlerManager.CallEventHandler(EventHandlerType.BeforeActionRun, context);
+            RunResult result = func(action, logger);
+            EventHandlerManager.CallEventHandler(EventHandlerType.AfterActionRun, context);
             if (result == null) return null;
-                logger.Log("run succeded");
+            logger.Log("run succeded");
             return result.Result;
         }
 
