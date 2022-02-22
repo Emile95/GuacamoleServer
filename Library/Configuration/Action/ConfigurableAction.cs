@@ -73,13 +73,16 @@ namespace Library.Configuration.Action
                     if (parameterRequiredAttribute != null)
                     {
                         logger.Log("Config not valid");
-                        throw new Exception(propertyName + " parameter is required");
+                        throw new Exception("the parameter '" + propertyName + "' parameter is required");
                     }
-                        
                 }
 
-                if (dictionary[propertyName].GetType().IsEquivalentTo(propertyInfo.PropertyType))
-                    propertyInfo.SetValue(config, dictionary[propertyName]);
+                if (!dictionary[propertyName].GetType().IsEquivalentTo(propertyInfo.PropertyType))
+                {
+                    logger.Log("Config not valid");
+                    throw new Exception("the parameter '" + propertyName + "' must be " + propertyInfo.PropertyType.Name + " type");
+                }
+                propertyInfo.SetValue(config, dictionary[propertyName]);
              }
 
             return config;
