@@ -3,7 +3,7 @@ using Library.Http;
 
 var serverInstance = new ServerInstance();
 
-serverInstance.LoadPlugins();
+serverInstance.InitializeApplications();
 
 var builder = WebApplication.CreateBuilder(args);
 

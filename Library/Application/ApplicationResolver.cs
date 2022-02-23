@@ -6,14 +6,31 @@ namespace Library.Application
 {
     public class ApplicationResolver
     {
-        public void ResolveEventHandlers(EventHandlerManager eventHandlerManager, object application)
+        private readonly EventHandlerManager _eventHandlerManager;
+        private readonly HttpRequestManager _httpRequestManager;
+
+        public ApplicationResolver(
+            EventHandlerManager eventHandlerManager,
+            HttpRequestManager httpRequestManager
+        )
         {
-            ResolveMethodInfoAttribute(eventHandlerManager, application);
+            _eventHandlerManager = eventHandlerManager;
+            _httpRequestManager = httpRequestManager;
         }
 
-        public void ResolveHttpRequests(HttpRequestManager httpRequestManager, object application)
+        public void ResolveAll(object application)
         {
-            ResolveMethodInfoAttribute(httpRequestManager, application);
+            ResolveMethodInfoAttribute(_eventHandlerManager, application);
+            ResolveMethodInfoAttribute(_httpRequestManager, application);
+        }
+        public void ResolveEventHandlers(object application)
+        {
+            ResolveMethodInfoAttribute(_eventHandlerManager, application);
+        }
+
+        public void ResolveHttpRequests(object application)
+        {
+            ResolveMethodInfoAttribute(_httpRequestManager, application);
         }
 
         private void ResolveMethodInfoAttribute<Context, AttributeType>(IAttributeManager<Action<Context>, AttributeType> attributeManager, object application)

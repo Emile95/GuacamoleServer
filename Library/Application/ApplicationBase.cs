@@ -6,7 +6,6 @@ namespace Library.Application
     {
         public EventHandlerManager EventHandlerManager { get; set; }
 
-        public abstract string GetID();
         public abstract string GetName();
         public abstract string GetDescription();
 
