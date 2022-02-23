@@ -1,6 +1,6 @@
 ﻿using Library.EventHandler;
 
-namespace Library.Configuration.Module.EventHandler
+namespace Library.Configuration.EventHandler
 {
     public class EventHandlerAttribute : Attribute
     {

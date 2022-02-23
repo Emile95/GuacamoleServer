@@ -1,8 +1,8 @@
-﻿using Library.Configuration.Module.EventHandler;
+﻿using Library.Configuration.EventHandler;
 
 namespace Library.EventHandler
 {
-    public class EventHandlerManager
+    public class EventHandlerManager : IAttributeManager<Action<EventHandlerContext>, EventHandlerAttribute>
     {
         private readonly Dictionary<EventHandlerType, List<Action<EventHandlerContext>>> _eventHandlers;
 
@@ -13,10 +13,15 @@ namespace Library.EventHandler
             _eventHandlers.Add(EventHandlerType.BeforeActionRun, new List<Action<EventHandlerContext>>());
         }
 
-        public void AddEventHandler(Action<EventHandlerContext> eventHandler, IEnumerable<EventHandlerAttribute> eventHandlerAttributes)
+        public void Add(Action<EventHandlerContext> eventHandler, IEnumerable<EventHandlerAttribute> eventHandlerAttributes)
         {
             foreach(EventHandlerAttribute eventHandlerAttribute in eventHandlerAttributes)
                 _eventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventHandler);
+        }
+
+        public void Add(Action<EventHandlerContext> eventHandler, EventHandlerType eventHandlerType)
+        {
+            _eventHandlers[eventHandlerType].Add(eventHandler);
         }
 
         public void CallEventHandlers(EventHandlerType eventHandlerType, EventHandlerContext context)

@@ -1,6 +1,6 @@
 ﻿namespace Library.Logger
 {
-    public abstract class FileLogger : ILogger
+    public abstract class FileLogger
     {
         protected string _filePath;
 

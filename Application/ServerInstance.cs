@@ -4,28 +4,26 @@ using App.Exceptions;
 using Library;
 using Library.EventHandler;
 using Library.Logger;
-using Library.Module;
+using Library.Application;
+using Library.Http;
 
 namespace App
 {
     public class ServerInstance
     {
         private readonly PluginLoader _pluginLoader;
-
-        public List<IAction> Actions { get; set; }
-
-        public List<IModule> Modules { get; set; }
-
-        public EventHandlerManager EventHandlerManager { get; set; }
-        public ModuleResolver ModuleResolver { get; set; }
-
+        private readonly List<ApplicationBase> _applications;
+        private readonly ApplicationResolver _applicationResolver;
+        private readonly EventHandlerManager _eventHandlerManager;
+        private readonly HttpRequestManager _httpRequestManager;
+        
         public ServerInstance()
         {
             _pluginLoader = new PluginLoader();
-            Actions = new List<IAction>();
-            Modules = new List<IModule>();
-            EventHandlerManager = new EventHandlerManager();
-            ModuleResolver = new ModuleResolver();
+            _applications = new List<ApplicationBase>();
+            _applicationResolver = new ApplicationResolver();
+            _eventHandlerManager = new EventHandlerManager();
+            _httpRequestManager = new HttpRequestManager();
         }
 
         public void LoadPlugins()
@@ -33,65 +31,26 @@ namespace App
             Assembly[] assemblies = _pluginLoader.LoadDlls();
 
             foreach(Assembly assembly in assemblies)
+                _applications.AddRange(_pluginLoader.GetImplementations<ApplicationBase>(assembly));
+            
+            for(int i = 0; i < _applications.Count; i++)
             {
-                Modules.AddRange(_pluginLoader.GetImplementations<IModule>(assembly));
-                Actions.AddRange(_pluginLoader.GetImplementations<IAction>(assembly));
-            }
-
-            VerifyActionIDs();
-            VerifyModuleIDs();
-
-            for(int i = 0; i < Modules.Count; i++)
-            {
-                object module = Modules[i];
-                ModuleResolver.ResolveEventHandlers(EventHandlerManager, module);
+                ApplicationBase app = _applications[i];
+                app.EventHandlerManager = _eventHandlerManager;
+                _applicationResolver.ResolveEventHandlers(_eventHandlerManager, app);
+                _applicationResolver.ResolveHttpRequests(_httpRequestManager, app);
             }
         }
 
-        public object RunAction(IAction action, JsonElement runParameter)
+        public Dictionary<HttpRequestType, List<HttpRequestDefinition>> GetHttpRequests()
         {
-            return _RunAction(action, (act, logger) => act.Run(runParameter, logger));
+            return _httpRequestManager.HttpRequest;
         }
 
-        public object RunAction(IAction action)
+        public object RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
         {
-            return _RunAction(action, (act, logger) => act.Run(logger));
-        }
-
-        private object _RunAction(IAction action, Func<IAction, ActionRunLogger, RunResult> func)
-        {
-            ActionRunLogger logger = new ActionRunLogger(action);
-            EventHandlerContext context = new EventHandlerContext();
-            context.Action = action;
-            EventHandlerManager.CallEventHandlers(EventHandlerType.BeforeActionRun, context);
-            RunResult result = func(action, logger);
-            EventHandlerManager.CallEventHandlers(EventHandlerType.AfterActionRun, context);
-            logger.Log("run succeded");
-            return result.Result;
-        }
-
-        private void VerifyActionIDs()
-        {
-            List<string> actionsIDs = new List<string>();
-            for(int i = 0; i < Actions.Count; i++)
-            {
-                string actionID = Actions[i].GetActionID();
-                if (actionsIDs.Contains(actionID))
-                    throw new PluginIdException<IAction>(actionID);
-                actionsIDs.Add(actionID);
-            }
-        }
-
-        private void VerifyModuleIDs()
-        {
-            List<string> moduleIDs = new List<string>();
-            for (int i = 0; i < Modules.Count; i++)
-            {
-                string moduleId = Modules[i].GetModuleID();
-                if (moduleIDs.Contains(moduleId))
-                    throw new PluginIdException<IModule>(moduleId);
-                moduleIDs.Add(moduleId);
-            }
+            context.ExpectedBody = httpRequestDefinition.ExcpectedType;
+            return _httpRequestManager.RunHttpRequest(httpRequestDefinition.Request, context);
         }
     }
 }
