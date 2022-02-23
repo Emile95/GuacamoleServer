@@ -49,8 +49,13 @@ namespace App
 
         public object RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
         {
-            context.ExpectedBody = httpRequestDefinition.ExcpectedType;
-            return _httpRequestManager.RunHttpRequest(httpRequestDefinition.Request, context);
+            try
+            {
+                return _httpRequestManager.RunHttpRequest(httpRequestDefinition, context);
+            } catch(Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
 }

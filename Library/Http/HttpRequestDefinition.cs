@@ -1,9 +1,11 @@
-﻿namespace Library.Http
+﻿using System.Reflection;
+
+namespace Library.Http
 {
     public class HttpRequestDefinition
     {
         public string Pattern { get; set; }
-        public Action<HttpRequestContext> Request { get; set; }
-        public Type ExcpectedType { get; set; }
+        public Action<HttpRequestContext> Action { get; set; }
+        public Type ExpectedBody { get; set; }
     }
 }

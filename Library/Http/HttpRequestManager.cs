@@ -1,4 +1,6 @@
 ﻿using Library.Configuration.Http;
+using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Library.Http
 {
@@ -15,27 +17,58 @@ namespace Library.Http
             HttpRequest.Add(HttpRequestType.Delete, new List<HttpRequestDefinition>());
         }
 
-        public void Add(Action<HttpRequestContext> httpRequest, IEnumerable<HttpRequestAttribute> httpRequestAttributes)
+        public void Add(Action<HttpRequestContext> action, IEnumerable<HttpRequestAttribute> httpRequestAttributes)
         {
             foreach (HttpRequestAttribute httpRequestAttribute in httpRequestAttributes)
-                HttpRequest[httpRequestAttribute.HttpRequestType].Add(new HttpRequestDefinition { 
+            {
+                HttpRequest[httpRequestAttribute.HttpRequestType].Add(new HttpRequestDefinition
+                {
                     Pattern = httpRequestAttribute.Pattern,
-                    Request = httpRequest,
-                    ExcpectedType = httpRequestAttribute.ExpectedBody
+                    Action = action,
+                    ExpectedBody = httpRequestAttribute.ExpectedBody,
                 });
+            } 
         }
 
-        public object RunHttpRequest(Action<HttpRequestContext> httpRequest, HttpRequestContext context)
+        public object RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
         {
-            if(context.RequestBody != null && context.ExpectedBody != null)
-                ValidateRequestBody(context.RequestBody);
-            httpRequest(context);
+            if(context.RequestBody != null && httpRequestDefinition.ExpectedBody != null)
+            {
+                Dictionary<object, object> jsonObject = JsonConvert.DeserializeObject< Dictionary<object, object>>(context.RequestBody.ToString());
+                context.RequestBody = CreateExpectedBody(httpRequestDefinition.ExpectedBody, jsonObject);
+            }
+            httpRequestDefinition.Action(context);
             return context.ResponseBody;
         }
 
-        private void ValidateRequestBody(object body)
+        private object CreateExpectedBody(Type expectedBody, Dictionary<object, object> jsonObject)
         {
+            object body = Activator.CreateInstance(expectedBody);
 
+            PropertyInfo[] propertyInfos = expectedBody.GetProperties();
+            foreach(PropertyInfo propertyInfo in propertyInfos)
+            {
+                BodyMemberAttribute attribute = propertyInfo.GetCustomAttribute<BodyMemberAttribute>();
+                if (attribute == null) continue;
+
+                string propertyName = string.IsNullOrEmpty(attribute.Name) ? propertyInfo.Name : attribute.Name;
+
+                if(!jsonObject.ContainsKey(propertyName))
+                {
+                    if (attribute.IsRequired)
+                        throw new Exception("Request body member '" + propertyName + "' is required");
+                    continue;
+                }
+
+                object member = jsonObject[propertyName];
+
+                if (!propertyInfo.PropertyType.Equals(member.GetType()))
+                    throw new Exception("Request body member '" + propertyName + "' required a value of type '" + propertyInfo.PropertyType.Name + "'");
+
+                propertyInfo.SetValue(body, member);
+            }
+
+            return body;
         }
     }
 }
