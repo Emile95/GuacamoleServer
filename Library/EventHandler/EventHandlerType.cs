@@ -2,7 +2,7 @@
 {
     public enum EventHandlerType
     {
-        BeforeActionRun,
-        AfterActionRun
+        BeforeHttpRequest,
+        AfterHttpRequest
     }
 }

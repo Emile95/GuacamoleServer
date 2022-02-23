@@ -9,14 +9,14 @@ namespace Library.EventHandler
         public EventHandlerManager()
         {
             _eventHandlers = new Dictionary<EventHandlerType, List<Action<EventHandlerContext>>>();
-            _eventHandlers.Add(EventHandlerType.AfterActionRun, new List<Action<EventHandlerContext>>());
-            _eventHandlers.Add(EventHandlerType.BeforeActionRun, new List<Action<EventHandlerContext>>());
+            _eventHandlers.Add(EventHandlerType.BeforeHttpRequest, new List<Action<EventHandlerContext>>());
+            _eventHandlers.Add(EventHandlerType.AfterHttpRequest, new List<Action<EventHandlerContext>>());
         }
 
         public void Add(Action<EventHandlerContext> eventHandler, IEnumerable<EventHandlerAttribute> eventHandlerAttributes)
         {
             foreach(EventHandlerAttribute eventHandlerAttribute in eventHandlerAttributes)
-                _eventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventHandler);
+                _eventHandlers[eventHandlerAttribute.EventType].Add(eventHandler);
         }
 
         public void Add(Action<EventHandlerContext> eventHandler, EventHandlerType eventHandlerType)

@@ -51,7 +51,14 @@ namespace App
         {
             try
             {
-                return _httpRequestManager.RunHttpRequest(httpRequestDefinition, context);
+                EventHandlerContext eventHandlerContext = new EventHandlerContext
+                {
+                    HttpRequestContext = context
+                };
+                _eventHandlerManager.CallEventHandlers(EventHandlerType.BeforeHttpRequest, eventHandlerContext);
+                object response = _httpRequestManager.RunHttpRequest(httpRequestDefinition, context);
+                _eventHandlerManager.CallEventHandlers(EventHandlerType.AfterHttpRequest, eventHandlerContext);
+                return response;
             } catch(Exception ex)
             {
                 return ex.Message;
