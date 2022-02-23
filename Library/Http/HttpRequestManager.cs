@@ -32,6 +32,8 @@ namespace Library.Http
 
         public object RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
         {
+            if (context.RequestBody == null && httpRequestDefinition.ExpectedBody != null)
+                throw new Exception("You need to provide a body to your request");
             if(context.RequestBody != null && httpRequestDefinition.ExpectedBody != null)
             {
                 Dictionary<object, object> jsonObject = JsonConvert.DeserializeObject< Dictionary<object, object>>(context.RequestBody.ToString());
