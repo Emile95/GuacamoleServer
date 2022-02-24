@@ -62,6 +62,10 @@ Task PrepareHttpRequest(HttpRequestType httpRequestType, HttpRequestDefinition r
         HttpRequestContext context = new HttpRequestContext();
         context.RequestType = httpRequestType;
 
+        RouteData routeData = httpContext.GetRouteData();
+        foreach(KeyValuePair<string,object?> set in routeData.Values)
+            context.RouteDatas[set.Key] = set.Value;
+        
         StreamReader reader = new StreamReader(httpContext.Request.Body);
         string requestBody = reader.ReadToEndAsync().Result;
         if (!string.IsNullOrEmpty(requestBody))
