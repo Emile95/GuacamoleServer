@@ -1,18 +1,27 @@
 ﻿using Library.Application;
 using Library.Storage;
+using Newtonsoft.Json;
 
 namespace Library.Configuration.App
 {
     public abstract class ConfigurableApplication<Configuration> : ApplicationBase
-        where Configuration : class
+        where Configuration : class, new()
     {
         protected Configuration Config { get; private set; }
         protected ConfigurationStorageManager<Configuration> ConfigurationStorageManager { get; private set; }
 
 
-        protected sealed override void ValidateApplication()
+        public ConfigurableApplication()
         {
-            ValidateConfiguration();
+            Config = new Configuration();
+        }
+
+        public void UpdateConfiguration(string configuration)
+        {
+            Configuration oldConfiguration = Config;
+            Config = JsonConvert.DeserializeObject<Configuration>(configuration);
+            ConfigurationStorageManager.UpdateConfiguration(Config);
+            OnConfigurationUpdate(oldConfiguration);
         }
 
         public override void Install(ApplicationContext context) 
@@ -30,17 +39,26 @@ namespace Library.Configuration.App
         public override void Uninstall(ApplicationContext context) 
         {
             ConfigurationStorageManager.RemoveConfiguration(Config);
-            Config = null;
             ConfigurationStorageManager = null;
-            
+            Config = null;
         }
 
         public override void Unitialize(ApplicationContext context) 
         {
-            Config = null;
             ConfigurationStorageManager = null;
+            Config = null;
+        }
+
+        protected sealed override void ValidateApplication()
+        {
+            ValidateConfiguration();
         }
 
         protected virtual void ValidateConfiguration() { }
+
+        protected virtual void OnConfigurationUpdate(Configuration oldConfiguration)
+        {
+
+        }
     }
 }

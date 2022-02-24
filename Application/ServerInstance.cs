@@ -55,5 +55,10 @@ namespace App
             _applicationManager.InstallApplication(path);
             return "plugin installed";
         }
+
+        public object GetApplicationsAttributes()
+        {
+            _applicationManager.
+        }
     }
 }

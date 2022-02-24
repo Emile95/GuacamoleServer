@@ -1,4 +1,3 @@
-using App;
 using Library.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.RequestBody;
@@ -12,6 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 var webApp = builder.Build();
 
 Dictionary<HttpRequestType, List<HttpRequestDefinition>> httpRequests = serverInstance.GetHttpRequests();
+
+webApp.MapGet("applications/", () =>
+{
+    return serverInstance.GetApplicationsAttributes();
+});
 
 webApp.MapPost("plugins/install/", ([FromBody] InstallPlugin body) =>
 {

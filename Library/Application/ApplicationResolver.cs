@@ -1,4 +1,6 @@
-﻿using Library.EventHandler;
+﻿using Library.Configuration.EventHandler;
+using Library.Configuration.Http;
+using Library.EventHandler;
 using Library.Http;
 using System.Reflection;
 
@@ -18,31 +20,36 @@ namespace Library.Application
             _httpRequestManager = httpRequestManager;
         }
 
-        public void ResolveAll(object application)
+        public void ResolveAll(ApplicationBase application, ApplicationContext context)
         {
-            ResolveMethodInfoAttribute(_eventHandlerManager, application);
-            ResolveMethodInfoAttribute(_httpRequestManager, application);
+            ResolveEventHandlers(application, context);
+            ResolveHttpRequests(application, context);
         }
-        public void ResolveEventHandlers(object application)
-        {
-            ResolveMethodInfoAttribute(_eventHandlerManager, application);
-        }
-
-        public void ResolveHttpRequests(object application)
-        {
-            ResolveMethodInfoAttribute(_httpRequestManager, application);
-        }
-
-        private void ResolveMethodInfoAttribute<Context, AttributeType>(IAttributeManager<Action<Context>, AttributeType> attributeManager, object application)
-            where AttributeType : Attribute
+        public void ResolveEventHandlers(ApplicationBase application, ApplicationContext context)
         {
             Type applicationType = application.GetType();
             MethodInfo[] methodInfos = applicationType.GetMethods();
             foreach (MethodInfo methodInfo in methodInfos)
             {
-                IEnumerable<AttributeType> attributes = methodInfo.GetCustomAttributes<AttributeType>();
+                IEnumerable<EventHandlerAttribute> attributes = methodInfo.GetCustomAttributes<EventHandlerAttribute>();
                 if (attributes == null) continue;
-                attributeManager.Add((context) => {
+                _eventHandlerManager.Add((context) => {
+                    methodInfo.Invoke(application, new object[] { context });
+                }, attributes);
+            }
+        }
+
+        public void ResolveHttpRequests(ApplicationBase application, ApplicationContext context)
+        {
+            Type applicationType = application.GetType();
+            MethodInfo[] methodInfos = applicationType.GetMethods();
+            foreach (MethodInfo methodInfo in methodInfos)
+            {
+                IEnumerable<HttpRequestAttribute> attributes = methodInfo.GetCustomAttributes<HttpRequestAttribute>();
+                foreach (HttpRequestAttribute attribute in attributes)
+                    attribute.Pattern = context.Guid + "/" + attribute.Pattern;
+                if (attributes == null) continue;
+                _httpRequestManager.Add((context) => {
                     methodInfo.Invoke(application, new object[] { context });
                 }, attributes);
             }

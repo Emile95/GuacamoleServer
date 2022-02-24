@@ -37,7 +37,7 @@ namespace Library.Application
             context.Path = newApplicationDirectoryPath;
             application.Install(context);
             _applications.Add(newGuid, application);
-            _applicationResolver.ResolveAll(application);
+            _applicationResolver.ResolveAll(application, context);
         }
 
         public void InitializeApplications()
@@ -55,7 +55,7 @@ namespace Library.Application
                 context.Path = directoryPath;
                 application.Initialize(context);
                 _applications.Add(directoryInfo.Name, application);
-                _applicationResolver.ResolveAll(application);
+                _applicationResolver.ResolveAll(application, context);
             }
         }
 
