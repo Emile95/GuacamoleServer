@@ -16,7 +16,10 @@ namespace App
             _eventHandlerManager = new EventHandlerManager();
             _httpRequestManager = new HttpRequestManager();
             _applicationResolver = new ApplicationResolver(_eventHandlerManager, _httpRequestManager);
-            _applicationManager = new ApplicationManager(_applicationResolver);
+            _applicationManager = new ApplicationManager(
+                _applicationResolver,
+                _eventHandlerManager
+            );
         }
 
         public void InitializeApplications()
@@ -45,6 +48,12 @@ namespace App
             {
                 return ex.Message;
             }
+        }
+
+        public object InstallPlugin(string path)
+        {
+            _applicationManager.InstallApplication(path);
+            return "plugin installed";
         }
     }
 }

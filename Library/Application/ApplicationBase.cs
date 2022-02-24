@@ -1,4 +1,5 @@
 ﻿using Library.EventHandler;
+using Library.Storage;
 
 namespace Library.Application
 {
@@ -8,10 +9,10 @@ namespace Library.Application
 
         public abstract string GetName();
         public abstract string GetDescription();
-
-        protected virtual void ValidateApplication()
-        {
-
-        }
+        protected abstract void ValidateApplication();
+        public abstract void Install(ApplicationContext context);
+        public abstract void Uninstall(ApplicationContext context);
+        public abstract void Initialize(ApplicationContext context);
+        public abstract void Unitialize(ApplicationContext context);
     }
 }
