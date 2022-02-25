@@ -30,7 +30,7 @@ namespace Library.Http
             } 
         }
 
-        public object RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
+        public void RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
         {
             if (context.RequestBody == null && httpRequestDefinition.ExpectedBody != null)
                 throw new Exception("You need to provide a body to your request");
@@ -40,7 +40,6 @@ namespace Library.Http
                 context.RequestBody = CreateExpectedBody(httpRequestDefinition.ExpectedBody, jsonObject);
             }
             httpRequestDefinition.Action(context);
-            return context.ResponseBody;
         }
 
         private object CreateExpectedBody(Type expectedBody, Dictionary<object, object> jsonObject)

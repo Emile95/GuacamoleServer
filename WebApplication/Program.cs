@@ -1,5 +1,6 @@
 using Library.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using WebApp.RequestBody;
 
 var serverInstance = new ServerInstance();
@@ -62,17 +63,20 @@ Task PrepareHttpRequest(HttpRequestType httpRequestType, HttpRequestDefinition r
         HttpRequestContext context = new HttpRequestContext();
         context.RequestType = httpRequestType;
 
-        RouteData routeData = httpContext.GetRouteData();
-        foreach(KeyValuePair<string,object?> set in routeData.Values)
+        foreach(KeyValuePair<string,object?> set in httpContext.Request.RouteValues)
             context.RouteDatas[set.Key] = set.Value;
+
+        foreach(KeyValuePair<string, StringValues> set in httpContext.Request.Query)
+            context.Parameters[set.Key] = set.Value.ToList();
         
         StreamReader reader = new StreamReader(httpContext.Request.Body);
         string requestBody = reader.ReadToEndAsync().Result;
         if (!string.IsNullOrEmpty(requestBody))
             context.RequestBody = requestBody;
 
-        object obj = serverInstance.RunHttpRequest(requestDefinition, context);
-        httpContext.Response.WriteAsJsonAsync(obj);
+        serverInstance.RunHttpRequest(requestDefinition, context);
+        if(context.ResponseBody != null)
+            httpContext.Response.WriteAsJsonAsync(context.ResponseBody);
     });
 }
 
