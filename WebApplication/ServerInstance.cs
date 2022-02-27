@@ -20,9 +20,9 @@ public class ServerInstance
         );
     }
 
-    public void InitializeApplications()
+    public void LoadApplications()
     {
-        _applicationManager.InitializeApplications();
+        _applicationManager.LoadApplications();
     }
 
     public Dictionary<HttpRequestType, List<HttpRequestDefinition>> GetHttpRequests()

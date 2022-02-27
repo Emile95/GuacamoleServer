@@ -11,11 +11,6 @@ namespace Library.Configuration.App
         protected Configuration Config { get; private set; }
         protected ConfigurationStorageManager<Configuration> ConfigurationStorageManager { get; private set; }
 
-        public ConfigurableApplication()
-        {
-            Config = new Configuration();
-        }
-
         private void UpdateConfiguration(Configuration newConfiguration)
         {
             Configuration oldConfiguration = Config;
@@ -27,7 +22,7 @@ namespace Library.Configuration.App
         public override void Install(ApplicationContext context) 
         {
             ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(context.Path);
-            ConfigurationStorageManager.AddConfiguration(Config);
+            ConfigurationStorageManager.AddConfiguration(new Configuration());
         }
 
         public override void Initialize(ApplicationContext context) 
@@ -39,27 +34,22 @@ namespace Library.Configuration.App
         public override void Uninstall(ApplicationContext context) 
         {
             ConfigurationStorageManager.RemoveConfiguration(Config);
-            ConfigurationStorageManager = null;
-            Config = null;
         }
 
-        public override void Unitialize(ApplicationContext context) 
+        public override void Uninitialize(ApplicationContext context) 
         {
             ConfigurationStorageManager = null;
             Config = null;
         }
 
-        protected sealed override void ValidateApplication()
+        protected sealed override void ValidateApplication(ApplicationContext context)
         {
-            ValidateConfiguration();
+            ValidateConfiguration(context);
         }
 
-        protected virtual void ValidateConfiguration() { }
+        protected virtual void ValidateConfiguration(ApplicationContext context) { }
 
-        protected virtual void OnConfigurationUpdate(Configuration oldConfiguration)
-        {
-
-        }
+        protected virtual void OnConfigurationUpdate(Configuration oldConfiguration) { }
 
         public sealed override void AddBaseHttpRequests(ApplicationContext applicationContext, HttpRequestManager httpRequestManager) 
         {

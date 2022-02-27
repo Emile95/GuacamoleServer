@@ -5,7 +5,7 @@ using WebApp.RequestBody;
 
 var serverInstance = new ServerInstance();
 
-serverInstance.InitializeApplications();
+serverInstance.LoadApplications();
 
 var builder = WebApplication.CreateBuilder(args);
 

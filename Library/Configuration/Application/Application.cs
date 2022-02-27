@@ -5,7 +5,7 @@ namespace Library.Configuration.App
 {
     public abstract class Application : ApplicationBase
     {
-        protected sealed override void ValidateApplication()
+        protected sealed override void ValidateApplication(ApplicationContext context)
         {
 
         }
@@ -25,7 +25,7 @@ namespace Library.Configuration.App
 
         }
 
-        public override void Unitialize(ApplicationContext context) 
+        public override void Uninitialize(ApplicationContext context) 
         { 
         
         }

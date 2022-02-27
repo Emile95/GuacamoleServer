@@ -38,7 +38,7 @@ namespace Library.Application
             application.Install(context);
         }
 
-        public void InitializeApplications()
+        public void LoadApplications()
         {
             string[] directoryPaths = Directory.GetDirectories(_applicationPaths);
 
@@ -52,9 +52,25 @@ namespace Library.Application
                 context.Guid = directoryInfo.Name;
                 context.Path = directoryPath;
                 application.Initialize(context);
-                _applications.Add(directoryInfo.Name, application);
+                _applications.Add(directoryInfo.Name, application); 
                 _applicationResolver.ResolveAll(application, context);
             }
+        }
+
+        public void InitializeApplication(string guid)
+        {
+            ApplicationContext application = new ApplicationContext();
+            application.Guid = guid;
+            application.Path = Path.Combine(_applicationPaths, guid);
+            _applications[guid].Initialize(application);
+        }
+
+        public void UninitializeApplication(string guid)
+        {
+            ApplicationContext application = new ApplicationContext();
+            application.Guid = guid;
+            application.Path = Path.Combine(_applicationPaths, guid);
+            _applications[guid].Uninitialize(application);
         }
 
         private string GetNewGuid()
