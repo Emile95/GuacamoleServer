@@ -13,6 +13,5 @@
             RouteDatas = new Dictionary<string, object>();
             Parameters = new Dictionary<string, List<string>>();
         }
-
     }
 }

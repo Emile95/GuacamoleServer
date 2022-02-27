@@ -9,12 +9,13 @@ namespace Library.Storage
         public ConfigurationStorageManager(string appPath)
         {
             _configurationFilePath = Path.Combine(appPath, "config.json");
+           
         }
 
-        public void LoadConfiguration(Configuration configuration)
+        public Configuration LoadConfiguration()
         {
             string json = File.ReadAllText(_configurationFilePath);
-            configuration = JsonConvert.DeserializeObject<Configuration>(json);
+            return JsonConvert.DeserializeObject<Configuration>(json);
         }
 
         public void UpdateConfiguration(Configuration updatedConfiguration)

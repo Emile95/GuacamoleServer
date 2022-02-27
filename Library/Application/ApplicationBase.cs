@@ -1,4 +1,5 @@
 ﻿using Library.EventHandler;
+using Library.Http;
 
 namespace Library.Application
 {
@@ -13,5 +14,6 @@ namespace Library.Application
         public abstract void Uninstall(ApplicationContext context);
         public abstract void Initialize(ApplicationContext context);
         public abstract void Unitialize(ApplicationContext context);
+        public virtual void AddBaseHttpRequests(ApplicationContext context, HttpRequestManager httpRequestManager) { }
     }
 }

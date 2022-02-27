@@ -36,8 +36,6 @@ namespace Library.Application
             context.Guid = newGuid;
             context.Path = newApplicationDirectoryPath;
             application.Install(context);
-            _applications.Add(newGuid, application);
-            _applicationResolver.ResolveAll(application, context);
         }
 
         public void InitializeApplications()
@@ -62,10 +60,7 @@ namespace Library.Application
         private string GetNewGuid()
         {
             string guid;
-            do
-            {
-                guid = Guid.NewGuid().ToString();
-            }
+            do { guid = Guid.NewGuid().ToString(); }
             while (_applications.ContainsKey(guid));
             return guid;
         }

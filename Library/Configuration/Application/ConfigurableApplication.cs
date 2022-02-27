@@ -1,6 +1,7 @@
 ﻿using Library.Application;
+using Library.Configuration.Http;
+using Library.Http;
 using Library.Storage;
-using Newtonsoft.Json;
 
 namespace Library.Configuration.App
 {
@@ -10,16 +11,15 @@ namespace Library.Configuration.App
         protected Configuration Config { get; private set; }
         protected ConfigurationStorageManager<Configuration> ConfigurationStorageManager { get; private set; }
 
-
         public ConfigurableApplication()
         {
             Config = new Configuration();
         }
 
-        public void UpdateConfiguration(string configuration)
+        private void UpdateConfiguration(Configuration newConfiguration)
         {
             Configuration oldConfiguration = Config;
-            Config = JsonConvert.DeserializeObject<Configuration>(configuration);
+            Config = newConfiguration;
             ConfigurationStorageManager.UpdateConfiguration(Config);
             OnConfigurationUpdate(oldConfiguration);
         }
@@ -33,7 +33,7 @@ namespace Library.Configuration.App
         public override void Initialize(ApplicationContext context) 
         {
             ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(context.Path);
-            ConfigurationStorageManager.LoadConfiguration(Config);
+            Config = ConfigurationStorageManager.LoadConfiguration();
         }
 
         public override void Uninstall(ApplicationContext context) 
@@ -59,6 +59,29 @@ namespace Library.Configuration.App
         protected virtual void OnConfigurationUpdate(Configuration oldConfiguration)
         {
 
+        }
+
+        public sealed override void AddBaseHttpRequests(ApplicationContext applicationContext, HttpRequestManager httpRequestManager) 
+        {
+            httpRequestManager.Add((context) => 
+            {
+                UpdateConfiguration(context.RequestBody as Configuration);
+                context.ResponseBody = "Configuration updated";
+            }, new HttpRequestAttribute() 
+            {
+                HttpRequestType = HttpRequestType.Post,
+                Pattern = applicationContext.Guid + "/config",
+                ExpectedBody = typeof(Configuration)
+            });
+
+            httpRequestManager.Add((context) => 
+            {
+                context.ResponseBody = Config;
+            }, new HttpRequestAttribute()
+            {
+                HttpRequestType = HttpRequestType.Get,
+                Pattern = applicationContext.Guid + "/config"
+            });
         }
     }
 }

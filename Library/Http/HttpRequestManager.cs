@@ -4,9 +4,9 @@ using System.Reflection;
 
 namespace Library.Http
 {
-    public class HttpRequestManager : IAttributeManager<Action<HttpRequestContext>, HttpRequestAttribute>
+    public class HttpRequestManager
     {
-        public Dictionary<HttpRequestType, List<HttpRequestDefinition>> HttpRequest { get; private set; }
+        public readonly Dictionary<HttpRequestType, List<HttpRequestDefinition>> HttpRequest;
 
         public HttpRequestManager()
         {
@@ -17,17 +17,14 @@ namespace Library.Http
             HttpRequest.Add(HttpRequestType.Delete, new List<HttpRequestDefinition>());
         }
 
-        public void Add(Action<HttpRequestContext> action, IEnumerable<HttpRequestAttribute> httpRequestAttributes)
+        public void Add(Action<HttpRequestContext> action, HttpRequestAttribute httpRequestAttribute)
         {
-            foreach (HttpRequestAttribute httpRequestAttribute in httpRequestAttributes)
+            HttpRequest[httpRequestAttribute.HttpRequestType].Add(new HttpRequestDefinition
             {
-                HttpRequest[httpRequestAttribute.HttpRequestType].Add(new HttpRequestDefinition
-                {
-                    Pattern = httpRequestAttribute.Pattern,
-                    Action = action,
-                    ExpectedBody = httpRequestAttribute.ExpectedBody,
-                });
-            } 
+                Pattern = httpRequestAttribute.Pattern,
+                Action = action,
+                ExpectedBody = httpRequestAttribute.ExpectedBody,
+            });
         }
 
         public void RunHttpRequest(HttpRequestDefinition httpRequestDefinition, HttpRequestContext context)
@@ -36,13 +33,13 @@ namespace Library.Http
                 throw new Exception("You need to provide a body to your request");
             if(context.RequestBody != null && httpRequestDefinition.ExpectedBody != null)
             {
-                Dictionary<object, object> jsonObject = JsonConvert.DeserializeObject< Dictionary<object, object>>(context.RequestBody.ToString());
+                Dictionary<string, object> jsonObject = JsonConvert.DeserializeObject< Dictionary<string, object>>(context.RequestBody.ToString());
                 context.RequestBody = CreateExpectedBody(httpRequestDefinition.ExpectedBody, jsonObject);
             }
             httpRequestDefinition.Action(context);
         }
 
-        private object CreateExpectedBody(Type expectedBody, Dictionary<object, object> jsonObject)
+        private object CreateExpectedBody(Type expectedBody, Dictionary<string, object> jsonObject)
         {
             object body = Activator.CreateInstance(expectedBody);
 
@@ -63,7 +60,7 @@ namespace Library.Http
 
                 object member = jsonObject[propertyName];
 
-                if (!propertyInfo.PropertyType.Equals(member.GetType()))
+                if (member != null && !propertyInfo.PropertyType.Equals(member.GetType()))
                     throw new Exception("Request body member '" + propertyName + "' required a value of type '" + propertyInfo.PropertyType.Name + "'");
 
                 propertyInfo.SetValue(body, member);

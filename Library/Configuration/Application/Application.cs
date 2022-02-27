@@ -1,4 +1,5 @@
 ﻿using Library.Application;
+using Library.Http;
 
 namespace Library.Configuration.App
 {

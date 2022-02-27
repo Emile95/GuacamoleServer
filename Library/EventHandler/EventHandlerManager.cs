@@ -2,7 +2,7 @@
 
 namespace Library.EventHandler
 {
-    public class EventHandlerManager : IAttributeManager<Action<EventHandlerContext>, EventHandlerAttribute>
+    public class EventHandlerManager
     {
         private readonly Dictionary<EventHandlerType, List<Action<EventHandlerContext>>> _eventHandlers;
 

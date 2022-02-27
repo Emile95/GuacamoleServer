@@ -45,14 +45,14 @@ namespace Library.Application
             MethodInfo[] methodInfos = applicationType.GetMethods();
             foreach (MethodInfo methodInfo in methodInfos)
             {
-                IEnumerable<HttpRequestAttribute> attributes = methodInfo.GetCustomAttributes<HttpRequestAttribute>();
-                foreach (HttpRequestAttribute attribute in attributes)
-                    attribute.Pattern = context.Guid + "/" + attribute.Pattern;
-                if (attributes == null) continue;
+                HttpRequestAttribute attribute = methodInfo.GetCustomAttribute<HttpRequestAttribute>();
+                if (attribute == null) continue;
+                attribute.Pattern = context.Guid + "/" + attribute.Pattern;
                 _httpRequestManager.Add((context) => {
                     methodInfo.Invoke(application, new object[] { context });
-                }, attributes);
+                }, attribute);
             }
+            application.AddBaseHttpRequests(context, _httpRequestManager);
         }
     }
 }
