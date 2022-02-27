@@ -73,6 +73,25 @@ namespace Library.Application
             _applications[guid].Uninitialize(application);
         }
 
+        public List<object> GetApplicationsDescriptive()
+        {
+            List<object> applications = new List<object>();
+
+            foreach(KeyValuePair<string, ApplicationBase> set in _applications)
+            {
+                applications.Add(
+                    new
+                    {
+                        guid = set.Key,
+                        name = set.Value.GetName(),
+                        description = set.Value.GetDescription()
+                    }
+                );
+            }
+
+            return applications;
+        }
+
         private string GetNewGuid()
         {
             string guid;
@@ -89,5 +108,6 @@ namespace Library.Application
                     return Activator.CreateInstance(type) as ApplicationBase;
             return null;
         }
+
     }
 }

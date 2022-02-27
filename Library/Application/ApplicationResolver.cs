@@ -47,7 +47,8 @@ namespace Library.Application
             {
                 HttpRequestAttribute attribute = methodInfo.GetCustomAttribute<HttpRequestAttribute>();
                 if (attribute == null) continue;
-                attribute.Pattern = context.Guid + "/" + attribute.Pattern;
+                attribute.Pattern = context.Guid + "/function/" + attribute.Pattern;
+                context.HttpRequestAttributes.Add(attribute);
                 _httpRequestManager.Add((context) => {
                     methodInfo.Invoke(application, new object[] { context });
                 }, attribute);

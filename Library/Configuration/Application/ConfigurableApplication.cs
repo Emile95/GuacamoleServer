@@ -53,25 +53,31 @@ namespace Library.Configuration.App
 
         public sealed override void AddBaseHttpRequests(ApplicationContext applicationContext, HttpRequestManager httpRequestManager) 
         {
-            httpRequestManager.Add((context) => 
-            {
-                UpdateConfiguration(context.RequestBody as Configuration);
-                context.ResponseBody = "Configuration updated";
-            }, new HttpRequestAttribute() 
+            HttpRequestAttribute updateConfigHttpRequest = new HttpRequestAttribute()
             {
                 HttpRequestType = HttpRequestType.Post,
                 Pattern = applicationContext.Guid + "/config",
                 ExpectedBody = typeof(Configuration)
-            });
-
+            };
+            applicationContext.HttpRequestAttributes.Add(updateConfigHttpRequest);
             httpRequestManager.Add((context) => 
             {
-                context.ResponseBody = Config;
-            }, new HttpRequestAttribute()
+                UpdateConfiguration(context.RequestBody as Configuration);
+                context.ResponseBody = "Configuration updated";
+            }, updateConfigHttpRequest);
+
+            HttpRequestAttribute getConfigHttpRequest = new HttpRequestAttribute()
             {
                 HttpRequestType = HttpRequestType.Get,
                 Pattern = applicationContext.Guid + "/config"
-            });
+            };
+            applicationContext.HttpRequestAttributes.Add(getConfigHttpRequest);
+            httpRequestManager.Add((context) => 
+            {
+                context.ResponseBody = Config;
+            }, getConfigHttpRequest);
+
+            base.AddBaseHttpRequests(applicationContext, httpRequestManager);
         }
     }
 }

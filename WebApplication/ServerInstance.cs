@@ -53,9 +53,9 @@ public class ServerInstance
         return "plugin installed";
     }
 
-    public object GetApplicationsAttributes()
+    public object GetApplicationDescriptives()
     {
-        return "hihiih";
+        return _applicationManager.GetApplicationsDescriptive();
     }
 }
 

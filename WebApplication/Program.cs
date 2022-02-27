@@ -15,7 +15,7 @@ Dictionary<HttpRequestType, List<HttpRequestDefinition>> httpRequests = serverIn
 
 webApp.MapGet("applications/", () =>
 {
-    return serverInstance.GetApplicationsAttributes();
+    return serverInstance.GetApplicationDescriptives();
 });
 
 webApp.MapPost("plugins/install/", ([FromBody] InstallPlugin body) =>
