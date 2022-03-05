@@ -19,47 +19,47 @@ namespace Library.Configuration.App
             OnConfigurationUpdate(oldConfiguration);
         }
 
-        public override void Install(ApplicationContext context) 
+        public override void Install() 
         {
-            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(context.Path);
+            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ApplicationContext.AppPath);
             ConfigurationStorageManager.AddConfiguration(new Configuration());
         }
 
-        public override void Initialize(ApplicationContext context) 
+        public override void Initialize() 
         {
-            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(context.Path);
+            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ApplicationContext.AppPath);
             Config = ConfigurationStorageManager.LoadConfiguration();
         }
 
-        public override void Uninstall(ApplicationContext context) 
+        public override void Uninstall() 
         {
             ConfigurationStorageManager.RemoveConfiguration(Config);
         }
 
-        public override void Uninitialize(ApplicationContext context) 
+        public override void Uninitialize() 
         {
             ConfigurationStorageManager = null;
             Config = null;
         }
 
-        protected sealed override void ValidateApplication(ApplicationContext context)
+        protected sealed override void ValidateApplication()
         {
-            ValidateConfiguration(context);
+            ValidateConfiguration();
         }
 
-        protected virtual void ValidateConfiguration(ApplicationContext context) { }
+        protected virtual void ValidateConfiguration() { }
 
         protected virtual void OnConfigurationUpdate(Configuration oldConfiguration) { }
 
-        public sealed override void AddBaseHttpRequests(ApplicationContext applicationContext, HttpRequestManager httpRequestManager) 
+        public sealed override void AddBaseHttpRequests(HttpRequestManager httpRequestManager) 
         {
             HttpRequestAttribute updateConfigHttpRequest = new HttpRequestAttribute()
             {
                 HttpRequestType = HttpRequestType.Post,
-                Pattern = applicationContext.Guid + "/config",
+                Pattern = ApplicationContext.Guid + "/config",
                 ExpectedBody = typeof(Configuration)
             };
-            applicationContext.HttpRequestAttributes.Add(updateConfigHttpRequest);
+            ApplicationContext.HttpRequestAttributes.Add(updateConfigHttpRequest);
             httpRequestManager.Add((context) => 
             {
                 UpdateConfiguration(context.RequestBody as Configuration);
@@ -69,15 +69,15 @@ namespace Library.Configuration.App
             HttpRequestAttribute getConfigHttpRequest = new HttpRequestAttribute()
             {
                 HttpRequestType = HttpRequestType.Get,
-                Pattern = applicationContext.Guid + "/config"
+                Pattern = ApplicationContext.Guid + "/config"
             };
-            applicationContext.HttpRequestAttributes.Add(getConfigHttpRequest);
+            ApplicationContext.HttpRequestAttributes.Add(getConfigHttpRequest);
             httpRequestManager.Add((context) => 
             {
                 context.ResponseBody = Config;
             }, getConfigHttpRequest);
 
-            base.AddBaseHttpRequests(applicationContext, httpRequestManager);
+            base.AddBaseHttpRequests(httpRequestManager);
         }
     }
 }

@@ -6,7 +6,6 @@ namespace Library.Application
     public class ApplicationManager
     {
         private readonly Dictionary<string, ApplicationBase> _applications;
-        private readonly string _applicationPaths;
 
         private readonly ApplicationResolver _applicationResolver;
         private readonly EventHandlerManager _eventHandlerManager;
@@ -19,28 +18,27 @@ namespace Library.Application
             _applicationResolver = applicationResolver;
             _eventHandlerManager = eventHandlerManager;
             _applications = new Dictionary<string, ApplicationBase>();
-            _applicationPaths = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "App");
         }
 
         public void InstallApplication(string applicationPath)
         {
             FileInfo applicationFileInfo = new FileInfo(applicationPath);
             string newGuid = GetNewGuid();
-            string newApplicationDirectoryPath = Path.Combine(_applicationPaths, newGuid);
+            string newApplicationDirectoryPath = Path.Combine(ApplicationContext.ParentDirectoryPath, newGuid);
             Directory.CreateDirectory(newApplicationDirectoryPath);
             string newApplicationPath = Path.Combine(newApplicationDirectoryPath, applicationFileInfo.Name);
             File.Copy(applicationPath, newApplicationPath);
             ApplicationBase application = GetApplicationImplementation(Assembly.LoadFile(newApplicationPath));
             application.EventHandlerManager = _eventHandlerManager;
-            ApplicationContext context = new ApplicationContext();
-            context.Guid = newGuid;
-            context.Path = newApplicationDirectoryPath;
-            application.Install(context);
+            using (var context = new ApplicationContext(newGuid))
+            {
+                application.Install();
+            }
         }
 
         public void LoadApplications()
         {
-            string[] directoryPaths = Directory.GetDirectories(_applicationPaths);
+            string[] directoryPaths = Directory.GetDirectories(ApplicationContext.ParentDirectoryPath);
 
             foreach (string directoryPath in directoryPaths)
             {
@@ -48,29 +46,30 @@ namespace Library.Application
                 string path = Directory.GetFiles(directoryPath, "*.dll")[0];
                 ApplicationBase application = GetApplicationImplementation(Assembly.LoadFile(path));
                 application.EventHandlerManager = _eventHandlerManager;
-                ApplicationContext context = new ApplicationContext();
-                context.Guid = directoryInfo.Name;
-                context.Path = directoryPath;
-                application.Initialize(context);
-                _applications.Add(directoryInfo.Name, application); 
-                _applicationResolver.ResolveAll(application, context);
+
+                using (var context = new ApplicationContext(directoryInfo.Name))
+                {
+                    application.Initialize();
+                    _applications.Add(directoryInfo.Name, application);
+                    _applicationResolver.ResolveAll(application);
+                }
             }
         }
 
         public void InitializeApplication(string guid)
         {
-            ApplicationContext application = new ApplicationContext();
-            application.Guid = guid;
-            application.Path = Path.Combine(_applicationPaths, guid);
-            _applications[guid].Initialize(application);
+            using (var context = new ApplicationContext(guid))
+            {
+                _applications[guid].Initialize();
+            }
         }
 
         public void UninitializeApplication(string guid)
         {
-            ApplicationContext application = new ApplicationContext();
-            application.Guid = guid;
-            application.Path = Path.Combine(_applicationPaths, guid);
-            _applications[guid].Uninitialize(application);
+            using (var context = new ApplicationContext(guid))
+            {
+                _applications[guid].Uninitialize();
+            }
         }
 
         public List<object> GetApplicationsDescriptive()
@@ -92,6 +91,11 @@ namespace Library.Application
             return applications;
         }
 
+        public bool IsValidGuid(string guid)
+        {
+            return _applications.ContainsKey(guid);
+        }
+
         private string GetNewGuid()
         {
             string guid;
@@ -102,11 +106,15 @@ namespace Library.Application
 
         private ApplicationBase GetApplicationImplementation(Assembly assembly)
         {
+            ApplicationBase app = null;
             Type applicationType = typeof(ApplicationBase);
             foreach (Type type in assembly.GetTypes())
+            {
                 if (applicationType.IsAssignableFrom(type))
-                    return Activator.CreateInstance(type) as ApplicationBase;
-            return null;
+                    app = Activator.CreateInstance(type) as ApplicationBase;
+            }
+                
+            return app;
         }
 
     }

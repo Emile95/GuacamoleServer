@@ -20,12 +20,12 @@ namespace Library.Application
             _httpRequestManager = httpRequestManager;
         }
 
-        public void ResolveAll(ApplicationBase application, ApplicationContext context)
+        public void ResolveAll(ApplicationBase application)
         {
-            ResolveEventHandlers(application, context);
-            ResolveHttpRequests(application, context);
+            ResolveEventHandlers(application);
+            ResolveHttpRequests(application);
         }
-        public void ResolveEventHandlers(ApplicationBase application, ApplicationContext context)
+        public void ResolveEventHandlers(ApplicationBase application)
         {
             Type applicationType = application.GetType();
             MethodInfo[] methodInfos = applicationType.GetMethods();
@@ -39,7 +39,7 @@ namespace Library.Application
             }
         }
 
-        public void ResolveHttpRequests(ApplicationBase application, ApplicationContext context)
+        public void ResolveHttpRequests(ApplicationBase application)
         {
             Type applicationType = application.GetType();
             MethodInfo[] methodInfos = applicationType.GetMethods();
@@ -47,13 +47,13 @@ namespace Library.Application
             {
                 HttpRequestAttribute attribute = methodInfo.GetCustomAttribute<HttpRequestAttribute>();
                 if (attribute == null) continue;
-                attribute.Pattern = context.Guid + "/function/" + attribute.Pattern;
-                context.HttpRequestAttributes.Add(attribute);
+                attribute.Pattern = ApplicationContext.Guid + "/function/" + attribute.Pattern;
+                ApplicationContext.HttpRequestAttributes.Add(attribute);
                 _httpRequestManager.Add((context) => {
                     methodInfo.Invoke(application, new object[] { context });
                 }, attribute);
             }
-            application.AddBaseHttpRequests(context, _httpRequestManager);
+            application.AddBaseHttpRequests(_httpRequestManager);
         }
     }
 }

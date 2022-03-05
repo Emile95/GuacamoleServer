@@ -10,17 +10,17 @@ namespace Library.Application
 
         public abstract string GetName();
         public abstract string GetDescription();
-        protected abstract void ValidateApplication(ApplicationContext context);
-        public abstract void Install(ApplicationContext context);
-        public abstract void Uninstall(ApplicationContext context);
-        public abstract void Initialize(ApplicationContext context);
-        public abstract void Uninitialize(ApplicationContext context);
-        public virtual void AddBaseHttpRequests(ApplicationContext applicationContext, HttpRequestManager httpRequestManager) 
+        protected abstract void ValidateApplication();
+        public abstract void Install();
+        public abstract void Uninstall();
+        public abstract void Initialize();
+        public abstract void Uninitialize();
+        public virtual void AddBaseHttpRequests(HttpRequestManager httpRequestManager) 
         {
             httpRequestManager.Add((context) =>
             {
                 List<object> requests = new List<object>();
-                foreach(HttpRequestAttribute httpRequestAttribute in applicationContext.HttpRequestAttributes)
+                foreach(HttpRequestAttribute httpRequestAttribute in ApplicationContext.HttpRequestAttributes)
                 {
                     requests.Add(new
                     {
@@ -38,7 +38,7 @@ namespace Library.Application
             }, new HttpRequestAttribute()
             {
                 HttpRequestType = HttpRequestType.Get,
-                Pattern = applicationContext.Guid + "/descriptive",
+                Pattern = ApplicationContext.Guid + "/descriptive",
             });
         }
     }

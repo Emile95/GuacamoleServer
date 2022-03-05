@@ -1,4 +1,5 @@
-﻿using Library.Configuration.Http;
+﻿using Library.Application;
+using Library.Configuration.Http;
 using Newtonsoft.Json;
 using System.Reflection;
 
@@ -6,24 +7,24 @@ namespace Library.Http
 {
     public class HttpRequestManager
     {
-        public readonly Dictionary<HttpRequestType, List<HttpRequestDefinition>> HttpRequest;
+        public Dictionary<string, List<HttpRequestDefinition>> HttpRequests { get; private set; }
 
         public HttpRequestManager()
         {
-            HttpRequest = new Dictionary<HttpRequestType, List<HttpRequestDefinition>>();
-            HttpRequest.Add(HttpRequestType.Get, new List<HttpRequestDefinition>());
-            HttpRequest.Add(HttpRequestType.Put, new List<HttpRequestDefinition>());
-            HttpRequest.Add(HttpRequestType.Post, new List<HttpRequestDefinition>());
-            HttpRequest.Add(HttpRequestType.Delete, new List<HttpRequestDefinition>());
+            HttpRequests = new Dictionary<string, List<HttpRequestDefinition>>();
         }
 
         public void Add(Action<HttpRequestContext> action, HttpRequestAttribute httpRequestAttribute)
         {
-            HttpRequest[httpRequestAttribute.HttpRequestType].Add(new HttpRequestDefinition
+            if (!HttpRequests.ContainsKey(ApplicationContext.Guid))
+                HttpRequests.Add(ApplicationContext.Guid, new List<HttpRequestDefinition>());
+
+            HttpRequests[ApplicationContext.Guid].Add(new HttpRequestDefinition
             {
                 Pattern = httpRequestAttribute.Pattern,
                 Action = action,
                 ExpectedBody = httpRequestAttribute.ExpectedBody,
+                RequestType = httpRequestAttribute.HttpRequestType
             });
         }
 

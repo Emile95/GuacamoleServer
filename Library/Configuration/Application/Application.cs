@@ -5,27 +5,27 @@ namespace Library.Configuration.App
 {
     public abstract class Application : ApplicationBase
     {
-        protected sealed override void ValidateApplication(ApplicationContext context)
+        protected sealed override void ValidateApplication()
         {
 
         }
 
-        public override void Install(ApplicationContext context)
+        public override void Install()
         {
 
         }
 
-        public override void Initialize(ApplicationContext context)
+        public override void Initialize()
         {
 
         }
 
-        public override void Uninstall(ApplicationContext context) 
+        public override void Uninstall() 
         { 
 
         }
 
-        public override void Uninitialize(ApplicationContext context) 
+        public override void Uninitialize() 
         { 
         
         }
