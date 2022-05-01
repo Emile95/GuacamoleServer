@@ -10,15 +10,15 @@ namespace Library.Application
         public static string AppPath { get; private set; }
         public static List<HttpRequestAttribute> HttpRequestAttributes { get; private set; } = new List<HttpRequestAttribute>();
 
-        public string PreviousGuid { get; private set; }
-        public string PreviousAppPath { get; private set; }
-        public List<HttpRequestAttribute> PreviousHttpRequestAttributes { get; set; } = new List<HttpRequestAttribute>();
+        private string _previousGuid;
+        public string _previousAppPath;
+        private List<HttpRequestAttribute> _previousHttpRequestAttributes;
 
         public ApplicationContext(string guid)
         {
-            PreviousGuid = Guid;
-            PreviousAppPath = AppPath;
-            PreviousHttpRequestAttributes = HttpRequestAttributes;
+            _previousGuid = Guid;
+            _previousAppPath = AppPath;
+            _previousHttpRequestAttributes = HttpRequestAttributes;
 
             Guid = guid;
             AppPath = Path.Combine(ParentDirectoryPath, guid);
@@ -27,9 +27,9 @@ namespace Library.Application
 
         public void Dispose()
         {
-            Guid = PreviousGuid;
-            AppPath = PreviousAppPath;
-            HttpRequestAttributes = PreviousHttpRequestAttributes;
+            Guid = _previousGuid;
+            AppPath = _previousAppPath;
+            HttpRequestAttributes = _previousHttpRequestAttributes;
         }
     }
 }
