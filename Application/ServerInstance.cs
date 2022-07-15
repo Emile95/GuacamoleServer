@@ -1,5 +1,6 @@
 ﻿using Library.EventHandler;
 using Library.Application;
+using Application.Sockets;
 
 public class ServerInstance
 {
@@ -7,6 +8,8 @@ public class ServerInstance
     private readonly ApplicationResolver _applicationResolver;
     private readonly EventHandlerManager _eventHandlerManager;
     private WebApplication _webApplication;
+
+    private readonly TCPIPSocket _tcpipSocket;
 
     public ServerInstance()
     {
@@ -17,6 +20,11 @@ public class ServerInstance
             _eventHandlerManager
         );
 
+        _tcpipSocket = new TCPIPSocket(1100);
+    }
+
+    public void LoadApplications()
+    {
         _applicationManager.LoadApplications();
     }
 
@@ -29,6 +37,16 @@ public class ServerInstance
     public void StopWebApp()
     {
         _webApplication.StopAsync();
+    }
+
+    public void StartSockets()
+    {
+        _tcpipSocket.Start();
+    }
+
+    public void StopSockets()
+    {
+        _tcpipSocket.Stop();
     }
 }
 

@@ -44,7 +44,12 @@ namespace Library.Application
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
                 string path = Directory.GetFiles(directoryPath, "*.dll")[0];
-                ApplicationBase application = GetApplicationImplementation(Assembly.LoadFile(path));
+                ApplicationBase application = null;
+                try
+                {
+                    application = GetApplicationImplementation(Assembly.LoadFile(path));
+                }
+                catch (Exception e) { }
                 application.EventHandlerManager = _eventHandlerManager;
 
                 using (var context = new ApplicationContext(directoryInfo.Name))
@@ -108,10 +113,13 @@ namespace Library.Application
         {
             ApplicationBase app = null;
             Type applicationType = typeof(ApplicationBase);
+
             foreach (Type type in assembly.GetTypes())
             {
                 if (applicationType.IsAssignableFrom(type))
+                {
                     app = Activator.CreateInstance(type) as ApplicationBase;
+                }
             }
                 
             return app;
