@@ -8,7 +8,7 @@ namespace Application.RestAPI
     {
         public static WebApplication BuildWebApplication(ApplicationManager applicationManager)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder();
 
             builder.Services.AddCors(options =>
             {
