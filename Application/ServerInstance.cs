@@ -1,6 +1,7 @@
 ﻿using Library.EventHandler;
 using Library.Application;
 using Application.Sockets;
+using Application.Logger;
 
 public class ServerInstance
 {
@@ -8,6 +9,8 @@ public class ServerInstance
     private readonly ApplicationResolver _applicationResolver;
     private readonly EventHandlerManager _eventHandlerManager;
     private WebApplication _webApplication;
+
+    private Application.Logger.ILogger _logger;
 
     private readonly TCPIPSocket _tcpipSocket;
 
@@ -20,7 +23,9 @@ public class ServerInstance
             _eventHandlerManager
         );
 
-        _tcpipSocket = new TCPIPSocket(1100);
+        _logger = new ConsoleLogger();
+
+        _tcpipSocket = new TCPIPSocket(_logger, 1100);
     }
 
     public void LoadApplications()

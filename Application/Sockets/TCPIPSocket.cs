@@ -5,12 +5,11 @@ namespace Application.Sockets
 {
     public class TCPIPSocket : ServerSocket
     {
-        public TCPIPSocket(int port)
-        : base(port) {}
+        public TCPIPSocket(Application.Logger.ILogger logger, int port)
+        : base(logger, port) {}
 
         protected override Socket GetSocket()
         {
-            //Debugger.Launch();
             return new Socket(
                 Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
                 SocketType.Stream,
