@@ -1,6 +1,4 @@
-﻿using Library.Configuration.Http;
-using Library.EventHandler;
-using Library.Http;
+﻿using Library.EventHandler;
 
 namespace Library.Application
 {
@@ -15,32 +13,5 @@ namespace Library.Application
         public abstract void Uninstall();
         public abstract void Initialize();
         public abstract void Uninitialize();
-        public virtual void AddBaseHttpRequests(HttpRequestManager httpRequestManager) 
-        {
-            httpRequestManager.Add((context) =>
-            {
-                List<object> requests = new List<object>();
-                foreach(HttpRequestAttribute httpRequestAttribute in ApplicationContext.HttpRequestAttributes)
-                {
-                    requests.Add(new
-                    {
-                        type = httpRequestAttribute.HttpRequestType.ToString(),
-                        pattern = httpRequestAttribute.Pattern,
-                    });
-                }
-
-                var descriptive = new {
-                    name = GetName(),
-                    description = GetDescription(),
-                    requests = requests
-                };
-                context.ResponseBody = descriptive;
-
-            }, new HttpRequestAttribute()
-            {
-                HttpRequestType = HttpRequestType.Get,
-                Pattern = ApplicationContext.Guid + "/descriptive",
-            });
-        }
     }
 }

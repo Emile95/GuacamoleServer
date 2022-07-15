@@ -1,6 +1,4 @@
 ﻿using Library.Application;
-using Library.Configuration.Http;
-using Library.Http;
 using Library.Storage;
 
 namespace Library.Configuration.App
@@ -50,34 +48,5 @@ namespace Library.Configuration.App
         protected virtual void ValidateConfiguration() { }
 
         protected virtual void OnConfigurationUpdate(Configuration oldConfiguration) { }
-
-        public sealed override void AddBaseHttpRequests(HttpRequestManager httpRequestManager) 
-        {
-            HttpRequestAttribute updateConfigHttpRequest = new HttpRequestAttribute()
-            {
-                HttpRequestType = HttpRequestType.Post,
-                Pattern = ApplicationContext.Guid + "/config",
-                ExpectedBody = typeof(Configuration)
-            };
-            ApplicationContext.HttpRequestAttributes.Add(updateConfigHttpRequest);
-            httpRequestManager.Add((context) => 
-            {
-                UpdateConfiguration(context.RequestBody as Configuration);
-                context.ResponseBody = "Configuration updated";
-            }, updateConfigHttpRequest);
-
-            HttpRequestAttribute getConfigHttpRequest = new HttpRequestAttribute()
-            {
-                HttpRequestType = HttpRequestType.Get,
-                Pattern = ApplicationContext.Guid + "/config"
-            };
-            ApplicationContext.HttpRequestAttributes.Add(getConfigHttpRequest);
-            httpRequestManager.Add((context) => 
-            {
-                context.ResponseBody = Config;
-            }, getConfigHttpRequest);
-
-            base.AddBaseHttpRequests(httpRequestManager);
-        }
     }
 }

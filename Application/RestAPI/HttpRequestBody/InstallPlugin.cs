@@ -1,4 +1,4 @@
-﻿namespace WebApp.RequestBody
+﻿namespace Application.RestApi.HttpRequestBody
 {
     public class InstallPlugin
     {
