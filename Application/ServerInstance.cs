@@ -12,7 +12,7 @@ public class ServerInstance
 
     private Application.Logger.ILogger _logger;
 
-    private readonly TCPAgentsHandler _tcpAgentsHandler;
+    private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
 
     public ServerInstance()
     {
@@ -25,7 +25,7 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _tcpAgentsHandler = new TCPAgentsHandler(_logger, 1100);
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100);
     }
 
     public void LoadApplications()
@@ -35,7 +35,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _tcpAgentsHandler);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _tcpAgentSocketsHandler);
         _webApplication.RunAsync();
     }
 
@@ -46,12 +46,12 @@ public class ServerInstance
 
     public void StartSockets()
     {
-        _tcpAgentsHandler.Start();
+        _tcpAgentSocketsHandler.Start();
     }
 
     public void StopSockets()
     {
-        _tcpAgentsHandler.Stop();
+        _tcpAgentSocketsHandler.Stop();
     }
 }
 

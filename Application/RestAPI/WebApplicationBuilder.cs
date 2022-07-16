@@ -7,7 +7,7 @@ namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentsHandler agentHandler)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentSocketsHandler agentHandler)
         {
             var builder = WebApplication.CreateBuilder();
 

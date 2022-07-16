@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace Application.Agent
 {
-    public abstract class AgentsHandler
+    public abstract class AgentSocketsHandler
     {
         private readonly Application.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
@@ -14,7 +14,7 @@ namespace Application.Agent
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentsHandler(Application.Logger.ILogger logger, int port)
+        public AgentSocketsHandler(Application.Logger.ILogger logger, int port)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -61,7 +61,6 @@ namespace Application.Agent
             }
             catch (Exception e)
             {
-                _logger.Log("Client Lost unexpectly");
                 _agentManager.LostUnexpeclyAgentSocket(clientSocket);
                 return;
             }

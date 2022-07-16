@@ -27,7 +27,7 @@ namespace Application.Agent.Request
 
         private void ConnectAgent(AgentDefinition agentDefinition, RequestContext context)
         {
-            context.AgentManager.AddAgent(agentDefinition.Id, context.SourceSocket);
+            context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
         }
     }

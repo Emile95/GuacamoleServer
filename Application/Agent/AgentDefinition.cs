@@ -8,7 +8,7 @@ namespace Application.Agent
         public string Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonPropertyName("label")]
-        public string Label { get; set; }
+        [JsonPropertyName("labels")]
+        public List<string> Labels { get; set; }
     }
 }

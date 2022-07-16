@@ -5,32 +5,41 @@ namespace Application.Agent
     public class AgentManager
     {
         private readonly Application.Logger.ILogger _logger;
-        private readonly Dictionary<string, Socket> _agentSockets;
+        private readonly Dictionary<string, AgentClient> _agentClients;
+        private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
 
         public AgentManager(Application.Logger.ILogger logger)
         {
             _logger = logger;
-            _agentSockets = new Dictionary<string, Socket>();
+            _agentClients = new Dictionary<string, AgentClient>();
+            _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
         }
 
-        public void AddAgent(string id, Socket agentSocket)
+        public void AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
-            _agentSockets.Add(id, agentSocket);
+            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger);
+            _agentClients.Add(agentDefinition.Id, agentClient);
+            foreach(string label in agentDefinition.Labels)
+            {
+                if (_agentClientsByLabels.ContainsKey(label) == false)
+                    _agentClientsByLabels.Add(label, new List<AgentClient>());
+                _agentClientsByLabels[label].Add(agentClient);
+            }
         }
 
         public void RemoveAgent(string id)
         {
-            _agentSockets.Remove(id);
+            _agentClients.Remove(id);
         }
 
         public void LostUnexpeclyAgentSocket(Socket agentSockect)
         {
-            foreach(KeyValuePair<string, Socket> set in _agentSockets)
+            foreach(KeyValuePair<string, AgentClient> set in _agentClients)
             {
-                if (agentSockect.Equals(set.Value))
+                if (set.Value.IsEqualBySocket(agentSockect))
                 {
                     _logger.Log("Lost unexpectly agent id : " + set.Key);
-                    _agentSockets.Remove(set.Key);
+                    _agentClients.Remove(set.Key);
                     return;
                 }
             }
