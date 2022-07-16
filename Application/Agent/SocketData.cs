@@ -1,4 +1,4 @@
-﻿namespace Application.Sockets
+﻿namespace Application.Agent
 {
     [Serializable]
     public class SocketData

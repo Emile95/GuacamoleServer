@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Application.Sockets
+namespace Application.Agent
 {
-    public abstract class ServerSocket
+    public abstract class AgentHandler
     {
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
@@ -14,7 +14,7 @@ namespace Application.Sockets
 
         private readonly SocketDataHandler _socketDataHandler;
 
-        public ServerSocket(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
+        public AgentHandler(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];

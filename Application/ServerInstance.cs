@@ -1,6 +1,6 @@
 ﻿using Library.EventHandler;
 using Library.Application;
-using Application.Sockets;
+using Application.Agent;
 using Application.Logger;
 
 public class ServerInstance
@@ -12,7 +12,7 @@ public class ServerInstance
 
     private Application.Logger.ILogger _logger;
 
-    private readonly TCPIPSocket _tcpipSocket;
+    private readonly TCPAgentHandler _tcpAgentHandler;
 
     public ServerInstance()
     {
@@ -27,7 +27,7 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _tcpipSocket = new TCPIPSocket(_logger, socketDataHandler, 1100);
+        _tcpAgentHandler = new TCPAgentHandler(_logger, socketDataHandler, 1100);
     }
 
     public void LoadApplications()
@@ -48,12 +48,12 @@ public class ServerInstance
 
     public void StartSockets()
     {
-        _tcpipSocket.Start();
+        _tcpAgentHandler.Start();
     }
 
     public void StopSockets()
     {
-        _tcpipSocket.Stop();
+        _tcpAgentHandler.Stop();
     }
 }
 

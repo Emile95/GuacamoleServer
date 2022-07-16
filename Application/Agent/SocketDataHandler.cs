@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Application.Sockets
+namespace Application.Agent
 {
     public class SocketDataHandler
     {
