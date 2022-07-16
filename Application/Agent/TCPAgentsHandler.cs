@@ -3,9 +3,9 @@ using System.Net.Sockets;
 
 namespace Application.Agent
 {
-    public class TCPAgentHandler : AgentHandler
+    public class TCPAgentsHandler : AgentsHandler
     {
-        public TCPAgentHandler(Application.Logger.ILogger logger, int port)
+        public TCPAgentsHandler(Application.Logger.ILogger logger, int port)
         : base(logger, port) {}
 
         protected override Socket GetSocket()
