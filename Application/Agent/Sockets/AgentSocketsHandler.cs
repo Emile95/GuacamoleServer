@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Application.Agent
+namespace Application.Agent.Sockets
 {
     public abstract class AgentSocketsHandler
     {
@@ -14,7 +14,7 @@ namespace Application.Agent
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Application.Logger.ILogger logger, int port)
+        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -22,7 +22,7 @@ namespace Application.Agent
             _socket.Bind(GetEndpoint());
             _socket.Listen(100);
             _logger = logger;
-            _agentManager = new AgentManager(logger);
+            _agentManager = agentManager;
             _requestHandler = new RequestHandler(logger);
         }
 

@@ -19,5 +19,10 @@ namespace Application.Agent
         {
             return _socket.Equals(socket);
         }
+
+        public string GetName()
+        {
+            return _agentDefinition.Name;
+        }
     }
 }

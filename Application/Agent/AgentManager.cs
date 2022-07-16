@@ -38,7 +38,7 @@ namespace Application.Agent
             {
                 if (set.Value.IsEqualBySocket(agentSockect))
                 {
-                    _logger.Log("Lost unexpectly agent id : " + set.Key);
+                    _logger.Log("Lost unexpectly agent " + set.Value.GetName());
                     _agentClients.Remove(set.Key);
                     return;
                 }

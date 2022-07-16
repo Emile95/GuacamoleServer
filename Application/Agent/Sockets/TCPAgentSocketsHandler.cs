@@ -1,12 +1,12 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Application.Agent
+namespace Application.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(Application.Logger.ILogger logger, int port)
-        : base(logger, port) {}
+        public TCPAgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager)
+        : base(logger, port, agentManager) {}
 
         protected override Socket GetSocket()
         {

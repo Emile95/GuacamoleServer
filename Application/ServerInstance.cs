@@ -2,17 +2,17 @@
 using Library.Application;
 using Application.Agent;
 using Application.Logger;
+using Application.Agent.Sockets;
 
 public class ServerInstance
 {
+    private Application.Logger.ILogger _logger;
     private readonly ApplicationManager _applicationManager;
     private readonly ApplicationResolver _applicationResolver;
     private readonly EventHandlerManager _eventHandlerManager;
     private WebApplication _webApplication;
-
-    private Application.Logger.ILogger _logger;
-
     private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
+    private readonly AgentManager _agentManager;
 
     public ServerInstance()
     {
@@ -25,7 +25,9 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100);
+        _agentManager = new AgentManager(_logger);
+
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager);
     }
 
     public void LoadApplications()
@@ -35,7 +37,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _tcpAgentSocketsHandler);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager);
         _webApplication.RunAsync();
     }
 
