@@ -23,9 +23,11 @@ public class ServerInstance
             _eventHandlerManager
         );
 
+        SocketDataHandler socketDataHandler = new SocketDataHandler();
+
         _logger = new ConsoleLogger();
 
-        _tcpipSocket = new TCPIPSocket(_logger, 1100);
+        _tcpipSocket = new TCPIPSocket(_logger, socketDataHandler, 1100);
     }
 
     public void LoadApplications()

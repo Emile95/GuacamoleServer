@@ -1,27 +1,29 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-
 namespace Application.Sockets
 {
     public abstract class ServerSocket
     {
+        protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
         private readonly List<Socket> _clientSockets;
         private readonly Application.Logger.ILogger _logger;
 
-        public ServerSocket(Application.Logger.ILogger logger, int port)
+        private readonly SocketDataHandler _socketDataHandler;
+
+        public ServerSocket(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
         {
             _port = port;
+            _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
             _socket = GetSocket();
             _socket.Bind(GetEndpoint());
             _socket.Listen(100);
             _clientSockets = new List<Socket>();
             _logger = logger;
-
-            
+            _socketDataHandler = socketDataHandler;
         }
 
         public void Start()
@@ -38,34 +40,45 @@ namespace Application.Sockets
 
         private void AcceptCallBack(IAsyncResult ar)
         {
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
+            Socket serverSocket = (Socket)ar.AsyncState;
+            Socket clientSocket = serverSocket.EndAccept(ar);
 
-            _clientSockets.Add(handler);
+            _clientSockets.Add(clientSocket);
+
+            SocketData socketData = new SocketData();
+
+            //clientSocket.Send(_socketDataHandler.CreateBytesFromSocketData(socketData));
 
             _logger.Log("New Client connected");
 
             StateObject state = new StateObject();
-            state.workSocket = handler;
+            state.workSocket = clientSocket;
 
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
+            clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
 
-            listener.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
+            serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
 
         private void ReadCallBack(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
+            Socket clientSocket = state.workSocket;
+
+            int bytesRead = 0;
             try
             {
-                int bytesRead = handler.EndReceive(ar);
-                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
-            } catch(Exception e)
+                bytesRead  = clientSocket.EndReceive(ar);
+            }
+            catch (Exception e)
             {
                 _logger.Log("Client Lost unexpectly");
-                _clientSockets.Remove(handler);
+                _clientSockets.Remove(clientSocket);
+                return;
             }
+
+            SocketData socketData = _socketDataHandler.CreateSocketDataFromBytes(state.buffer);
+
+            clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }
 
         protected abstract Socket GetSocket();

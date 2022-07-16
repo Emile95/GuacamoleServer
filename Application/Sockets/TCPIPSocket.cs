@@ -5,13 +5,13 @@ namespace Application.Sockets
 {
     public class TCPIPSocket : ServerSocket
     {
-        public TCPIPSocket(Application.Logger.ILogger logger, int port)
-        : base(logger, port) {}
+        public TCPIPSocket(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
+        : base(logger, socketDataHandler, port) {}
 
         protected override Socket GetSocket()
         {
             return new Socket(
-                Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
+                _hostIpAddress.AddressFamily,
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
@@ -19,7 +19,7 @@ namespace Application.Sockets
 
         protected override EndPoint GetEndpoint()
         {
-            return new IPEndPoint(Dns.GetHostAddresses(Dns.GetHostName())[0], _port);
+            return new IPEndPoint(_hostIpAddress, _port);
         }
     }
 }
