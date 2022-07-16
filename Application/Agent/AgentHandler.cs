@@ -1,29 +1,29 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace Application.Agent
 {
     public abstract class AgentHandler
     {
+        private readonly Application.Logger.ILogger _logger;
+        private readonly AgentManager _agentManager;
+
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        private readonly List<Socket> _clientSockets;
-        private readonly Application.Logger.ILogger _logger;
-
-        private readonly SocketDataHandler _socketDataHandler;
-
-        public AgentHandler(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
+        public AgentHandler(Application.Logger.ILogger logger, int port)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
             _socket = GetSocket();
             _socket.Bind(GetEndpoint());
             _socket.Listen(100);
-            _clientSockets = new List<Socket>();
             _logger = logger;
-            _socketDataHandler = socketDataHandler;
+            _agentManager = new AgentManager();
         }
 
         public void Start()
@@ -34,8 +34,6 @@ namespace Application.Agent
         public void Stop()
         {
             _socket.Close();
-            foreach (Socket socket in _clientSockets)
-                socket.Close();
         }
 
         private void AcceptCallBack(IAsyncResult ar)
@@ -43,9 +41,9 @@ namespace Application.Agent
             Socket serverSocket = (Socket)ar.AsyncState;
             Socket clientSocket = serverSocket.EndAccept(ar);
 
-            _clientSockets.Add(clientSocket);
+            _agentManager.AddAgent(clientSocket);
 
-            _logger.Log("New Client connected");
+            //_logger.Log("New Client connected");
 
             StateObject state = new StateObject();
             state.workSocket = clientSocket;
@@ -68,11 +66,21 @@ namespace Application.Agent
             catch (Exception e)
             {
                 _logger.Log("Client Lost unexpectly");
-                _clientSockets.Remove(clientSocket);
+                _agentManager.RemoveAgent(clientSocket);
                 return;
             }
 
-            SocketData socketData = _socketDataHandler.CreateSocketDataFromBytes(state.buffer);
+            ServerAgentData data = JsonConvert.DeserializeObject<ServerAgentData>(Encoding.ASCII.GetString(state.buffer));
+
+            JObject jObject = (JObject)data.Data;
+
+            switch (data.CommunicationType)
+            {
+                case "agentAuth":
+                    AgentDefinition agentDefinition = jObject.ToObject<AgentDefinition>();
+                    Console.WriteLine("Agent " + agentDefinition.label + " connected"); 
+                break;
+            }
 
             clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }

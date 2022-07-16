@@ -5,8 +5,8 @@ namespace Application.Agent
 {
     public class TCPAgentHandler : AgentHandler
     {
-        public TCPAgentHandler(Application.Logger.ILogger logger, SocketDataHandler socketDataHandler, int port)
-        : base(logger, socketDataHandler, port) {}
+        public TCPAgentHandler(Application.Logger.ILogger logger, int port)
+        : base(logger, port) {}
 
         protected override Socket GetSocket()
         {

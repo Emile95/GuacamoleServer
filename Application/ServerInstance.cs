@@ -23,11 +23,9 @@ public class ServerInstance
             _eventHandlerManager
         );
 
-        SocketDataHandler socketDataHandler = new SocketDataHandler();
-
         _logger = new ConsoleLogger();
 
-        _tcpAgentHandler = new TCPAgentHandler(_logger, socketDataHandler, 1100);
+        _tcpAgentHandler = new TCPAgentHandler(_logger, 1100);
     }
 
     public void LoadApplications()
@@ -37,7 +35,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _tcpAgentHandler);
         _webApplication.RunAsync();
     }
 

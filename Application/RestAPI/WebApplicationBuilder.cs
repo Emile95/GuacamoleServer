@@ -1,4 +1,5 @@
-﻿using Application.RestApi.HttpRequestBody;
+﻿using Application.Agent;
+using Application.RestApi.HttpRequestBody;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentHandler agentHandler)
         {
             var builder = WebApplication.CreateBuilder();
 
