@@ -3,17 +3,22 @@ using Library.Application;
 using Application.Agent;
 using Application.Logger;
 using Application.Agent.Sockets;
+using Application.Agent.Request.Received;
 
 public class ServerInstance
 {
     private Application.Logger.ILogger _logger;
+
     private readonly ApplicationManager _applicationManager;
     private readonly ApplicationResolver _applicationResolver;
     private readonly EventHandlerManager _eventHandlerManager;
-    private WebApplication _webApplication;
-    private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
-    private readonly AgentManager _agentManager;
 
+    private WebApplication _webApplication;
+
+    private readonly AgentManager _agentManager;
+    private readonly AgentRequestReceivedHandler _agentRequestReceivedHandler;
+    private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
+    
     public ServerInstance()
     {
         _eventHandlerManager = new EventHandlerManager();
@@ -27,7 +32,9 @@ public class ServerInstance
 
         _agentManager = new AgentManager(_logger);
 
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager);
+        _agentRequestReceivedHandler = new AgentRequestReceivedHandler(_logger);
+
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler);
     }
 
     public void LoadApplications()

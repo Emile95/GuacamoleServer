@@ -1,6 +1,6 @@
 ﻿namespace Application.Agent.Request
 {
-    public enum RequestType
+    public enum AgentRequestType
     {
         AgentConnect
     }

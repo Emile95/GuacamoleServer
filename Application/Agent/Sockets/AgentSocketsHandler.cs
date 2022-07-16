@@ -1,4 +1,4 @@
-﻿using Application.Agent.Request;
+﻿using Application.Agent.Request.Received;
 using System.Net;
 using System.Net.Sockets;
 
@@ -8,13 +8,13 @@ namespace Application.Agent.Sockets
     {
         private readonly Application.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly RequestHandler _requestHandler;
+        private readonly AgentRequestReceivedHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager)
+        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, AgentRequestReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -23,7 +23,7 @@ namespace Application.Agent.Sockets
             _socket.Listen(100);
             _logger = logger;
             _agentManager = agentManager;
-            _requestHandler = new RequestHandler(logger);
+            _agentRequestReceivedHandler = agentRequestReceivedHandler;
         }
 
         public void Start()
@@ -65,12 +65,12 @@ namespace Application.Agent.Sockets
                 return;
             }
 
-            RequestContext context = new RequestContext();
+            AgentRequestReceivedContext context = new AgentRequestReceivedContext();
             context.AgentManager = _agentManager;
             context.SourceSocket = clientSocket;
             context.Data = state.buffer;
 
-            _requestHandler.ProcessRequest(context);
+            _agentRequestReceivedHandler.ProcessRequest(context);
 
             clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }
