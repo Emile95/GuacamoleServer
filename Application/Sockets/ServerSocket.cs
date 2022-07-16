@@ -45,10 +45,6 @@ namespace Application.Sockets
 
             _clientSockets.Add(clientSocket);
 
-            SocketData socketData = new SocketData();
-
-            //clientSocket.Send(_socketDataHandler.CreateBytesFromSocketData(socketData));
-
             _logger.Log("New Client connected");
 
             StateObject state = new StateObject();
