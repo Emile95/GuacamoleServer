@@ -1,4 +1,6 @@
-﻿using Application.DataModel.Job;
+﻿using Application.Agent.Request.DataModel;
+using Application.DataModel;
+using Application.Job;
 using System.Net.Sockets;
 
 namespace Application.Agent
@@ -8,17 +10,19 @@ namespace Application.Agent
         private readonly Application.Logger.ILogger _logger;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
+        private readonly JobManager _jobManager;
 
-        public AgentManager(Application.Logger.ILogger logger)
+        public AgentManager(Application.Logger.ILogger logger, JobManager jobManager)
         {
             _logger = logger;
             _agentClients = new Dictionary<string, AgentClient>();
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
+            _jobManager = jobManager;
         }
 
         public void AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
-            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger);
+            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger, _jobManager);
             _agentClients.Add(agentDefinition.Id, agentClient);
             foreach(string label in agentDefinition.Labels)
             {
@@ -67,21 +71,21 @@ namespace Application.Agent
             RemoveAgent(agentId);
         }
 
-        public object RunJobOnAgent(JobRun jobRun)
+        public object StartJobOnAgent(StartJobDataModel job)
         {
-            if (_agentClientsByLabels.ContainsKey(jobRun.AgentLabel) == false) return "No agent with label " + jobRun.AgentLabel;
+            if (_agentClientsByLabels.ContainsKey(job.AgentLabel) == false) return "No agent with label " + job.AgentLabel;
 
             AgentClient foundedAgent = null;
-            foreach(AgentClient agentClient in _agentClientsByLabels[jobRun.AgentLabel])
+            foreach(AgentClient agentClient in _agentClientsByLabels[job.AgentLabel])
             {
                 if (agentClient.IsAvailable() == false) continue;
                 foundedAgent = agentClient;
                 break;
             }
 
-            if (foundedAgent == null) return "There is no available agent for the label : " + jobRun.AgentLabel;
+            if (foundedAgent == null) return "There is no available agent for the label : " + job.AgentLabel;
 
-            foundedAgent.RunJob(jobRun);
+            foundedAgent.RunJob(job);
 
             return "job started";
         }

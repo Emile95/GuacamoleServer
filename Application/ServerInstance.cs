@@ -4,6 +4,7 @@ using Application.Agent;
 using Application.Logger;
 using Application.Agent.Sockets;
 using Application.Agent.Request.Received;
+using Application.Job;
 
 public class ServerInstance
 {
@@ -18,7 +19,9 @@ public class ServerInstance
     private readonly AgentManager _agentManager;
     private readonly RequestReceivedHandler _agentRequestReceivedHandler;
     private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
-    
+
+    private readonly JobManager _jobManager;
+
     public ServerInstance()
     {
         _eventHandlerManager = new EventHandlerManager();
@@ -30,11 +33,13 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _agentManager = new AgentManager(_logger);
+        _jobManager = new JobManager(_logger);
+
+        _agentManager = new AgentManager(_logger, _jobManager);
 
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
 
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler);
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler, _jobManager);
     }
 
     public void LoadApplications()

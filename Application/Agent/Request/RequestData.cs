@@ -1,8 +1,8 @@
 ﻿namespace Application.Agent.Request
 {
-    public class AgentRequestData
+    public class RequestData
     {
-        public AgentRequestType RequestType { get; set; }
+        public RequestType RequestType { get; set; }
         public object Data { get; set; }
     }
 }

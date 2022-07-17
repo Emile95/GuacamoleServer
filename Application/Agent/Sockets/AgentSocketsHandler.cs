@@ -1,4 +1,5 @@
 ﻿using Application.Agent.Request.Received;
+using Application.Job;
 using System.Net;
 using System.Net.Sockets;
 
@@ -9,12 +10,13 @@ namespace Application.Agent.Sockets
         private readonly Application.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
         private readonly RequestReceivedHandler _agentRequestReceivedHandler;
+        private readonly JobManager _jobManager;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler, JobManager jobManager)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -24,6 +26,7 @@ namespace Application.Agent.Sockets
             _logger = logger;
             _agentManager = agentManager;
             _agentRequestReceivedHandler = agentRequestReceivedHandler;
+            _jobManager = jobManager;
         }
 
         public void Start()
@@ -69,6 +72,7 @@ namespace Application.Agent.Sockets
             context.AgentManager = _agentManager;
             context.SourceSocket = clientSocket;
             context.Data = state.buffer;
+            context.JobManager = _jobManager;
 
             _agentRequestReceivedHandler.ProcessRequest(context);
 

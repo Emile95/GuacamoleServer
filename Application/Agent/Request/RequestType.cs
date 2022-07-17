@@ -1,8 +1,9 @@
 ﻿namespace Application.Agent.Request
 {
-    public enum AgentRequestType
+    public enum RequestType
     {
         AgentConnect,
-        RunJob
+        RunJob,
+        JobFinish
     }
 }

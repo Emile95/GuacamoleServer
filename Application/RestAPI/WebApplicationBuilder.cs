@@ -1,6 +1,5 @@
 ﻿using Application.Agent;
 using Application.DataModel;
-using Application.DataModel.Job;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,9 +39,9 @@ namespace Application.RestAPI
                 return "plugin installed";
             });
 
-            webApplication.MapPost("job/run/", ([FromBody] JobRun body) =>
+            webApplication.MapPost("job/run/", ([FromBody] StartJobDataModel body) =>
             {
-                return agentManager.RunJobOnAgent(body);
+                return agentManager.StartJobOnAgent(body);
             });
 
             return webApplication;
