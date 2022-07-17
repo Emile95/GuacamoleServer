@@ -56,7 +56,7 @@ namespace Application.Agent
             return _agentDefinition.Labels;
         }
 
-        public void AnJobIsFinish()
+        public void DecrementJobRunning()
         {
             _jobrunning--;
         }

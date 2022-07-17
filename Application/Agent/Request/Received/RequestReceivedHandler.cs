@@ -37,7 +37,7 @@ namespace Application.Agent.Request.Received
         private void FinishJob(JobRunDataModel jobRun, RequestReceivedContext context)
         {
             RunningJob runningJob = context.JobManager.GetRunningJob(jobRun.Id);
-            runningJob.RunningOnAgent.AnJobIsFinish();
+            runningJob.RunningOnAgent.DecrementJobRunning();
             context.JobManager.RemoveRunningJob(jobRun.Id);
             _logger.Log("job " + jobRun.Id + " is finished");
         }
