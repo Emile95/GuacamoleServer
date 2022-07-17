@@ -71,13 +71,17 @@ namespace Application.Agent
         {
             if (_agentClientsByLabels.ContainsKey(jobRun.AgentLabel) == false) return "No agent with label " + jobRun.AgentLabel;
 
+            AgentClient foundedAgent = null;
             foreach(AgentClient agentClient in _agentClientsByLabels[jobRun.AgentLabel])
             {
-                if (agentClient.IsLocked()) continue;
-                agentClient.Lock();
-                _logger.Log("run job on label " + jobRun.AgentLabel);
-                agentClient.UnLock();
+                if (agentClient.IsAvailable() == false) continue;
+                foundedAgent = agentClient;
+                break;
             }
+
+            if (foundedAgent == null) return "There is no available agent for the label : " + jobRun.AgentLabel;
+
+            foundedAgent.RunJob(jobRun);
 
             return "job started";
         }

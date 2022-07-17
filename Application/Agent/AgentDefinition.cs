@@ -10,5 +10,7 @@ namespace Application.Agent
         public string Name { get; set; }
         [JsonPropertyName("labels")]
         public List<string> Labels { get; set; }
+        [JsonPropertyName("concurrentRun")]
+        public int ConcurrentRun { get; set; }
     }
 }
