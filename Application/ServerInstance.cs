@@ -44,7 +44,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager);
         _webApplication.RunAsync();
     }
 

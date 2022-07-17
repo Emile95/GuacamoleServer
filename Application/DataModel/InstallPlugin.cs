@@ -1,4 +1,4 @@
-﻿namespace Application.RestApi.HttpRequestBody
+﻿namespace Application.DataModel
 {
     public class InstallPlugin
     {

@@ -1,5 +1,5 @@
 ﻿using Application.Agent;
-using Application.RestApi.HttpRequestBody;
+using Application.DataModel;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +7,7 @@ namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager)
         {
             var builder = WebApplication.CreateBuilder();
 
@@ -37,6 +37,11 @@ namespace Application.RestAPI
             {
                 applicationManager.InstallApplication(body.Path);
                 return "plugin installed";
+            });
+
+            webApplication.MapPost("job/run/", ([FromBody] JobRun body) =>
+            {
+                return agentManager.RunJobOnAgent(body);
             });
 
             return webApplication;
