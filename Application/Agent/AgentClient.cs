@@ -1,5 +1,8 @@
-﻿using Application.DataModel;
+﻿using Application.Agent.Request;
+using Application.DataModel.Job;
+using Newtonsoft.Json;
 using System.Net.Sockets;
+using System.Text;
 
 namespace Application.Agent
 {
@@ -51,16 +54,23 @@ namespace Application.Agent
 
         public bool IsAvailable()
         {
+            return true;
             return _locked == false && _jobrunning < _agentDefinition.ConcurrentRun;
         }
 
         public void RunJob(JobRun jobRun)
         {
             Task.Run(() => {
-                _jobrunning++;
-                for (int i = 0; i < 100000; i++)
-                    _logger.Log(i.ToString());
-                _jobrunning--;
+                //_jobrunning++;
+                AgentRequestData agentRequestData = new AgentRequestData
+                {
+                    RequestType = AgentRequestType.RunJob,
+                    Data = jobRun
+                };
+                string json = JsonConvert.SerializeObject(agentRequestData);
+                byte[] data = Encoding.UTF8.GetBytes(json);
+                _socket.Send(data);
+                //_jobrunning--;
             });
         }
     }

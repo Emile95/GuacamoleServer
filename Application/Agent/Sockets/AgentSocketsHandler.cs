@@ -8,13 +8,13 @@ namespace Application.Agent.Sockets
     {
         private readonly Application.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly AgentRequestReceivedHandler _agentRequestReceivedHandler;
+        private readonly RequestReceivedHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, AgentRequestReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -65,7 +65,7 @@ namespace Application.Agent.Sockets
                 return;
             }
 
-            AgentRequestReceivedContext context = new AgentRequestReceivedContext();
+            RequestReceivedContext context = new RequestReceivedContext();
             context.AgentManager = _agentManager;
             context.SourceSocket = clientSocket;
             context.Data = state.buffer;

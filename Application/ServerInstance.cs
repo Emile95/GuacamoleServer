@@ -16,7 +16,7 @@ public class ServerInstance
     private WebApplication _webApplication;
 
     private readonly AgentManager _agentManager;
-    private readonly AgentRequestReceivedHandler _agentRequestReceivedHandler;
+    private readonly RequestReceivedHandler _agentRequestReceivedHandler;
     private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
     
     public ServerInstance()
@@ -32,7 +32,7 @@ public class ServerInstance
 
         _agentManager = new AgentManager(_logger);
 
-        _agentRequestReceivedHandler = new AgentRequestReceivedHandler(_logger);
+        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
 
         _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler);
     }

@@ -4,16 +4,16 @@ using System.Text;
 
 namespace Application.Agent.Request.Received
 {
-    public class AgentRequestReceivedHandler
+    public class RequestReceivedHandler
     {
         private readonly Application.Logger.ILogger _logger;
 
-        public AgentRequestReceivedHandler(Application.Logger.ILogger logger)
+        public RequestReceivedHandler(Application.Logger.ILogger logger)
         {
             _logger = logger;
         }
 
-        public void ProcessRequest(AgentRequestReceivedContext context)
+        public void ProcessRequest(RequestReceivedContext context)
         {
             AgentRequestData requestData = JsonConvert.DeserializeObject<AgentRequestData>(Encoding.ASCII.GetString(context.Data));
 
@@ -25,7 +25,7 @@ namespace Application.Agent.Request.Received
             }
         }
 
-        private void ConnectAgent(AgentDefinition agentDefinition, AgentRequestReceivedContext context)
+        private void ConnectAgent(AgentDefinition agentDefinition, RequestReceivedContext context)
         {
             context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");

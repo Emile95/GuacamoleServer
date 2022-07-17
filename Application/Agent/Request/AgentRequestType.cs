@@ -2,6 +2,7 @@
 {
     public enum AgentRequestType
     {
-        AgentConnect
+        AgentConnect,
+        RunJob
     }
 }

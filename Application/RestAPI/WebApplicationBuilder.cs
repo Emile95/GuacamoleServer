@@ -1,5 +1,6 @@
 ﻿using Application.Agent;
 using Application.DataModel;
+using Application.DataModel.Job;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-﻿using Application.DataModel;
+﻿using Application.DataModel.Job;
 using System.Net.Sockets;
 
 namespace Application.Agent
