@@ -10,19 +10,17 @@ namespace Application.Agent
         private readonly Application.Logger.ILogger _logger;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
-        private readonly JobManager _jobManager;
 
-        public AgentManager(Application.Logger.ILogger logger, JobManager jobManager)
+        public AgentManager(Application.Logger.ILogger logger)
         {
             _logger = logger;
             _agentClients = new Dictionary<string, AgentClient>();
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
-            _jobManager = jobManager;
         }
 
         public void AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
-            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger, _jobManager);
+            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger);
             _agentClients.Add(agentDefinition.Id, agentClient);
             foreach(string label in agentDefinition.Labels)
             {
@@ -71,23 +69,21 @@ namespace Application.Agent
             RemoveAgent(agentId);
         }
 
-        public object StartJobOnAgent(StartJobDataModel job)
+        public AgentClient GetAvailableAgentByLabel(string label)
         {
-            if (_agentClientsByLabels.ContainsKey(job.AgentLabel) == false) return "No agent with label " + job.AgentLabel;
+            if (_agentClientsByLabels.ContainsKey(label) == false) throw new Exception("No agent with label " + label);
 
             AgentClient foundedAgent = null;
-            foreach(AgentClient agentClient in _agentClientsByLabels[job.AgentLabel])
+            foreach (AgentClient agentClient in _agentClientsByLabels[label])
             {
                 if (agentClient.IsAvailable() == false) continue;
                 foundedAgent = agentClient;
                 break;
             }
 
-            if (foundedAgent == null) return "There is no available agent for the label : " + job.AgentLabel;
+            if (foundedAgent == null) throw new Exception("No agent available with label " + label);
 
-            foundedAgent.RunJob(job);
-
-            return "job started";
+            return foundedAgent;
         }
     }
 }

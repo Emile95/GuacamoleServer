@@ -47,5 +47,13 @@ namespace Application.Job
             string jobJson = File.ReadAllText(jobDefinitionPath);
             return JsonConvert.DeserializeObject<JobDefinition>(jobJson);
         }
+
+        public List<JobDefinition> GetAllJobDefinitions()
+        {
+            List<JobDefinition> jobDefinitions = new List<JobDefinition>();
+            foreach (string jobName in _jobDirectoryPaths.Keys)
+                jobDefinitions.Add(GetJobDefinition(jobName));
+            return jobDefinitions;
+        }
     }
 }

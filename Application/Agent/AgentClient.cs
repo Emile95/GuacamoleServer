@@ -15,15 +15,13 @@ namespace Application.Agent
         private readonly Application.Logger.ILogger _logger;
         private bool _locked;
         private int _jobrunning;
-        private readonly JobManager _jobManager;
 
-        public AgentClient(AgentDefinition agentDefinition, Socket socket, Application.Logger.ILogger logger, JobManager jobManager)
+        public AgentClient(AgentDefinition agentDefinition, Socket socket, Application.Logger.ILogger logger)
         {
             _agentDefinition = agentDefinition;
             _socket = socket;
             _logger = logger;
             _jobrunning = 0;
-            _jobManager = jobManager;
         }
 
         public bool IsEqualBySocket(Socket socket)
@@ -66,26 +64,8 @@ namespace Application.Agent
             return _locked == false && _jobrunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void RunJob(StartJobDataModel job)
+        public void RunJob(byte[] data)
         {
-            JobRunDataModel jobRun = new JobRunDataModel();
-            jobRun.AgentLabel = job.AgentLabel;
-            jobRun.Script = job.Script;
-
-            do
-            {
-                jobRun.Id = Guid.NewGuid().ToString();
-            } while (_jobManager.IsRunningJobIdAvailable(jobRun.Id) == false);
-
-            RequestData agentRequestData = new RequestData
-            {
-                RequestType = RequestType.RunJob,
-                Data = jobRun
-            };
-
-            string json = JsonConvert.SerializeObject(agentRequestData);
-            byte[] data = Encoding.UTF8.GetBytes(json);
-
             _jobrunning++;
             try {
                 _socket.Send(data);
@@ -93,13 +73,6 @@ namespace Application.Agent
                 _jobrunning--;
                 return;
             }
-
-            RunningJob runningJob = new RunningJob();
-            runningJob.JobRun = jobRun;
-            runningJob.Id = jobRun.Id;
-            runningJob.RunningOnAgent = this;
-
-            _jobManager.AddRuningJob(runningJob);
         }
     }
 }

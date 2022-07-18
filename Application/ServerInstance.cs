@@ -34,14 +34,11 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _jobManager = new JobManager(_logger);
-
+        _agentManager = new AgentManager(_logger);
+        _jobManager = new JobManager(_logger, _agentManager);
         _jobStorage = new JobStorage(_logger);
 
-        _agentManager = new AgentManager(_logger, _jobManager);
-
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
-
         _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler, _jobManager);
     }
 
@@ -52,7 +49,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _jobStorage);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _jobStorage, _jobManager);
         _webApplication.RunAsync();
     }
 

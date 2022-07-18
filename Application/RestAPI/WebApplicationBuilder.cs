@@ -8,7 +8,7 @@ namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, JobStorage jobStorage)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, JobStorage jobStorage, JobManager jobManager)
         {
             var builder = WebApplication.CreateBuilder();
 
@@ -46,7 +46,7 @@ namespace Application.RestAPI
 
             webApplication.MapPost("job/run/", ([FromBody] StartJobDataModel body) =>
             {
-                return agentManager.StartJobOnAgent(body);
+                return jobManager.StartJobOnAgent(body);
             });
 
             return webApplication;
