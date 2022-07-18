@@ -35,9 +35,9 @@ public class ServerInstance
         _logger = new ConsoleLogger();
 
         _agentManager = new AgentManager(_logger);
-        _jobManager = new JobManager(_logger, _agentManager);
         _jobStorage = new JobStorage(_logger);
-
+        _jobManager = new JobManager(_logger, _agentManager, _jobStorage);
+        
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
         _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler, _jobManager);
     }

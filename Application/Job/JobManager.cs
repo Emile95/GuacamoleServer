@@ -12,13 +12,15 @@ namespace Application.Job
         private Application.Logger.ILogger _logger;
 
         private readonly AgentManager _agentManager;
+        private readonly JobStorage _jobStorage;
 
         private Dictionary<string, RunningJob> _runningJobs;
 
-        public JobManager(Application.Logger.ILogger logger, AgentManager agentManager)
+        public JobManager(Application.Logger.ILogger logger, AgentManager agentManager, JobStorage jobStorage)
         {
             _logger = logger;
             _agentManager = agentManager;
+            _jobStorage = jobStorage;
             _runningJobs = new Dictionary<string, RunningJob>();
         }
 
@@ -42,43 +44,55 @@ namespace Application.Job
             return _runningJobs.ContainsKey(id) == false;
         }
 
-        public object StartJobOnAgent(StartJobDataModel job)
+        public object StartJobOnAgent(StartJobDataModel model)
         {
             AgentClient foundedAgent = null;
             try
             {
-                foundedAgent = _agentManager.GetAvailableAgentByLabel(job.AgentLabel);
+                foundedAgent = _agentManager.GetAvailableAgentByLabel(model.AgentLabel);
             }
             catch (Exception e) { return e.Message; }
 
-            JobRunDataModel jobRun = new JobRunDataModel();
-            jobRun.AgentLabel = job.AgentLabel;
-            jobRun.Script = "adsdasdasd";
+            JobRunDataModel jobRun = CreateJobRunDataModel(model);
 
-            do
-            {
-                jobRun.Id = Guid.NewGuid().ToString();
-            } while (IsRunningJobIdAvailable(jobRun.Id) == false);
-
-            RequestData agentRequestData = new RequestData
-            {
-                RequestType = RequestType.RunJob,
-                Data = jobRun
-            };
-
-            string json = JsonConvert.SerializeObject(agentRequestData);
-            byte[] data = Encoding.UTF8.GetBytes(json);
+            byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(RequestType.RunJob, jobRun);
 
             foundedAgent.RunJob(data);
 
-            RunningJob runningJob = new RunningJob();
-            runningJob.JobRun = jobRun;
-            runningJob.Id = jobRun.Id;
-            runningJob.RunningOnAgent = foundedAgent;
+            RunningJob runningJob = CreateRunningJob(jobRun, foundedAgent);
 
             AddRuningJob(runningJob);
 
             return "job started";
+        }
+
+
+        private JobRunDataModel CreateJobRunDataModel(StartJobDataModel model)
+        {
+            JobRunDataModel jobRun = new JobRunDataModel();
+            jobRun.AgentLabel = model.AgentLabel;
+            jobRun.Script = "adsdasdasd";
+            jobRun.Id = GenerateRunningJobId();
+            return jobRun;
+        }
+
+        private string GenerateRunningJobId()
+        {
+            string id = "";
+            do
+            {
+                id = Guid.NewGuid().ToString();
+            } while (IsRunningJobIdAvailable(id) == false);
+            return id;
+        }
+
+        private RunningJob CreateRunningJob(JobRunDataModel model, AgentClient agentClient)
+        {
+            RunningJob runningJob = new RunningJob();
+            runningJob.JobRun = model;
+            runningJob.Id = model.Id;
+            runningJob.RunningOnAgent = agentClient;
+            return runningJob;
         }
     }
 }

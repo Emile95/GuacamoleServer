@@ -1,10 +1,4 @@
-﻿using Application.Agent.Request;
-using Application.Agent.Request.DataModel;
-using Application.DataModel;
-using Application.Job;
-using Newtonsoft.Json;
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Net.Sockets;
 
 namespace Application.Agent
 {
@@ -64,11 +58,11 @@ namespace Application.Agent
             return _locked == false && _jobrunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void RunJob(byte[] data)
+        public void RunJob(byte[] jobData)
         {
             _jobrunning++;
             try {
-                _socket.Send(data);
+                _socket.Send(jobData);
             } catch (Exception e) {
                 _jobrunning--;
                 return;
