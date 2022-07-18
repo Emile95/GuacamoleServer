@@ -1,5 +1,4 @@
-﻿using Application.Agent.Action;
-using Application.Agent.Request;
+﻿using Application.Agent.Request;
 using Library;
 using Library.Agent.Action;
 using Library.Agent.Request;
@@ -52,8 +51,7 @@ namespace Application.Agent.Sockets
 
             foreach (AgentActionLoaded agentActionLoaded in _agentManager.GetLoadedAgentActions())
             {
-                AgentActionDefinition agentActionDefinition = agentActionLoaded.AgentAction.GetAgentActionDefinition();
-                byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded.AgentAction);
+                byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded);
                 clientSocket.Send(data);
             }
 

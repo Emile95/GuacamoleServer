@@ -18,7 +18,10 @@ namespace Application.Agent.Request
 
         public void ProcessRequest(RequestReceivedContext context)
         {
-            AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data));
+            JsonSerializerSettings setting = new JsonSerializerSettings();
+            setting.TypeNameHandling = TypeNameHandling.All;
+
+            AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data), setting);
 
             JObject jObject = (JObject)agentRequest.Data;
 

@@ -22,7 +22,7 @@ namespace Application.Agent.Action
 
             agentActionLoaded.ActionId = id;
             agentActionLoaded.DisplayName = definition.DisplayName;
-            agentActionLoaded.AgentAction = agentAction;
+            agentActionLoaded.Type = agentAction.GetType();
 
             _agentActionsLoaded.Add(id, agentActionLoaded);
 
