@@ -21,6 +21,7 @@ public class ServerInstance
     private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
 
     private readonly JobManager _jobManager;
+    private readonly JobStorage _jobStorage;
 
     public ServerInstance()
     {
@@ -34,6 +35,8 @@ public class ServerInstance
         _logger = new ConsoleLogger();
 
         _jobManager = new JobManager(_logger);
+
+        _jobStorage = new JobStorage(_logger);
 
         _agentManager = new AgentManager(_logger, _jobManager);
 
@@ -49,7 +52,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _jobStorage);
         _webApplication.RunAsync();
     }
 

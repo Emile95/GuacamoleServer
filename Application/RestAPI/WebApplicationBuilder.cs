@@ -1,5 +1,6 @@
 ﻿using Application.Agent;
 using Application.DataModel;
+using Application.Job;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,7 @@ namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, JobStorage jobStorage)
         {
             var builder = WebApplication.CreateBuilder();
 
@@ -33,10 +34,14 @@ namespace Application.RestAPI
                 return applicationManager.IsValidGuid(guid);
             });
 
-            webApplication.MapPost("plugins/install/", ([FromBody] InstallPlugin body) =>
+            webApplication.MapPost("job/", ([FromBody] JobDefinition body) =>
             {
-                applicationManager.InstallApplication(body.Path);
-                return "plugin installed";
+                jobStorage.AddJob(body);
+            });
+
+            webApplication.MapDelete("job/{jobName}", (string jobName) =>
+            {
+                jobStorage.RemoveJob(jobName);
             });
 
             webApplication.MapPost("job/run/", ([FromBody] StartJobDataModel body) =>
