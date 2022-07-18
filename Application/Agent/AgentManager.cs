@@ -1,17 +1,15 @@
-﻿using Application.Agent.Request.DataModel;
-using Application.DataModel;
-using Application.Job;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
+using Library.Agent;
 
 namespace Application.Agent
 {
     public class AgentManager
     {
-        private readonly Application.Logger.ILogger _logger;
+        private readonly Library.Logger.ILogger _logger;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
 
-        public AgentManager(Application.Logger.ILogger logger)
+        public AgentManager(Library.Logger.ILogger logger)
         {
             _logger = logger;
             _agentClients = new Dictionary<string, AgentClient>();

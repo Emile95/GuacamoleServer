@@ -1,5 +1,6 @@
-﻿using Application.Agent;
-using Application.Agent.Request.DataModel;
+﻿using Library.Agent;
+using Library.Agent.Request.DataModel;
+
 
 namespace Application.Job
 {
@@ -7,6 +8,6 @@ namespace Application.Job
     {
         public string Id { get; set; }
         public AgentClient RunningOnAgent { get; set; }
-        public JobRunDataModel JobRun { get; set; }
+        public JobStartDataModel JobRun { get; set; }
     }
 }

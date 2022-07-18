@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Application.Agent
+namespace Library.Agent
 {
     public class AgentDefinition
     {

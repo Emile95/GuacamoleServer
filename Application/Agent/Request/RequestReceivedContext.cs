@@ -1,7 +1,7 @@
 ﻿using Application.Job;
 using System.Net.Sockets;
 
-namespace Application.Agent.Request.Received
+namespace Application.Agent.Request
 {
     public class RequestReceivedContext
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
-namespace Application.Agent.Request
+namespace Library.Agent.Request
 {
     public static class RequestDataBytesBuilder
     {

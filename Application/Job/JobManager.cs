@@ -1,22 +1,21 @@
 ﻿using Application.Agent;
-using Application.Agent.Request;
-using Application.Agent.Request.DataModel;
+using Library.Agent;
+using Library.Agent.Request.DataModel;
 using Application.DataModel;
-using Newtonsoft.Json;
-using System.Text;
+using Library.Agent.Request;
 
 namespace Application.Job
 {
     public class JobManager
     {
-        private Application.Logger.ILogger _logger;
+        private Library.Logger.ILogger _logger;
 
         private readonly AgentManager _agentManager;
         private readonly JobStorage _jobStorage;
 
         private Dictionary<string, RunningJob> _runningJobs;
 
-        public JobManager(Application.Logger.ILogger logger, AgentManager agentManager, JobStorage jobStorage)
+        public JobManager(Library.Logger.ILogger logger, AgentManager agentManager, JobStorage jobStorage)
         {
             _logger = logger;
             _agentManager = agentManager;
@@ -53,11 +52,9 @@ namespace Application.Job
             }
             catch (Exception e) { return e.Message; }
 
-            JobRunDataModel jobRun = CreateJobRunDataModel(model);
+            JobStartDataModel jobRun = CreateJobRunDataModel(model);
 
-            byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(RequestType.RunJob, jobRun);
-
-            foundedAgent.RunJob(data);
+            foundedAgent.StartJob(jobRun);
 
             RunningJob runningJob = CreateRunningJob(jobRun, foundedAgent);
 
@@ -66,10 +63,9 @@ namespace Application.Job
             return "job started";
         }
 
-
-        private JobRunDataModel CreateJobRunDataModel(StartJobDataModel model)
+        private JobStartDataModel CreateJobRunDataModel(StartJobDataModel model)
         {
-            JobRunDataModel jobRun = new JobRunDataModel();
+            JobStartDataModel jobRun = new JobStartDataModel();
             jobRun.AgentLabel = model.AgentLabel;
             jobRun.Script = "adsdasdasd";
             jobRun.Id = GenerateRunningJobId();
@@ -86,7 +82,7 @@ namespace Application.Job
             return id;
         }
 
-        private RunningJob CreateRunningJob(JobRunDataModel model, AgentClient agentClient)
+        private RunningJob CreateRunningJob(JobStartDataModel model, AgentClient agentClient)
         {
             RunningJob runningJob = new RunningJob();
             runningJob.JobRun = model;

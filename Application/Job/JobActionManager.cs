@@ -1,6 +1,6 @@
 ﻿namespace Application.Job
 {
-    public class JobResult
+    public class JobActionManager
     {
     }
 }

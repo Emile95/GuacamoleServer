@@ -3,12 +3,12 @@ using Library.Application;
 using Application.Agent;
 using Application.Logger;
 using Application.Agent.Sockets;
-using Application.Agent.Request.Received;
+using Application.Agent.Request;
 using Application.Job;
 
 public class ServerInstance
 {
-    private Application.Logger.ILogger _logger;
+    private Library.Logger.ILogger _logger;
 
     private readonly ApplicationManager _applicationManager;
     private readonly ApplicationResolver _applicationResolver;

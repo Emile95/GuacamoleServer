@@ -1,4 +1,4 @@
-﻿namespace Application.Logger
+﻿namespace Library.Logger
 {
     public interface ILogger
     {

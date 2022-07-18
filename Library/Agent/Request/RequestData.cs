@@ -1,4 +1,4 @@
-﻿namespace Application.Agent.Request
+﻿namespace Library.Agent.Request
 {
     public class RequestData
     {

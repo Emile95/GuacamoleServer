@@ -2,6 +2,6 @@
 {
     public class JobStep
     {
-        public string Script { get; set; }
+        public string JobActionID { get; set; }
     }
 }

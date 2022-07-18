@@ -1,6 +1,6 @@
 ﻿namespace Application.Logger
 {
-    public class ConsoleLogger : ILogger
+    public class ConsoleLogger : Library.Logger.ILogger
     {
         public void Log(string message)
         {

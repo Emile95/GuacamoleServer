@@ -7,11 +7,11 @@ namespace Application.Job
     {
         private readonly string JOBSPATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jobs");
 
-        private readonly Application.Logger.ILogger _logger;
+        private readonly Library.Logger.ILogger _logger;
 
         private readonly Dictionary<string, string> _jobDirectoryPaths;
 
-        public JobStorage(Application.Logger.ILogger logger)
+        public JobStorage(Library.Logger.ILogger logger)
         {
             _logger = logger;
             _jobDirectoryPaths = new Dictionary<string, string>();

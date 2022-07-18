@@ -1,4 +1,4 @@
-﻿using Application.Agent.Request.Received;
+﻿using Application.Agent.Request;
 using Application.Job;
 using System.Net;
 using System.Net.Sockets;
@@ -7,7 +7,7 @@ namespace Application.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(Application.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler, JobManager jobManager)
+        public TCPAgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler, JobManager jobManager)
         : base(logger, port, agentManager, agentRequestReceivedHandler, jobManager) {}
 
         protected override Socket GetSocket()
