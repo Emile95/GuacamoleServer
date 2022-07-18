@@ -1,10 +1,8 @@
-﻿using System.Reflection;
-
-namespace Library.Application
+﻿namespace Library.Application
 {
     public class ApplicationContext : IDisposable
     {
-        public static string ParentDirectoryPath { get; private set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "App");
+        public static string ParentDirectoryPath { get; private set; } = ApplicationConstValue.SERVERAPPSPATH;
         public static string Guid { get; private set; }
         public static string AppPath { get; private set; }
 

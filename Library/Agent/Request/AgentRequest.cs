@@ -1,8 +1,8 @@
 ﻿namespace Library.Agent.Request
 {
-    public class RequestData
+    public class AgentRequest
     {
-        public RequestType RequestType { get; set; }
+        public string RequestId { get; set; }
         public object Data { get; set; }
     }
 }

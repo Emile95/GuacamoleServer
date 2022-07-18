@@ -1,5 +1,8 @@
-﻿using Application.Agent.Request;
-using Application.Job;
+﻿using Application.Agent.Action;
+using Application.Agent.Request;
+using Library;
+using Library.Agent.Action;
+using Library.Agent.Request;
 using System.Net;
 using System.Net.Sockets;
 
@@ -10,13 +13,12 @@ namespace Application.Agent.Sockets
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
         private readonly RequestReceivedHandler _agentRequestReceivedHandler;
-        private readonly JobManager _jobManager;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler, JobManager jobManager)
+        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, RequestReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -26,7 +28,6 @@ namespace Application.Agent.Sockets
             _logger = logger;
             _agentManager = agentManager;
             _agentRequestReceivedHandler = agentRequestReceivedHandler;
-            _jobManager = jobManager;
         }
 
         public void Start()
@@ -48,6 +49,13 @@ namespace Application.Agent.Sockets
             state.workSocket = clientSocket;
 
             clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
+
+            foreach (AgentActionLoaded agentActionLoaded in _agentManager.GetLoadedAgentActions())
+            {
+                AgentActionDefinition agentActionDefinition = agentActionLoaded.AgentAction.GetAgentActionDefinition();
+                byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded.AgentAction);
+                clientSocket.Send(data);
+            }
 
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
@@ -72,7 +80,6 @@ namespace Application.Agent.Sockets
             context.AgentManager = _agentManager;
             context.SourceSocket = clientSocket;
             context.Data = state.buffer;
-            context.JobManager = _jobManager;
 
             _agentRequestReceivedHandler.ProcessRequest(context);
 

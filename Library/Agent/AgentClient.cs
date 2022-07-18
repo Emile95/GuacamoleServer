@@ -1,6 +1,4 @@
-﻿using Library.Agent.Request;
-using Library.Agent.Request.DataModel;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace Library.Agent
 {
@@ -10,14 +8,14 @@ namespace Library.Agent
         private readonly Socket _socket;
         private readonly Library.Logger.ILogger _logger;
         private bool _locked;
-        private int _jobrunning;
+        private int _actionRunning;
 
         public AgentClient(AgentDefinition agentDefinition, Socket socket, Library.Logger.ILogger logger)
         {
             _agentDefinition = agentDefinition;
             _socket = socket;
             _logger = logger;
-            _jobrunning = 0;
+            _actionRunning = 0;
         }
 
         public bool IsEqualBySocket(Socket socket)
@@ -50,47 +48,14 @@ namespace Library.Agent
             return _agentDefinition.Labels;
         }
 
-        public void DecrementJobRunning()
-        {
-            _jobrunning--;
-        }
-
         public bool IsAvailable()
         {
-            return _locked == false && _jobrunning < _agentDefinition.ConcurrentRun;
+            return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void TransferFile(byte[] file, string path, string jobActionId = null)
+        public void SendData(byte[] data)
         {
-            TransferFileDataModel transferFileDataModel = new TransferFileDataModel
-            {
-                File = file,
-                Path = path
-            };
-            SendRequest(RequestType.TransferFile, transferFileDataModel);
-        }
-
-        public void StartJob(JobStartDataModel model)
-        {
-            _jobrunning++;
-            SendRequest(RequestType.StartJob, model);
-        }
-
-        private void SendRequest(RequestType requestType, object data, string jobActionId = null)
-        {
-            object dataToSend = data;
-            if (jobActionId != null)
-            {
-                JobActionDataModel jobActionDataModel = new JobActionDataModel
-                {
-                    JobActionId = jobActionId,
-                    RequestType = requestType,
-                    Data = data
-                };
-                dataToSend = jobActionDataModel;
-            }
-            byte[] bytes = RequestDataBytesBuilder.BuildRequestDataBytes(requestType, dataToSend);
-            _socket.Send(bytes);
+            _socket.Send(data);
         }
     }
 }

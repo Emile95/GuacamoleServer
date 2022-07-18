@@ -1,10 +1,9 @@
-﻿using Library.Agent.Request.DataModel;
-using Application.Job;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using Library.Agent;
 using Library.Agent.Request;
+using Library;
 
 namespace Application.Agent.Request
 {
@@ -19,29 +18,17 @@ namespace Application.Agent.Request
 
         public void ProcessRequest(RequestReceivedContext context)
         {
-            RequestData requestData = JsonConvert.DeserializeObject<RequestData>(Encoding.ASCII.GetString(context.Data));
+            AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data));
 
-            JObject jObject = (JObject)requestData.Data;
+            JObject jObject = (JObject)agentRequest.Data;
 
-            switch (requestData.RequestType)
-            {
-                case RequestType.AgentConnect: ConnectAgent(jObject.ToObject<AgentDefinition>(), context); break;
-                case RequestType.FinishJob: FinishJob(jObject.ToObject<JobStartDataModel>(), context); break;
-            }
+            if(agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID) ConnectAgent(jObject.ToObject<AgentDefinition>(), context); return;
         }
 
         private void ConnectAgent(AgentDefinition agentDefinition, RequestReceivedContext context)
         {
             context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
-        }
-
-        private void FinishJob(JobStartDataModel jobRun, RequestReceivedContext context)
-        {
-            RunningJob runningJob = context.JobManager.GetRunningJob(jobRun.Id);
-            runningJob.RunningOnAgent.DecrementJobRunning();
-            context.JobManager.RemoveRunningJob(jobRun.Id);
-            _logger.Log("job " + jobRun.Id + " is finished");
         }
     }
 }

@@ -6,11 +6,11 @@ namespace Library.Agent.Request
     public static class RequestDataBytesBuilder
     {
 
-        public static byte[] BuildRequestDataBytes(RequestType requestType, object data)
+        public static byte[] BuildRequestDataBytes(string requestId, object data)
         {
-            RequestData agentRequestData = new RequestData
+            AgentRequest agentRequestData = new AgentRequest
             {
-                RequestType = requestType,
+                RequestId = requestId,
                 Data = data
             };
 

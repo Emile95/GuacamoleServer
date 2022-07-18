@@ -1,14 +1,11 @@
 ﻿using Application.Agent;
-using Application.DataModel;
-using Application.Job;
 using Library.Application;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, JobStorage jobStorage, JobManager jobManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager)
         {
             var builder = WebApplication.CreateBuilder();
 
@@ -32,21 +29,6 @@ namespace Application.RestAPI
             webApplication.MapGet("applications/is-valid-guid/{guid}", (string guid) =>
             {
                 return applicationManager.IsValidGuid(guid);
-            });
-
-            webApplication.MapPost("job/", ([FromBody] JobDefinition body) =>
-            {
-                jobStorage.AddJob(body);
-            });
-
-            webApplication.MapDelete("job/{jobName}", (string jobName) =>
-            {
-                jobStorage.RemoveJob(jobName);
-            });
-
-            webApplication.MapPost("job/run/", ([FromBody] StartJobDataModel body) =>
-            {
-                return jobManager.StartJobOnAgent(body);
             });
 
             return webApplication;

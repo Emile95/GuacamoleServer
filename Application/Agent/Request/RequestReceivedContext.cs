@@ -1,11 +1,9 @@
-﻿using Application.Job;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace Application.Agent.Request
 {
     public class RequestReceivedContext
     {
-        public JobManager JobManager { get; set; }
         public AgentManager AgentManager { get; set; }
         public Socket SourceSocket { get; set; }
         public byte[] Data { get; set; }
