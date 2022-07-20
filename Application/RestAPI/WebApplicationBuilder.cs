@@ -1,11 +1,15 @@
 ﻿using Application.Agent;
+using Application.Agent.Action;
+using Application.DataModel;
 using Library.Application;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, AgentActionManager agentActionManager)
         {
             var builder = WebApplication.CreateBuilder();
 
@@ -29,6 +33,12 @@ namespace Application.RestAPI
             webApplication.MapGet("applications/is-valid-guid/{guid}", (string guid) =>
             {
                 return applicationManager.IsValidGuid(guid);
+            });
+
+            webApplication.MapPost("action/process", ([FromBody] ProcessActionDataModel processActionDataModel) =>
+            {
+                agentActionManager.ProcessAgentAction(processActionDataModel);
+                return "hoho";
             });
 
             return webApplication;

@@ -8,6 +8,7 @@ namespace Library.Agent.Request
 
         public static byte[] BuildRequestDataBytes(string requestId, object data)
         {
+            
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
 
@@ -18,6 +19,7 @@ namespace Library.Agent.Request
             };
 
             string json = JsonConvert.SerializeObject(agentRequestData, setting);
+            Console.WriteLine(json);
             return Encoding.UTF8.GetBytes(json);
         }
     }

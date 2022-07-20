@@ -16,5 +16,10 @@ namespace Application.Agent.Sockets
 
         // Client socket.
         public Socket workSocket = null;
+
+        public void ClearBuffer()
+        {
+            buffer = new byte[BufferSize];
+        }
     }
 }

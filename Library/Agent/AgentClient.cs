@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using Library.Agent.Request;
+using System.Net.Sockets;
 
 namespace Library.Agent
 {
@@ -53,9 +54,9 @@ namespace Library.Agent
             return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void SendData(byte[] data)
+        public void ProcessAction(string actionId)
         {
-            _socket.Send(data);
+            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(actionId, "asdasasda"));
         }
     }
 }

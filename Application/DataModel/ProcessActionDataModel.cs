@@ -1,8 +1,8 @@
 ﻿namespace Application.DataModel
 {
-    public class StartJobDataModel
+    public class ProcessActionDataModel
     {
         public string AgentLabel { get; set; }
-        public string JobDefinitionName { get; set; }
+        public string ActionId { get; set; }
     }
 }

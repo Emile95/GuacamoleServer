@@ -5,8 +5,6 @@ using Application.Logger;
 using Application.Agent.Sockets;
 using Application.Agent.Request;
 using Application.Agent.Action;
-using Library.Agent.Request;
-using Library;
 
 public class ServerInstance
 {
@@ -34,14 +32,14 @@ public class ServerInstance
 
         _logger = new ConsoleLogger();
 
-        _agentActionManager = new AgentActionManager(_logger);
+        _agentManager = new AgentManager(_logger);
+
+        _agentActionManager = new AgentActionManager(_logger, _agentManager);
 
         _agentActionManager.AddActionLoaded(new ConsoleLogAgentAction());
 
-        _agentManager = new AgentManager(_logger, _agentActionManager);
-        
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentRequestReceivedHandler);
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentActionManager, _agentRequestReceivedHandler);
     }
 
     public void LoadApplications()
@@ -51,7 +49,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _agentActionManager);
         _webApplication.RunAsync();
     }
 

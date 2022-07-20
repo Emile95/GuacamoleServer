@@ -1,21 +1,17 @@
 ﻿using System.Net.Sockets;
-using Application.Agent.Action;
 using Library.Agent;
-using Library.Agent.Action;
 
 namespace Application.Agent
 {
     public class AgentManager
     {
         private readonly Library.Logger.ILogger _logger;
-        private readonly AgentActionManager _agentActionManager;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
 
-        public AgentManager(Library.Logger.ILogger logger, AgentActionManager agentActionManager)
+        public AgentManager(Library.Logger.ILogger logger)
         {
             _logger = logger;
-            _agentActionManager = agentActionManager;
             _agentClients = new Dictionary<string, AgentClient>();
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
         }
@@ -86,11 +82,6 @@ namespace Application.Agent
             if (foundedAgent == null) throw new Exception("No agent available with label " + label);
 
             return foundedAgent;
-        }
-
-        public List<AgentActionLoaded> GetLoadedAgentActions()
-        {
-            return _agentActionManager.GetLoadedAgentActions();
         }
     }
 }
