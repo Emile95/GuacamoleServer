@@ -31,23 +31,15 @@ namespace GuacamoleAgent.ServerApplication.Request
             string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentActions", actionLoaded.Instance.Item1);
             File.WriteAllBytes(newDllPath, actionLoaded.Instance.Item2);
 
-            Assembly jihogoAssembly = Assembly.LoadFile(newDllPath);
+            List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(newDllPath);
 
-            AgentAction jihoAgentAction = null;
-            Type applicationType = typeof(AgentAction);
-
-            foreach (Type type in jihogoAssembly.GetTypes())
+            foreach (AgentAction agentAction in agentActions)
             {
-                if (applicationType.IsAssignableFrom(type))
-                {
-                    jihoAgentAction = Activator.CreateInstance(type) as AgentAction;
-                    AgentActionDefinition definition = jihoAgentAction.GetAgentActionDefinition();
-                    AgentActionLoaded<AgentAction> action = new AgentActionLoaded<AgentAction>();
-                    action.ActionId = actionLoaded.ActionId;
-                    action.DisplayName = actionLoaded.DisplayName;
-                    action.Instance = jihoAgentAction;
-                    context.AgentActionManager.AddAgentAction(action);
-                }
+                AgentActionLoaded<AgentAction> action = new AgentActionLoaded<AgentAction>();
+                action.ActionId = actionLoaded.ActionId;
+                action.DisplayName = actionLoaded.DisplayName;
+                action.Instance = agentAction;
+                context.AgentActionManager.AddAgentAction(action);
             }
         }
     }

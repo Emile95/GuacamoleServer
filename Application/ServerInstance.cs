@@ -47,24 +47,17 @@ public class ServerInstance
 
             foreach(string dll in dlls)
             {
-                Assembly jihogoAssembly = Assembly.LoadFile(dll);
+                List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(dll);
 
-                AgentAction jihoAgentAction = null;
-                Type applicationType = typeof(AgentAction);
-
-                foreach (Type type in jihogoAssembly.GetTypes())
+                foreach(AgentAction agentAction in agentActions)
                 {
-                    if (applicationType.IsAssignableFrom(type))
-                    {
-                        jihoAgentAction = Activator.CreateInstance(type) as AgentAction;
-                        AgentActionDefinition definition = jihoAgentAction.GetAgentActionDefinition();
-                        AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
-                        agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
-                        agentActionLoaded.DisplayName = definition.DisplayName;
-                        byte[] dllFile = File.ReadAllBytes(dll);
-                        agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
-                        _serverAgentActionManager.AddAgentAction(agentActionLoaded);
-                    }
+                    AgentActionDefinition definition = agentAction.GetAgentActionDefinition();
+                    AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
+                    agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
+                    agentActionLoaded.DisplayName = definition.DisplayName;
+                    byte[] dllFile = File.ReadAllBytes(dll);
+                    agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
+                    _serverAgentActionManager.AddAgentAction(agentActionLoaded);
                 }
             }
         }
