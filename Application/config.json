@@ -1,5 +1,5 @@
 {
-  "SocketConfig": {
+  "AgentSocketConfig": {
     "Protocol": "tcp",
     "Port": 1100
   }

@@ -4,7 +4,7 @@ namespace Application.Config
 {
     public class ServerConfig
     {
-        public SocketConfig SocketConfig { get; set; }
+        public AgentSocketConfig AgentSocketConfig { get; set; }
         
     }
 }

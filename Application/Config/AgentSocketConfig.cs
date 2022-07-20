@@ -3,7 +3,7 @@
 namespace Application.Config
 {
     [Serializable]
-    public class SocketConfig
+    public class AgentSocketConfig
     {
         public string Protocol { get; set; }
         public int Port { get; set; }

@@ -6,11 +6,11 @@ namespace Application.Agent.Sockets
 {
     public static class AgentSocketsHandlerFactory
     {
-        public static AgentSocketsHandler CreateAgentSocketsHandler(SocketConfig socketConfig , Library.Logger.ILogger logger, AgentManager agentManager, ServerAgentActionManager serverAgentActionManager, RequestReceivedHandler requestReceivedHandler)
+        public static AgentSocketsHandler CreateAgentSocketsHandler(AgentSocketConfig agentSocketConfig, Library.Logger.ILogger logger, AgentManager agentManager, ServerAgentActionManager serverAgentActionManager, RequestReceivedHandler requestReceivedHandler)
         {
-            switch(socketConfig.Protocol)
+            switch(agentSocketConfig.Protocol)
             {
-                case "tcp": return new TCPAgentSocketsHandler(logger, socketConfig.Port, agentManager, serverAgentActionManager, requestReceivedHandler);
+                case "tcp": return new TCPAgentSocketsHandler(logger, agentSocketConfig.Port, agentManager, serverAgentActionManager, requestReceivedHandler);
             }
             return null;
         }
