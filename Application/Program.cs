@@ -1,4 +1,8 @@
-var serverInstance = new ServerInstance();
+using Application.Config;
+
+ServerConfig serverConfig = ServerConfigResolver.ResolveConfig();
+
+var serverInstance = new ServerInstance(serverConfig);
 
 serverInstance.LoadApplications();
 

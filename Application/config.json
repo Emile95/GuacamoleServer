@@ -1,0 +1,6 @@
+{
+  "SocketConfig": {
+    "Protocol": "tcp",
+    "Port": 1100
+  }
+}

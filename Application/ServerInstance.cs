@@ -5,12 +5,14 @@ using Application.Logger;
 using Application.Agent.Sockets;
 using Application.Agent.Request;
 using Application.Agent.Action;
-using System.Reflection;
 using Library.Agent.Action;
 using Library;
+using Application.Config;
 
 public class ServerInstance
 {
+    private readonly ServerConfig _config;
+
     private Library.Logger.ILogger _logger;
 
     private readonly ApplicationManager _applicationManager;
@@ -22,10 +24,13 @@ public class ServerInstance
     private readonly AgentManager _agentManager;
     private readonly ServerAgentActionManager _serverAgentActionManager;
     private readonly RequestReceivedHandler _agentRequestReceivedHandler;
-    private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
 
-    public ServerInstance()
+    private readonly AgentSocketsHandler _agentSocketsHandler;
+
+    public ServerInstance(ServerConfig serverConfig)
     {
+        _config = serverConfig;
+
         _eventHandlerManager = new EventHandlerManager();
         _applicationResolver = new ApplicationResolver(_eventHandlerManager);
         _applicationManager = new ApplicationManager(
@@ -63,7 +68,8 @@ public class ServerInstance
         }
 
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
+
+        _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.SocketConfig, _logger, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
     }
 
     public void LoadApplications()
@@ -84,12 +90,12 @@ public class ServerInstance
 
     public void StartSockets()
     {
-        _tcpAgentSocketsHandler.Start();
+        _agentSocketsHandler.Start();
     }
 
     public void StopSockets()
     {
-        _tcpAgentSocketsHandler.Stop();
+        _agentSocketsHandler.Stop();
     }
 }
 
