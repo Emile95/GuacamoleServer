@@ -7,6 +7,6 @@
 
         public readonly static string INSTALLMODULERAGENTREQUESTID = "InstallModule";
         public readonly static string CONNECTAGENTREQUESTID = "AgentConnect";
-        public readonly static string SERVERCONFIGFILEPATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+        public readonly static string CONFIGFILEPATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
     }
 }

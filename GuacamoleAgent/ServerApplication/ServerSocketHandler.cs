@@ -19,14 +19,18 @@ namespace GuacamoleAgent.ServerApplication
         private readonly RequestReceivedHandler _requestReceivedHandler;
         private readonly ClientAgentActionManager _agentActionManager;
 
-        public ServerSocketHandler(int port, AgentDefinition agentDefinition)
+        public ServerSocketHandler(int port, string protocol, AgentDefinition agentDefinition)
         {
             _port = port;
-            _socket = new Socket(
+
+            if(protocol == "tcp")
+            {
+                _socket = new Socket(
                 Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
+            }
             _agentDefinition = agentDefinition;
             _requestReceivedHandler = new RequestReceivedHandler();
             _agentActionManager = new ClientAgentActionManager();

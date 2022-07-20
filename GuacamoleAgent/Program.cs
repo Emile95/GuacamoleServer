@@ -1,16 +1,13 @@
-﻿using GuacamoleAgent.ServerApplication;
-using Library.Agent;
-using Newtonsoft.Json;
+﻿using GuacamoleAgent;
+using GuacamoleAgent.Config;
 
-string agentDefinitionStr = File.ReadAllText("agent-definition.json");
+AgentConfig config = AgentConfigResolver.ResolveConfig();
 
-AgentDefinition agentDefinition = JsonConvert.DeserializeObject<AgentDefinition>(agentDefinitionStr);
+AgentInstance agentInstance = new AgentInstance(config);
 
-ServerSocketHandler serverApplicationHandler = new ServerSocketHandler(1100, agentDefinition);
+agentInstance.StartSocket();
 
-serverApplicationHandler.Start();
-
-string? line;
+string line;
 do
 {
     line = Console.ReadLine();

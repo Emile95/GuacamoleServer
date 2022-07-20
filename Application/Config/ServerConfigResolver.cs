@@ -12,7 +12,7 @@ namespace Application.Config
             JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
             serializerSettings.ObjectCreationHandling = ObjectCreationHandling.Replace;
 
-            string file = File.ReadAllText(ApplicationConstValue.SERVERCONFIGFILEPATH);
+            string file = File.ReadAllText(ApplicationConstValue.CONFIGFILEPATH);
 
             return JsonConvert.DeserializeObject<ServerConfig>(file);
         }
