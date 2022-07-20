@@ -62,7 +62,7 @@ public class ServerInstance
                         agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
                         agentActionLoaded.DisplayName = definition.DisplayName;
                         byte[] dllFile = File.ReadAllBytes(dll);
-                        agentActionLoaded.Instance = new Tuple<string, byte[]>(dll, dllFile);
+                        agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
                         _serverAgentActionManager.AddAgentAction(agentActionLoaded);
                     }
                 }

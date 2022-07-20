@@ -31,11 +31,10 @@ namespace Application.Agent.Action
 
         public void ProcessAgentAction(ProcessActionDataModel processActionDataModel)
         {
-
-            /*AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
+            AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
             if (agentClient == null) return;
             if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) return;
-            agentClient.ProcessAction(processActionDataModel.ActionId);*/
+            agentClient.ProcessAction(processActionDataModel.ActionId);
         }
     }
 }
