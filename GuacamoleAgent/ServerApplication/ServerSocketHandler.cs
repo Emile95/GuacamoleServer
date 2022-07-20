@@ -26,10 +26,10 @@ namespace GuacamoleAgent.ServerApplication
             if(protocol == "tcp")
             {
                 _socket = new Socket(
-                Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
-                SocketType.Stream,
-                ProtocolType.Tcp
-            );
+                    Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
+                    SocketType.Stream,
+                    ProtocolType.Tcp
+                );
             }
             _agentDefinition = agentDefinition;
             _requestReceivedHandler = new RequestReceivedHandler();
