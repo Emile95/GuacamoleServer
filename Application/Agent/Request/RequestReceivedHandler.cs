@@ -4,6 +4,7 @@ using System.Text;
 using Library.Agent;
 using Library.Agent.Request;
 using Library;
+using Library.Agent.Action;
 
 namespace Application.Agent.Request
 {
@@ -30,8 +31,11 @@ namespace Application.Agent.Request
 
         private void ConnectAgent(AgentDefinition agentDefinition, RequestReceivedContext context)
         {
-            context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
+            AgentClient agentClient = context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
+            List<AgentActionLoaded<Tuple<string, byte[]>>> data = context.ServerAgentActionManager.GetLoadedAgentActions();
+            foreach(AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded in data)
+                agentClient.InstallAgentAction(agentActionLoaded);
         }
     }
 }

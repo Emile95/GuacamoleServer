@@ -19,7 +19,6 @@ namespace Library.Agent.Request
             };
 
             string json = JsonConvert.SerializeObject(agentRequestData, setting);
-            Console.WriteLine(json);
             return Encoding.UTF8.GetBytes(json);
         }
     }

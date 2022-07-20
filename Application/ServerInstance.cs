@@ -5,6 +5,9 @@ using Application.Logger;
 using Application.Agent.Sockets;
 using Application.Agent.Request;
 using Application.Agent.Action;
+using System.Reflection;
+using Library.Agent.Action;
+using Library;
 
 public class ServerInstance
 {
@@ -17,7 +20,7 @@ public class ServerInstance
     private WebApplication _webApplication;
 
     private readonly AgentManager _agentManager;
-    private readonly AgentActionManager _agentActionManager;
+    private readonly ServerAgentActionManager _serverAgentActionManager;
     private readonly RequestReceivedHandler _agentRequestReceivedHandler;
     private readonly TCPAgentSocketsHandler _tcpAgentSocketsHandler;
 
@@ -34,12 +37,40 @@ public class ServerInstance
 
         _agentManager = new AgentManager(_logger);
 
-        _agentActionManager = new AgentActionManager(_logger, _agentManager);
+        _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
 
-        _agentActionManager.AddActionLoaded(new ConsoleLogAgentAction());
+        string [] agentActionDirectoryPaths = Directory.GetDirectories(ApplicationConstValue.AGENTAPPSPATH);
+
+        foreach(string agentActionDirectoryPath in agentActionDirectoryPaths)
+        {
+            string[] dlls = Directory.GetFiles(agentActionDirectoryPath, "*.dll");
+
+            foreach(string dll in dlls)
+            {
+                Assembly jihogoAssembly = Assembly.LoadFile(dll);
+
+                AgentAction jihoAgentAction = null;
+                Type applicationType = typeof(AgentAction);
+
+                foreach (Type type in jihogoAssembly.GetTypes())
+                {
+                    if (applicationType.IsAssignableFrom(type))
+                    {
+                        jihoAgentAction = Activator.CreateInstance(type) as AgentAction;
+                        AgentActionDefinition definition = jihoAgentAction.GetAgentActionDefinition();
+                        AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
+                        agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
+                        agentActionLoaded.DisplayName = definition.DisplayName;
+                        byte[] dllFile = File.ReadAllBytes(dll);
+                        agentActionLoaded.Instance = new Tuple<string, byte[]>(dll, dllFile);
+                        _serverAgentActionManager.AddAgentAction(agentActionLoaded);
+                    }
+                }
+            }
+        }
 
         _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
-        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _agentActionManager, _agentRequestReceivedHandler);
+        _tcpAgentSocketsHandler = new TCPAgentSocketsHandler(_logger, 1100, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
     }
 
     public void LoadApplications()
@@ -49,7 +80,7 @@ public class ServerInstance
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _agentActionManager);
+        _webApplication = Application.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _serverAgentActionManager);
         _webApplication.RunAsync();
     }
 

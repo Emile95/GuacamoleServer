@@ -1,4 +1,5 @@
 ﻿using GuacamoleAgent.ServerApplication;
+using Library.Agent;
 using Newtonsoft.Json;
 
 string agentDefinitionStr = File.ReadAllText("agent-definition.json");

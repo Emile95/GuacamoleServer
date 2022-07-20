@@ -1,6 +1,6 @@
 ﻿using Library.Agent.Action;
 
-namespace Application.Agent.Action
+namespace GuacamoleAgent.Agent.Action
 {
     public class ConsoleLogAgentAction : AgentAction
     {

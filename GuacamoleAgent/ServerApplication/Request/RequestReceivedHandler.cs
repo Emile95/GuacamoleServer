@@ -13,11 +13,15 @@ namespace GuacamoleAgent.ServerApplication.Request
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
 
+            Console.WriteLine(Encoding.ASCII.GetString(context.Data));
+
             AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data), setting);
 
+            Console.WriteLine("a");
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
-                InstallModule(agentRequest.Data as AgentActionLoaded, context);
+                Console.WriteLine("b");
+                InstallModule(agentRequest.Data as AgentActionLoaded<Tuple<string, byte[]>>, context);
                 return;
             }
 
@@ -25,9 +29,11 @@ namespace GuacamoleAgent.ServerApplication.Request
                 context.AgentActionManager.ProcessAction(agentRequest.RequestId);
         }
 
-        private void InstallModule(AgentActionLoaded agentActionLoaded, RequestReceivedContext context)
+        private void InstallModule(AgentActionLoaded<Tuple<string, byte[]>> actionLoaded, RequestReceivedContext context)
         {
-            context.AgentActionManager.AddAgentAction(agentActionLoaded);
+            Console.WriteLine("install module");
+            /*AgentActionLoaded<AgentAction> agentActionLoaded = null;
+            context.AgentActionManager.AddAgentAction(agentActionLoaded);*/
         }
     }
 }

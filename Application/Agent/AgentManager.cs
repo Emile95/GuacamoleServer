@@ -16,7 +16,7 @@ namespace Application.Agent
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
         }
 
-        public void AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
+        public AgentClient AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
             AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger);
             _agentClients.Add(agentDefinition.Id, agentClient);
@@ -26,6 +26,7 @@ namespace Application.Agent
                     _agentClientsByLabels.Add(label, new List<AgentClient>());
                 _agentClientsByLabels[label].Add(agentClient);
             }
+            return agentClient;
         }
 
         public void RemoveAgent(string id)

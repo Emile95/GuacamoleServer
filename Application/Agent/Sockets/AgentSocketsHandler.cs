@@ -1,8 +1,6 @@
 ﻿using Application.Agent.Action;
 using Application.Agent.Request;
-using Library;
-using Library.Agent.Action;
-using Library.Agent.Request;
+using Library.Sockets;
 using System.Net;
 using System.Net.Sockets;
 
@@ -12,14 +10,14 @@ namespace Application.Agent.Sockets
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly AgentActionManager _agentActionManager;
+        private readonly ServerAgentActionManager _serverAgentActionManager;
         private readonly RequestReceivedHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, AgentActionManager agentActionManager, RequestReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, ServerAgentActionManager serverAgentActionManager, RequestReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -29,7 +27,7 @@ namespace Application.Agent.Sockets
             _logger = logger;
             _agentManager = agentManager;
             _agentRequestReceivedHandler = agentRequestReceivedHandler;
-            _agentActionManager = agentActionManager;
+            _serverAgentActionManager = serverAgentActionManager;
         }
 
         public void Start()
@@ -52,12 +50,6 @@ namespace Application.Agent.Sockets
 
             clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
 
-            foreach (AgentActionLoaded agentActionLoaded in _agentActionManager.GetLoadedAgentActions())
-            {
-                byte[] data = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded);
-                clientSocket.Send(data);
-            }
-
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
 
@@ -79,8 +71,12 @@ namespace Application.Agent.Sockets
 
             RequestReceivedContext context = new RequestReceivedContext();
             context.AgentManager = _agentManager;
+            context.ServerAgentActionManager = _serverAgentActionManager;
             context.SourceSocket = clientSocket;
-            context.Data = state.buffer;
+
+            context.Data = new byte[bytesRead];
+            for (int i = 0; i < bytesRead; i++)
+                context.Data[i] = state.buffer[i];
 
             _agentRequestReceivedHandler.ProcessRequest(context);
 

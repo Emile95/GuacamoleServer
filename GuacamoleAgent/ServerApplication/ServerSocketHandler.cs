@@ -1,7 +1,9 @@
 ﻿using GuacamoleAgent.Action;
 using GuacamoleAgent.ServerApplication.Request;
 using Library;
+using Library.Agent;
 using Library.Agent.Request;
+using Library.Sockets;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
@@ -15,7 +17,7 @@ namespace GuacamoleAgent.ServerApplication
         private readonly Socket _socket;
         private readonly AgentDefinition _agentDefinition;
         private readonly RequestReceivedHandler _requestReceivedHandler;
-        private readonly AgentActionManager _agentActionManager;
+        private readonly ClientAgentActionManager _agentActionManager;
 
         public ServerSocketHandler(int port, AgentDefinition agentDefinition)
         {
@@ -27,7 +29,7 @@ namespace GuacamoleAgent.ServerApplication
             );
             _agentDefinition = agentDefinition;
             _requestReceivedHandler = new RequestReceivedHandler();
-            _agentActionManager = new AgentActionManager();
+            _agentActionManager = new ClientAgentActionManager();
         }
 
         public void Start()
@@ -64,9 +66,12 @@ namespace GuacamoleAgent.ServerApplication
             }
 
             RequestReceivedContext context = new RequestReceivedContext();
-            context.Data = state.buffer;
             context.ServerSocket = socket;
             context.AgentActionManager = _agentActionManager;
+
+            context.Data = new byte[bytesRead];
+            for (int i = 0; i < bytesRead; i++)
+                context.Data[i] = state.buffer[i];
 
             _requestReceivedHandler.ProcessRequest(context);
 

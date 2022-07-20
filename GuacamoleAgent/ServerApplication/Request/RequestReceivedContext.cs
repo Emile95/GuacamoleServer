@@ -7,6 +7,6 @@ namespace GuacamoleAgent.ServerApplication.Request
     {
         public Socket ServerSocket { get; set; }
         public byte[] Data { get; set; }
-        public AgentActionManager AgentActionManager { get; set; }
+        public ClientAgentActionManager AgentActionManager { get; set; }
     }
 }

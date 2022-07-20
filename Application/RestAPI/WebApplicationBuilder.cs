@@ -3,13 +3,12 @@ using Application.Agent.Action;
 using Application.DataModel;
 using Library.Application;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Application.RestAPI
 {
     public static class WebApplicationBuilder
     {
-        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, AgentActionManager agentActionManager)
+        public static WebApplication BuildWebApplication(ApplicationManager applicationManager, AgentManager agentManager, ServerAgentActionManager agentActionManager)
         {
             var builder = WebApplication.CreateBuilder();
 

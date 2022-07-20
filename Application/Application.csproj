@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GuacamoleAgent\GuacamoleAgent.csproj" />
     <ProjectReference Include="..\Library\Library.csproj" />
   </ItemGroup>
 
