@@ -48,28 +48,7 @@ public class ServerInstance
 
         _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
 
-        string [] agentActionDirectoryPaths = Directory.GetDirectories(ApplicationConstValue.AGENTAPPSPATH);
-
-        foreach(string agentActionDirectoryPath in agentActionDirectoryPaths)
-        {
-            string[] dlls = Directory.GetFiles(agentActionDirectoryPath, "*.dll");
-
-            foreach(string dll in dlls)
-            {
-                List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(dll);
-
-                foreach(AgentAction agentAction in agentActions)
-                {
-                    AgentActionDefinition definition = agentAction.GetAgentActionDefinition();
-                    AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
-                    agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
-                    agentActionLoaded.DisplayName = definition.DisplayName;
-                    byte[] dllFile = File.ReadAllBytes(dll);
-                    agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
-                    _serverAgentActionManager.AddAgentAction(agentActionLoaded);
-                }
-            }
-        }
+        LoadAgentActionsPlugins();
     }
 
     public void LoadApplications()
@@ -96,6 +75,32 @@ public class ServerInstance
     public void StopSockets()
     {
         _agentSocketsHandler.Stop();
+    }
+
+    private void LoadAgentActionsPlugins()
+    {
+        string[] agentActionDirectoryPaths = Directory.GetDirectories(ApplicationConstValue.AGENTAPPSPATH);
+
+        foreach (string agentActionDirectoryPath in agentActionDirectoryPaths)
+        {
+            string[] dlls = Directory.GetFiles(agentActionDirectoryPath, "*.dll");
+
+            foreach (string dll in dlls)
+            {
+                List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(dll);
+
+                foreach (AgentAction agentAction in agentActions)
+                {
+                    AgentActionDefinition definition = agentAction.GetAgentActionDefinition();
+                    AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
+                    agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
+                    agentActionLoaded.DisplayName = definition.DisplayName;
+                    byte[] dllFile = File.ReadAllBytes(dll);
+                    agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
+                    _serverAgentActionManager.AddAgentAction(agentActionLoaded);
+                }
+            }
+        }
     }
 }
 
