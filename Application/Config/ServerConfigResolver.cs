@@ -7,14 +7,22 @@ namespace Application.Config
     {
         public static ServerConfig ResolveConfig()
         {
-            ServerConfig serverConfig = new ServerConfig();
-
-            JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
-            serializerSettings.ObjectCreationHandling = ObjectCreationHandling.Replace;
-
             string file = File.ReadAllText(ApplicationConstValue.CONFIGFILEPATH);
 
-            return JsonConvert.DeserializeObject<ServerConfig>(file);
+            ServerConfig serverConfig = null;
+
+            try
+            {
+                serverConfig = JsonConvert.DeserializeObject<ServerConfig>(file);
+            } catch(Exception e)
+            {
+                throw new Exception("config file is Invalid");
+            }
+
+            if (serverConfig == null)
+                throw new Exception("config file is Invalid");
+
+            return serverConfig;
         }
     }
 }

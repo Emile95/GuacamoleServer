@@ -44,6 +44,10 @@ public class ServerInstance
 
         _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
 
+        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
+
+        _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
+
         string [] agentActionDirectoryPaths = Directory.GetDirectories(ApplicationConstValue.AGENTAPPSPATH);
 
         foreach(string agentActionDirectoryPath in agentActionDirectoryPaths)

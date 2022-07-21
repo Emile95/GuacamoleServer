@@ -12,7 +12,7 @@ namespace Application.Agent.Sockets
             {
                 case "tcp": return new TCPAgentSocketsHandler(logger, agentSocketsConfig.Port, agentManager, serverAgentActionManager, requestReceivedHandler);
             }
-            return null;
+            throw new Exception("most prodive a valid string expression for socket protocol : '" + agentSocketsConfig.Protocol + "' is Invalid");
         }
     }
 }
