@@ -19,10 +19,6 @@ try
     }
     while (line != "quit");
 
-    serverInstance.StopSockets();
-
-    serverInstance.StopWebApp();
-
 } catch (Exception ex)
 {
     Console.Error.WriteLine(ex.Message);

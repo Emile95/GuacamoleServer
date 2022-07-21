@@ -62,19 +62,9 @@ public class ServerInstance
         _webApplication.RunAsync();
     }
 
-    public void StopWebApp()
-    {
-        _webApplication.StopAsync();
-    }
-
     public void StartSockets()
     {
         _agentSocketsHandler.Start();
-    }
-
-    public void StopSockets()
-    {
-        _agentSocketsHandler.Stop();
     }
 
     private void LoadAgentActionsPlugins()
