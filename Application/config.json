@@ -1,6 +1,6 @@
 {
   "AgentSocketsConfig": {
     "Protocol": "tcp",
-    "Port": 2200
+    "Port": 1000
   }
 }
