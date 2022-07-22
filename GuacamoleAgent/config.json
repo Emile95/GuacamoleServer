@@ -5,6 +5,6 @@
   "concurrentRun": 5,
   "serverSocketConfig": {
     "Protocol": "tcp",
-    "Port": 1100
+    "Port": 1000
   }
 }

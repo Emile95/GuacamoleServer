@@ -1,6 +1,10 @@
-﻿using GuacamoleAgent.Config;
+﻿using GuacamoleAgent.Action;
+using GuacamoleAgent.Config;
 using GuacamoleAgent.ServerApplication;
+using GuacamoleAgent.ServerApplication.Request;
 using Library.Agent;
+using System.Net;
+using System.Net.Sockets;
 
 namespace GuacamoleAgent
 {
@@ -9,7 +13,11 @@ namespace GuacamoleAgent
         private readonly AgentConfig _config;
         private readonly AgentDefinition _agentDefinition;
 
-        private readonly ServerSocketHandler _serverApplicationHandler;
+        private readonly ServerSocketHandler _serverSocketHandler;
+        private readonly ClientAgentActionManager _clientAgentActionManager;
+        private readonly ServerClient _serverClient;
+        private readonly ServerRequestReceivedHandler _serverRequestReceivedHandler;
+        private readonly Socket _serverSocket;
 
         public AgentInstance(AgentConfig config)
         {
@@ -23,12 +31,21 @@ namespace GuacamoleAgent
                 ConcurrentRun = _config.ConcurrentRun
             };
 
-            _serverApplicationHandler = new ServerSocketHandler(_config.ServerSocketConfig.Port, _config.ServerSocketConfig.Protocol, _agentDefinition);
+
+            _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
+
+            _serverClient = new ServerClient(_serverSocket);
+
+            _clientAgentActionManager = new ClientAgentActionManager(_serverClient);
+
+            _serverRequestReceivedHandler = new ServerRequestReceivedHandler(_clientAgentActionManager);
+
+            _serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }
 
         public void StartSocket()
         {
-            _serverApplicationHandler.Start();
+            _serverSocketHandler.Start(_agentDefinition);
         }
     }
 }

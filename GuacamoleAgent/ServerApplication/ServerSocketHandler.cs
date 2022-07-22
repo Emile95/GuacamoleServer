@@ -1,11 +1,9 @@
-﻿using GuacamoleAgent.Action;
-using GuacamoleAgent.ServerApplication.Request;
+﻿using GuacamoleAgent.ServerApplication.Request;
 using Library;
 using Library.Agent;
 using Library.Agent.Request;
 using Library.Sockets;
 using Newtonsoft.Json;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -14,44 +12,29 @@ namespace GuacamoleAgent.ServerApplication
     public class ServerSocketHandler
     {
         private readonly int _port;
-        private readonly Socket _socket;
-        private readonly AgentDefinition _agentDefinition;
-        private readonly RequestReceivedHandler _requestReceivedHandler;
-        private readonly ClientAgentActionManager _agentActionManager;
+        private readonly Socket _serverSocket;
+        private readonly ServerRequestReceivedHandler _serverRequestReceivedHandler;
 
-        public ServerSocketHandler(int port, string protocol, AgentDefinition agentDefinition)
+        public ServerSocketHandler(Socket serverSocket, ServerRequestReceivedHandler serverRequestReceivedHandler)
         {
-            _port = port;
-
-            if(protocol == "tcp")
-            {
-                _socket = new Socket(
-                    Dns.GetHostAddresses(Dns.GetHostName())[0].AddressFamily,
-                    SocketType.Stream,
-                    ProtocolType.Tcp
-                );
-            }
-            _agentDefinition = agentDefinition;
-            _requestReceivedHandler = new RequestReceivedHandler();
-            _agentActionManager = new ClientAgentActionManager();
+            _serverSocket = serverSocket;
+            _serverRequestReceivedHandler = serverRequestReceivedHandler;
         }
 
-        public void Start()
+        public void Start(AgentDefinition agentDefinition)
         {
             AgentRequest data = new AgentRequest
             {
                 RequestId = ApplicationConstValue.CONNECTAGENTREQUESTID,
-                Data = _agentDefinition
+                Data = agentDefinition
             };
 
-            _socket.Connect(new IPEndPoint(Dns.GetHostAddresses(Dns.GetHostName())[0], _port));
-
-            _socket.Send(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
+            _serverSocket.Send(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 
             StateObject state = new StateObject();
-            state.workSocket = _socket;
+            state.workSocket = _serverSocket;
 
-            _socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
+            _serverSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }
 
         private void ReadCallBack(IAsyncResult ar)
@@ -69,15 +52,14 @@ namespace GuacamoleAgent.ServerApplication
                 return;
             }
 
-            RequestReceivedContext context = new RequestReceivedContext();
+            ServerRequestReceivedContext context = new ServerRequestReceivedContext();
             context.ServerSocket = socket;
-            context.AgentActionManager = _agentActionManager;
 
             context.Data = new byte[bytesRead];
             for (int i = 0; i < bytesRead; i++)
                 context.Data[i] = state.buffer[i];
 
-            _requestReceivedHandler.ProcessRequest(context);
+            _serverRequestReceivedHandler.ProcessRequest(context);
 
             state.ClearBuffer();
 

@@ -1,4 +1,4 @@
-﻿using Application.Common;
+﻿using Library;
 using Application.DataModel;
 using Library.Action;
 using Library.Agent;
@@ -26,7 +26,7 @@ namespace Application.Agent.Action
 
         public string GetNewID()
         {
-            return UniqueIdGenerator.Generate(_agentActionsLoaded.Keys.ToList());
+            return UniqueIdGenerator.Generate(_agentActionsLoaded.Keys);
         }
 
         public void ProcessAgentAction(ProcessActionDataModel processActionDataModel)
@@ -34,6 +34,9 @@ namespace Application.Agent.Action
             AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
             if (agentClient == null) return;
             if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) return;
+
+            string runningAgentActionId = UniqueIdGenerator.Generate(_runningAgentActions.Keys);
+
             agentClient.ProcessAction(processActionDataModel.ActionId);
         }
     }

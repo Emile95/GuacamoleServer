@@ -26,7 +26,17 @@ namespace Application.Agent.Request
 
             JObject jObject = (JObject)agentRequest.Data;
 
-            if(agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID) ConnectAgent(jObject.ToObject<AgentDefinition>(), context); return;
+            if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
+            {
+                ConnectAgent(jObject.ToObject<AgentDefinition>(), context);
+                return;
+            }
+
+            if (agentRequest.RequestId == ApplicationConstValue.AGENTACTIONFINISHQUESTID)
+            {
+                AgentActionFinish(context);
+                return;
+            }
         }
 
         private void ConnectAgent(AgentDefinition agentDefinition, RequestReceivedContext context)
@@ -36,6 +46,11 @@ namespace Application.Agent.Request
             List<AgentActionLoaded<Tuple<string, byte[]>>> data = context.ServerAgentActionManager.GetLoadedAgentActions();
             foreach(AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded in data)
                 agentClient.InstallAgentAction(agentActionLoaded);
+        }
+
+        private void AgentActionFinish(RequestReceivedContext context)
+        {
+            _logger.Log("Request finish");
         }
     }
 }

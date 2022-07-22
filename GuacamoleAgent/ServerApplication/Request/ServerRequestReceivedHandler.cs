@@ -1,15 +1,22 @@
-﻿using Library;
+﻿using GuacamoleAgent.Action;
+using Library;
 using Library.Agent.Action;
 using Library.Agent.Request;
 using Newtonsoft.Json;
-using System.Reflection;
 using System.Text;
 
 namespace GuacamoleAgent.ServerApplication.Request
 {
-    public class RequestReceivedHandler
+    public class ServerRequestReceivedHandler
     {
-        public void ProcessRequest(RequestReceivedContext context)
+        private readonly ClientAgentActionManager _clientAgentActionManager;
+
+        public ServerRequestReceivedHandler(ClientAgentActionManager clientAgentActionManager)
+        {
+            _clientAgentActionManager = clientAgentActionManager;
+        }
+
+        public void ProcessRequest(ServerRequestReceivedContext context)
         {
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
@@ -22,11 +29,11 @@ namespace GuacamoleAgent.ServerApplication.Request
                 return;
             }
 
-            if(context.AgentActionManager.IsActionIdValid(agentRequest.RequestId))
-                context.AgentActionManager.ProcessAction(agentRequest.RequestId);
+            if(_clientAgentActionManager.IsActionIdValid(agentRequest.RequestId))
+                _clientAgentActionManager.ProcessAction(agentRequest.RequestId);
         }
 
-        private void InstallModule(AgentActionLoaded<Tuple<string, byte[]>> actionLoaded, RequestReceivedContext context)
+        private void InstallModule(AgentActionLoaded<Tuple<string, byte[]>> actionLoaded, ServerRequestReceivedContext context)
         {
             string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentActions", actionLoaded.Instance.Item1);
             File.WriteAllBytes(newDllPath, actionLoaded.Instance.Item2);
@@ -39,7 +46,7 @@ namespace GuacamoleAgent.ServerApplication.Request
                 action.ActionId = actionLoaded.ActionId;
                 action.DisplayName = actionLoaded.DisplayName;
                 action.Instance = agentAction;
-                context.AgentActionManager.AddAgentAction(action);
+                _clientAgentActionManager.AddAgentAction(action);
             }
         }
     }
