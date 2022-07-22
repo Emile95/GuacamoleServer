@@ -1,6 +1,6 @@
-﻿namespace Library.Application
+﻿namespace Library.Server.Application
 {
-    public class ApplicationContext : IDisposable
+    public class ServerApplicationContext : IDisposable
     {
         public static string ParentDirectoryPath { get; private set; } = ApplicationConstValue.SERVERAPPSPATH;
         public static string Guid { get; private set; }
@@ -9,7 +9,7 @@
         private string _previousGuid;
         public string _previousAppPath;
 
-        public ApplicationContext(string guid)
+        public ServerApplicationContext(string guid)
         {
             _previousGuid = Guid;
             _previousAppPath = AppPath;

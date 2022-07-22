@@ -1,8 +1,8 @@
-﻿using Library.Application;
+﻿using Library.Agent.Application;
 
-namespace Library.Configuration.App
+namespace Library.Agent.Configuration.Application
 {
-    public abstract class Application : ApplicationBase
+    public abstract class AgentApplication : AgentApplicationBase
     {
         protected sealed override void ValidateApplication()
         {

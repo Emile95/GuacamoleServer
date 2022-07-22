@@ -1,6 +1,4 @@
-﻿using Library.EventHandler;
-using Library.Application;
-using Application.Agent;
+﻿using Application.Agent;
 using Application.Logger;
 using Application.Agent.Sockets;
 using Application.Agent.Request;
@@ -8,6 +6,9 @@ using Application.Agent.Action;
 using Library.Agent.Action;
 using Library;
 using Application.Config;
+using Application;
+using Library.Server.Application;
+using Library.Server.EventHandler;
 
 public class ServerInstance
 {
@@ -15,9 +16,9 @@ public class ServerInstance
 
     private Library.Logger.ILogger _logger;
 
-    private readonly ApplicationManager _applicationManager;
-    private readonly ApplicationResolver _applicationResolver;
-    private readonly EventHandlerManager _eventHandlerManager;
+    private readonly ServerApplicationManager _applicationManager;
+    private readonly ServerApplicationResolver _applicationResolver;
+    private readonly ServerEventHandlerManager _eventHandlerManager;
 
     private WebApplication _webApplication;
 
@@ -31,9 +32,9 @@ public class ServerInstance
     {
         _config = serverConfig;
 
-        _eventHandlerManager = new EventHandlerManager();
-        _applicationResolver = new ApplicationResolver(_eventHandlerManager);
-        _applicationManager = new ApplicationManager(
+        _eventHandlerManager = new ServerEventHandlerManager();
+        _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
+        _applicationManager = new ServerApplicationManager(
             _applicationResolver,
             _eventHandlerManager
         );

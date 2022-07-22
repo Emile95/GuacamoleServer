@@ -1,9 +1,8 @@
-﻿using Library.Application;
-using Library.Storage;
+﻿using Library.Storage;
 
-namespace Library.Configuration.App
+namespace Library.Server.Application
 {
-    public abstract class ConfigurableApplication<Configuration> : ApplicationBase
+    public abstract class ServerConfigurableApplication<Configuration> : ServerApplicationBase
         where Configuration : class, new()
     {
         protected Configuration Config { get; private set; }
@@ -19,13 +18,13 @@ namespace Library.Configuration.App
 
         public override void Install() 
         {
-            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ApplicationContext.AppPath);
+            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ServerApplicationContext.AppPath);
             ConfigurationStorageManager.AddConfiguration(new Configuration());
         }
 
         public override void Initialize() 
         {
-            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ApplicationContext.AppPath);
+            ConfigurationStorageManager = new ConfigurationStorageManager<Configuration>(ServerApplicationContext.AppPath);
             Config = ConfigurationStorageManager.LoadConfiguration();
         }
 
