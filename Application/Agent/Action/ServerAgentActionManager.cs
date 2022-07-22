@@ -11,10 +11,13 @@ namespace Application.Agent.Action
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
 
+        protected readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
+
         public ServerAgentActionManager(Library.Logger.ILogger logger, AgentManager agentManager)
         {
             _logger = logger;
             _agentManager = agentManager;
+            _runningAgentActions = new Dictionary<string, RunningAgentActionLogs>();
         }
 
         public override bool AddAgentAction(AgentActionLoaded<Tuple<string,byte[]>> agentActionLoaded)
@@ -36,8 +39,14 @@ namespace Application.Agent.Action
             if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) return;
 
             string runningAgentActionId = UniqueIdGenerator.Generate(_runningAgentActions.Keys);
+            _runningAgentActions.Add(runningAgentActionId, new RunningAgentActionLogs());
 
-            agentClient.ProcessAction(processActionDataModel.ActionId);
+            agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId);
+        }
+
+        public void RemoveRunningAction(string runningActionId)
+        {
+            _runningAgentActions.Remove(runningActionId);
         }
     }
 }

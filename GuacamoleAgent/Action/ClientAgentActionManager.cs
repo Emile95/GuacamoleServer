@@ -20,10 +20,10 @@ namespace GuacamoleAgent.Action
             return true;
         }
 
-        public void ProcessAction(string actionId)
+        public void ProcessAction(string actionId, string agentActionId)
         {
             _agentActionsLoaded[actionId].Instance.Process();
-            _serverClient.FinishAction();
+            _serverClient.FinishAction(agentActionId);
         }
     }
 }

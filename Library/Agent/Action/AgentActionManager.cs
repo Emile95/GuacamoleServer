@@ -5,12 +5,10 @@ namespace Library.Action
     public abstract class AgentActionManager<InstanceType>
     {
         protected readonly Dictionary<string, AgentActionLoaded<InstanceType>> _agentActionsLoaded;
-        protected readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
 
         public AgentActionManager()
         {
             _agentActionsLoaded = new Dictionary<string, AgentActionLoaded<InstanceType>>();
-            _runningAgentActions = new Dictionary<string, RunningAgentActionLogs>();
         }
 
         public bool IsActionIdValid(string actionId)

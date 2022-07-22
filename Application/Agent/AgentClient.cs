@@ -1,8 +1,10 @@
-﻿using Library.Agent.Action;
+﻿using Library;
+using Library.Agent;
+using Library.Agent.Action;
 using Library.Agent.Request;
 using System.Net.Sockets;
 
-namespace Library.Agent
+namespace Application.Agent
 {
     public class AgentClient
     {
@@ -60,9 +62,9 @@ namespace Library.Agent
             _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded));
         }
 
-        public void ProcessAction(string actionId)
+        public void ProcessAction(string actionId, string runningActionId)
         {
-            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(actionId, "asdasasda"));
+            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(actionId, runningActionId));
         }
     }
 }

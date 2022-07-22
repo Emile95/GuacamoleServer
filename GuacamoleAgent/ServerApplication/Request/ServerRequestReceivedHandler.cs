@@ -30,7 +30,7 @@ namespace GuacamoleAgent.ServerApplication.Request
             }
 
             if(_clientAgentActionManager.IsActionIdValid(agentRequest.RequestId))
-                _clientAgentActionManager.ProcessAction(agentRequest.RequestId);
+                _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as string);
         }
 
         private void InstallModule(AgentActionLoaded<Tuple<string, byte[]>> actionLoaded, ServerRequestReceivedContext context)

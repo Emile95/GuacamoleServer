@@ -13,9 +13,9 @@ namespace GuacamoleAgent.ServerApplication
             _socket = socket;
         }
 
-        public void FinishAction()
+        public void FinishAction(string agentActionId)
         {
-            byte[] bytes = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONFINISHQUESTID, null);
+            byte[] bytes = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONFINISHQUESTID, agentActionId);
             _socket.Send(bytes);
         }
     }

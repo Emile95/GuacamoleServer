@@ -24,17 +24,16 @@ namespace Application.Agent.Request
 
             AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data), setting);
 
-            JObject jObject = (JObject)agentRequest.Data;
-
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
+                JObject jObject = (JObject)agentRequest.Data;
                 ConnectAgent(jObject.ToObject<AgentDefinition>(), context);
                 return;
             }
 
             if (agentRequest.RequestId == ApplicationConstValue.AGENTACTIONFINISHQUESTID)
             {
-                AgentActionFinish(context);
+                AgentActionFinish(context, agentRequest.Data as string);
                 return;
             }
         }
@@ -48,9 +47,9 @@ namespace Application.Agent.Request
                 agentClient.InstallAgentAction(agentActionLoaded);
         }
 
-        private void AgentActionFinish(RequestReceivedContext context)
+        private void AgentActionFinish(RequestReceivedContext context, string runningActionId)
         {
-            _logger.Log("Request finish");
+            _logger.Log("Request finish, id : " + runningActionId);
         }
     }
 }
