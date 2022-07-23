@@ -1,4 +1,6 @@
-﻿using Library.Agent.Application;
+﻿using Agent.Action;
+using Library.Agent.Application;
+using Library.Agent.Configuration.Application.AgentAction;
 using Library.Agent.EventHandler;
 using System.Reflection;
 
@@ -10,18 +12,21 @@ namespace Agent
 
         private readonly AgentApplicationResolver _applicationResolver;
         private readonly AgentEventHandlerManager _eventHandlerManager;
+        private readonly AgentActionManager _agentActionManager;
 
         public AgentApplicationManager(
-            AgentApplicationResolver applicationResolver,
-            AgentEventHandlerManager eventHandlerManager
+            //AgentApplicationResolver applicationResolver,
+            //AgentEventHandlerManager eventHandlerManager
+            AgentActionManager agentActionManager
         )
         {
-            _applicationResolver = applicationResolver;
-            _eventHandlerManager = eventHandlerManager;
+            //_applicationResolver = applicationResolver;
+            //_eventHandlerManager = eventHandlerManager;
             _applications = new Dictionary<string, AgentApplicationBase>();
+            _agentActionManager = agentActionManager;
         }
 
-        public void InstallApplication(string applicationPath)
+        public void InstallApplication(string applicationPath, List<string> agentActionIds)
         {
             FileInfo applicationFileInfo = new FileInfo(applicationPath);
             string newGuid = GetNewGuid();
@@ -34,6 +39,16 @@ namespace Agent
             using (var context = new AgentApplicationContext(newGuid))
             {
                 application.Install();
+            }
+
+            MethodInfo[] methods = application.GetType().GetMethods();
+            int agentAcitonIdIndex = 0;
+            foreach (MethodInfo method in methods)
+            {
+                AgentAction agentAction = method.GetCustomAttribute<AgentAction>();
+                if (agentAction == null) continue;
+                _agentActionManager.AddAgentAction(agentActionIds[agentAcitonIdIndex], (context) => method.Invoke(application,new object[] { context }));
+                agentAcitonIdIndex++;
             }
         }
 

@@ -9,6 +9,11 @@ using Server.Config;
 using Server;
 using Library.Server.Application;
 using Library.Server.EventHandler;
+using Library.Agent.Configuration.Application;
+using Library.Agent.Application;
+using System.Reflection;
+using Library.Agent.Configuration.Application.AgentAction;
+using System.Diagnostics;
 
 public class ServerInstance
 {
@@ -16,9 +21,11 @@ public class ServerInstance
 
     private Library.Logger.ILogger _logger;
 
-    private readonly ServerApplicationManager _applicationManager;
+    private readonly ServerApplicationManager _serverApplicationManager;
     private readonly ServerApplicationResolver _applicationResolver;
     private readonly ServerEventHandlerManager _eventHandlerManager;
+
+    private readonly AgentApplicationManager _agentApplicationManager;
 
     private WebApplication _webApplication;
 
@@ -32,9 +39,12 @@ public class ServerInstance
     {
         _config = serverConfig;
 
+        _agentApplicationManager = new AgentApplicationManager();
+
         _eventHandlerManager = new ServerEventHandlerManager();
         _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
-        _applicationManager = new ServerApplicationManager(
+        
+        _serverApplicationManager = new ServerApplicationManager(
             _applicationResolver,
             _eventHandlerManager
         );
@@ -45,21 +55,26 @@ public class ServerInstance
 
         _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
 
-        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger);
+        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger, _agentApplicationManager);
 
         _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
 
-        LoadAgentActionsPlugins();
+        LoadAgentApplicationsPlugins();
     }
 
-    public void LoadApplications()
+    public void LoadServerApplications()
     {
-        _applicationManager.LoadApplications();
+        _serverApplicationManager.LoadApplications();
+    }
+
+    public void LoadAgentApplications()
+    {
+        _serverApplicationManager.LoadApplications();
     }
 
     public void RunWebApp(string[] args)
     {
-        _webApplication = Server.RestAPI.WebApplicationBuilder.BuildWebApplication(_applicationManager, _agentManager, _serverAgentActionManager);
+        _webApplication = Server.RestAPI.WebApplicationBuilder.BuildWebApplication(_serverApplicationManager, _agentManager, _serverAgentActionManager);
         _webApplication.RunAsync();
     }
 
@@ -68,7 +83,7 @@ public class ServerInstance
         _agentSocketsHandler.Start();
     }
 
-    private void LoadAgentActionsPlugins()
+    private void LoadAgentApplicationsPlugins()
     {
         string[] agentActionDirectoryPaths = Directory.GetDirectories(ApplicationConstValue.AGENTAPPSPATH);
 
@@ -78,17 +93,23 @@ public class ServerInstance
 
             foreach (string dll in dlls)
             {
-                List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(dll);
-
-                foreach (AgentAction agentAction in agentActions)
+                List<AgentApplicationBase> agentApplications = PluginFactory.CreatePluginsFromFile<AgentApplicationBase>(dll);
+                
+                foreach (AgentApplicationBase agentApplication in agentApplications)
                 {
-                    AgentActionDefinition definition = agentAction.GetAgentActionDefinition();
-                    AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded = new AgentActionLoaded<Tuple<string, byte[]>>();
-                    agentActionLoaded.ActionId = _serverAgentActionManager.GetNewID();
-                    agentActionLoaded.DisplayName = definition.DisplayName;
-                    byte[] dllFile = File.ReadAllBytes(dll);
-                    agentActionLoaded.Instance = new Tuple<string, byte[]>(Path.GetFileName(dll), dllFile);
-                    _serverAgentActionManager.AddAgentAction(agentActionLoaded);
+                    byte[] fileBinary = File.ReadAllBytes(dll);
+
+                    List<string> agentActionIds = new List<string>();
+
+                    MethodInfo[] methods = agentApplication.GetType().GetMethods();
+                    foreach(MethodInfo method in methods)
+                    {
+                        AgentAction agentAction = method.GetCustomAttribute<AgentAction>();
+                        if (agentAction == null) continue;
+                        agentActionIds.Add(_serverAgentActionManager.AddAgentAction(agentAction));
+                    }
+
+                    _agentApplicationManager.AddAgentApplication(dll, fileBinary, agentActionIds);            
                 }
             }
         }

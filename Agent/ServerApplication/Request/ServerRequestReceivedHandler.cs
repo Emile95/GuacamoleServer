@@ -1,19 +1,23 @@
 ﻿using Agent.Action;
 using Library;
-using Library.Agent.Action;
+using Library.Agent.Application;
+using Library.Agent.Configuration.Application.AgentAction;
 using Library.Agent.Request;
 using Newtonsoft.Json;
+using System.Reflection;
 using System.Text;
 
 namespace Agent.ServerApplication.Request
 {
     public class ServerRequestReceivedHandler
     {
-        private readonly ClientAgentActionManager _clientAgentActionManager;
+        private readonly AgentActionManager _clientAgentActionManager;
+        private readonly AgentApplicationManager _agentApplicationManager;
 
-        public ServerRequestReceivedHandler(ClientAgentActionManager clientAgentActionManager)
+        public ServerRequestReceivedHandler(AgentActionManager clientAgentActionManager, AgentApplicationManager agentApplicationManager)
         {
             _clientAgentActionManager = clientAgentActionManager;
+            _agentApplicationManager = agentApplicationManager;
         }
 
         public void ProcessRequest(ServerRequestReceivedContext context)
@@ -25,29 +29,19 @@ namespace Agent.ServerApplication.Request
 
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
-                InstallModule(agentRequest.Data as AgentActionLoaded<Tuple<string, byte[]>>, context);
+                InstallModule(agentRequest.Data as ServerAgentApplicationLoaded, context);
                 return;
             }
 
-            if(_clientAgentActionManager.IsActionIdValid(agentRequest.RequestId))
+            if(_clientAgentActionManager.IsValidActionId(agentRequest.RequestId))
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as string);
         }
 
-        private void InstallModule(AgentActionLoaded<Tuple<string, byte[]>> actionLoaded, ServerRequestReceivedContext context)
+        private void InstallModule(ServerAgentApplicationLoaded serverAgentApplicationLoaded, ServerRequestReceivedContext context)
         {
-            string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentActions", actionLoaded.Instance.Item1);
-            File.WriteAllBytes(newDllPath, actionLoaded.Instance.Item2);
-
-            List<AgentAction> agentActions = PluginFactory.CreatePluginsFromFile<AgentAction>(newDllPath);
-
-            foreach (AgentAction agentAction in agentActions)
-            {
-                AgentActionLoaded<AgentAction> action = new AgentActionLoaded<AgentAction>();
-                action.ActionId = actionLoaded.ActionId;
-                action.DisplayName = actionLoaded.DisplayName;
-                action.Instance = agentAction;
-                _clientAgentActionManager.AddAgentAction(action);
-            }
+            string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
+            File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);
+            _agentApplicationManager.InstallApplication(newDllPath, serverAgentApplicationLoaded.ActionIds);
         }
     }
 }

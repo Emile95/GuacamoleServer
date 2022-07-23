@@ -3,6 +3,7 @@ using Agent.Config;
 using Agent.ServerApplication;
 using Agent.ServerApplication.Request;
 using Library.Agent;
+using System.Diagnostics;
 using System.Net.Sockets;
 
 namespace Agent
@@ -11,15 +12,17 @@ namespace Agent
     {
         private readonly AgentConfig _config;
         private readonly AgentDefinition _agentDefinition;
-
+        private readonly AgentApplicationManager _agentApplicationManager;
         private readonly ServerSocketHandler _serverSocketHandler;
-        private readonly ClientAgentActionManager _clientAgentActionManager;
+        private readonly AgentActionManager _agentActionManager;
         private readonly ServerClient _serverClient;
         private readonly ServerRequestReceivedHandler _serverRequestReceivedHandler;
         private readonly Socket _serverSocket;
 
         public AgentInstance(AgentConfig config)
         {
+            Debugger.Launch();
+
             _config = config;
 
             _agentDefinition = new AgentDefinition
@@ -35,9 +38,11 @@ namespace Agent
 
             _serverClient = new ServerClient(_serverSocket);
 
-            _clientAgentActionManager = new ClientAgentActionManager(_serverClient);
+            _agentActionManager = new AgentActionManager(_serverClient);
 
-            _serverRequestReceivedHandler = new ServerRequestReceivedHandler(_clientAgentActionManager);
+            _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
+
+            _serverRequestReceivedHandler = new ServerRequestReceivedHandler(_agentActionManager, _agentApplicationManager);
 
             _serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }

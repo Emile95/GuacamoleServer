@@ -1,35 +1,36 @@
 ﻿using Library;
 using Server.DataModel;
-using Library.Action;
-using Library.Agent;
 using Library.Agent.Action;
+using Library.Agent.Configuration.Application.AgentAction;
 
 namespace Server.Agent.Action
 {
-    public class ServerAgentActionManager : AgentActionManager<Tuple<string,byte[]>>
+    public class ServerAgentActionManager
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
 
-        protected readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
+        private readonly Dictionary<string, AgentActionLoaded> _agentActionsLoaded;
+        private readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
 
         public ServerAgentActionManager(Library.Logger.ILogger logger, AgentManager agentManager)
         {
             _logger = logger;
             _agentManager = agentManager;
             _runningAgentActions = new Dictionary<string, RunningAgentActionLogs>();
+            _agentActionsLoaded = new Dictionary<string, AgentActionLoaded>();
         }
 
-        public override bool AddAgentAction(AgentActionLoaded<Tuple<string,byte[]>> agentActionLoaded)
+        public string AddAgentAction(AgentAction agentAction)
         {
+            AgentActionLoaded agentActionLoaded = new AgentActionLoaded
+            {
+                DisplayName = agentAction.DisplayName,
+                ActionId = GetNewID()
+            };
             _agentActionsLoaded.Add(agentActionLoaded.ActionId, agentActionLoaded);
             _logger.Log("new action named " + agentActionLoaded.DisplayName + ", id " + agentActionLoaded.ActionId);
-            return true;
-        }
-
-        public string GetNewID()
-        {
-            return UniqueIdGenerator.Generate(_agentActionsLoaded.Keys);
+            return agentActionLoaded.ActionId;
         }
 
         public void ProcessAgentAction(ProcessActionDataModel processActionDataModel)
@@ -47,6 +48,11 @@ namespace Server.Agent.Action
         public void RemoveRunningAction(string runningActionId)
         {
             _runningAgentActions.Remove(runningActionId);
+        }
+
+        private string GetNewID()
+        {
+            return UniqueIdGenerator.Generate(_agentActionsLoaded.Keys);
         }
     }
 }

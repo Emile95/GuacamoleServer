@@ -6,7 +6,7 @@ try
 
     var serverInstance = new ServerInstance(serverConfig);
 
-    serverInstance.LoadApplications();
+    serverInstance.LoadServerApplications();
 
     serverInstance.StartSockets();
 

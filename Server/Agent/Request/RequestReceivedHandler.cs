@@ -4,17 +4,18 @@ using System.Text;
 using Library.Agent;
 using Library.Agent.Request;
 using Library;
-using Library.Agent.Action;
 
 namespace Server.Agent.Request
 {
     public class RequestReceivedHandler
     {
         private readonly Library.Logger.ILogger _logger;
+        private readonly AgentApplicationManager _agentApplicationManager;
 
-        public RequestReceivedHandler(Library.Logger.ILogger logger)
+        public RequestReceivedHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager)
         {
             _logger = logger;
+            _agentApplicationManager = agentApplicationManager;
         }
 
         public void ProcessRequest(RequestReceivedContext context)
@@ -42,9 +43,9 @@ namespace Server.Agent.Request
         {
             AgentClient agentClient = context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
-            List<AgentActionLoaded<Tuple<string, byte[]>>> data = context.ServerAgentActionManager.GetLoadedAgentActions();
-            foreach(AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded in data)
-                agentClient.InstallAgentAction(agentActionLoaded);
+
+            foreach(ServerAgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
+                agentClient.InstallAgentApplication(serverAgentApplicationLoaded);
         }
 
         private void AgentActionFinish(RequestReceivedContext context, string runningActionId)

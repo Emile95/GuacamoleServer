@@ -1,6 +1,5 @@
 ﻿using Library;
 using Library.Agent;
-using Library.Agent.Action;
 using Library.Agent.Request;
 using System.Net.Sockets;
 
@@ -57,9 +56,9 @@ namespace Server.Agent
             return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void InstallAgentAction(AgentActionLoaded<Tuple<string, byte[]>> agentActionLoaded)
+        public void InstallAgentApplication(ServerAgentApplicationLoaded agentApplicationLoaded)
         {
-            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentActionLoaded));
+            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
         }
 
         public void ProcessAction(string actionId, string runningActionId)
