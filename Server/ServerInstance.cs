@@ -28,8 +28,6 @@ namespace Server
         private readonly AgentRequestHandler _agentRequestReceivedHandler;
         private readonly AgentSocketsHandler _agentSocketsHandler;
 
-        private WebApplication _webApplication;
-
         private readonly RestAPIHandler _restAPIHandler;
 
         public ServerInstance(ServerConfig serverConfig)
