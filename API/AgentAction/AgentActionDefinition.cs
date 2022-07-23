@@ -1,4 +1,4 @@
-﻿namespace API.Agent.Action
+﻿namespace API.AgentAction
 {
     public class AgentActionDefinition
     {

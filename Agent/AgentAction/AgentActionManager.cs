@@ -1,5 +1,5 @@
 ﻿using Agent.ServerApplication;
-using API.Agent.Action;
+using API.AgentAction;
 
 namespace AgentAction
 {

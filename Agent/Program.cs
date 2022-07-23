@@ -1,5 +1,8 @@
 ﻿using Agent;
 using Agent.Config;
+using System.Diagnostics;
+
+Debugger.Launch();
 
 AgentConfig config = AgentConfigResolver.ResolveConfig();
 
