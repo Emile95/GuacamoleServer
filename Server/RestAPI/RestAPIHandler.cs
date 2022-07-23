@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
@@ -32,6 +31,8 @@ namespace Server.RestAPI
                     return ex.Message;
                 }
             });
+
+            _logger.Log("Http POST request mapped, pattern : '" + pattern + "'");
         }
 
         public void MapGet(string pattern, Func<object> action)
@@ -47,6 +48,8 @@ namespace Server.RestAPI
                     return ex.Message;
                 }
             });
+
+            _logger.Log("Http GET request mapped, pattern : '" + pattern + "'");
         }
 
         public void Run()
