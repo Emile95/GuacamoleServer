@@ -1,5 +1,5 @@
-﻿using API.Server;
-using API.AgentAction;
+﻿using API.AgentAction;
+using Agent.ServerApplication;
 
 namespace Agent.AgentAction
 {
@@ -24,8 +24,11 @@ namespace Agent.AgentAction
         public void ProcessAction(string actionId, string runningAgentActionId)
         {
             AgentActionContext agentActionContext = new AgentActionContext();
-            agentActionContext.ServerOperations = _serverOperations;
-            agentActionContext.RunningAgentActionId = runningAgentActionId;
+            agentActionContext.FinishAgentAction = (message) => _serverOperations.FinishRunningAgentAction(runningAgentActionId, message);
+            agentActionContext.LogInfoAgentAction = (message) => _serverOperations.LogInfoRunningAgentAction(runningAgentActionId, message);
+            agentActionContext.LogWarningAgentAction = (message) => _serverOperations.LogWarningRunningAgentAction(runningAgentActionId, message);
+            agentActionContext.LogErrorAgentAction = (message) => _serverOperations.LogErrorRunningAgentAction(runningAgentActionId, message);
+            agentActionContext.FatalAgentAction = (message) => _serverOperations.FatalRunningAgentAction(runningAgentActionId, message);
             _agentActionsLoaded[actionId].Invoke(agentActionContext);
         }
 

@@ -3,7 +3,6 @@ using API.AgentAction;
 using Common;
 using Server.Agent;
 using API.Agent.Configuration.Application.AgentAction;
-using API.AgentAction;
 
 namespace Server.AgentAction
 {
@@ -67,11 +66,29 @@ namespace Server.AgentAction
         {
             _runningAgentActions[runningAgentActionLog.RunningAgentActionId][runningAgentActionLog.RunningAgentActionLogType].Add(runningAgentActionLog);
 
-            if(runningAgentActionLog.RunningAgentActionLogType == RunningAgentActionLogType.Succeed)
+            string logType = "";
+            switch(runningAgentActionLog.RunningAgentActionLogType)
             {
-                _runningAgentActions.Remove(runningAgentActionLog.RunningAgentActionId);
-                _logger.Log(runningAgentActionLog.Message);
+                case RunningAgentActionLogType.Succeed:
+                    _runningAgentActions.Remove(runningAgentActionLog.RunningAgentActionId);
+                    logType = "SUCCEED";
+                    break;
+                case RunningAgentActionLogType.Error:
+                    logType = "ERROR";
+                    break;
+                case RunningAgentActionLogType.Warning:
+                    logType = "WARNING";
+                    break;
+                case RunningAgentActionLogType.Info:
+                    logType = "INFO";
+                    break;
+                case RunningAgentActionLogType.Fatal:
+                    _runningAgentActions.Remove(runningAgentActionLog.RunningAgentActionId);
+                    logType = "FATAL";
+                    break;
             }
+
+            _logger.Log(logType + " -- Running Agent Action '" + runningAgentActionLog.RunningAgentActionId + "', message : " + runningAgentActionLog.Message);
         }
 
         private string GetNewID()

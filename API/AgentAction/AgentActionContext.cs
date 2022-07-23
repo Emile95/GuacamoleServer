@@ -1,10 +1,11 @@
-﻿using API.Server;
-
-namespace API.AgentAction
+﻿namespace API.AgentAction
 {
     public class AgentActionContext
     {
-        public string RunningAgentActionId { get; set; }
-        public ServerOperations ServerOperations { get; set;}
+        public Action<string> FinishAgentAction { get; set; }
+        public Action<string> FatalAgentAction { get; set; }
+        public Action<string> LogInfoAgentAction { get; set; }
+        public Action<string> LogWarningAgentAction { get; set; }
+        public Action<string> LogErrorAgentAction { get; set; }
     }
 }
