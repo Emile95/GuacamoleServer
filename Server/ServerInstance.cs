@@ -55,9 +55,9 @@ public class ServerInstance
 
         _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
 
-        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger, _agentApplicationManager);
+        _agentRequestReceivedHandler = new RequestReceivedHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
 
-        _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _serverAgentActionManager, _agentRequestReceivedHandler);
+        _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentRequestReceivedHandler);
     }
 
     public void LoadServerApplications()

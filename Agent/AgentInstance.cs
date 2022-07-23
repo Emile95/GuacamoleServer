@@ -21,8 +21,6 @@ namespace Agent
 
         public AgentInstance(AgentConfig config)
         {
-            Debugger.Launch();
-
             _config = config;
 
             _agentDefinition = new AgentDefinition

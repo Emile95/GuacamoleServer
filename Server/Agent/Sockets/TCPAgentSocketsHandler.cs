@@ -1,5 +1,4 @@
-﻿using Server.Agent.Action;
-using Server.Agent.Request;
+﻿using Server.Agent.Request;
 using System.Net;
 using System.Net.Sockets;
 
@@ -7,8 +6,8 @@ namespace Server.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, ServerAgentActionManager agentActionManager, RequestReceivedHandler agentRequestReceivedHandler)
-        : base(logger, port, agentManager, agentActionManager, agentRequestReceivedHandler) {}
+        public TCPAgentSocketsHandler(Library.Logger.ILogger logger, int port, RequestReceivedHandler agentRequestReceivedHandler)
+        : base(logger, port, agentRequestReceivedHandler) {}
 
         protected override Socket GetSocket()
         {

@@ -1,5 +1,4 @@
-﻿using Server.Agent.Action;
-using Server.Agent.Request;
+﻿using Server.Agent.Request;
 using Library.Sockets;
 using System.Net;
 using System.Net.Sockets;
@@ -10,14 +9,13 @@ namespace Server.Agent.Sockets
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly ServerAgentActionManager _serverAgentActionManager;
         private readonly RequestReceivedHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentManager agentManager, ServerAgentActionManager serverAgentActionManager, RequestReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, RequestReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -25,9 +23,7 @@ namespace Server.Agent.Sockets
             _socket.Bind(GetEndpoint());
             _socket.Listen(100);
             _logger = logger;
-            _agentManager = agentManager;
             _agentRequestReceivedHandler = agentRequestReceivedHandler;
-            _serverAgentActionManager = serverAgentActionManager;
         }
 
         public void Start()
@@ -70,8 +66,6 @@ namespace Server.Agent.Sockets
             }
 
             RequestReceivedContext context = new RequestReceivedContext();
-            context.AgentManager = _agentManager;
-            context.ServerAgentActionManager = _serverAgentActionManager;
             context.SourceSocket = clientSocket;
 
             context.Data = new byte[bytesRead];

@@ -4,6 +4,7 @@ using System.Text;
 using Library.Agent;
 using Library.Agent.Request;
 using Library;
+using Server.Agent.Action;
 
 namespace Server.Agent.Request
 {
@@ -11,11 +12,15 @@ namespace Server.Agent.Request
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentApplicationManager _agentApplicationManager;
+        private readonly ServerAgentActionManager _serverAgentActionManager;
+        private readonly AgentManager _agentManager;
 
-        public RequestReceivedHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager)
+        public RequestReceivedHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, ServerAgentActionManager serverAgentActionManager, AgentManager agentManager)
         {
             _logger = logger;
             _agentApplicationManager = agentApplicationManager;
+            _serverAgentActionManager = serverAgentActionManager;
+            _agentManager = agentManager;
         }
 
         public void ProcessRequest(RequestReceivedContext context)
@@ -41,7 +46,7 @@ namespace Server.Agent.Request
 
         private void ConnectAgent(AgentDefinition agentDefinition, RequestReceivedContext context)
         {
-            AgentClient agentClient = context.AgentManager.AddAgent(agentDefinition, context.SourceSocket);
+            AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
 
             foreach(ServerAgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
@@ -50,6 +55,7 @@ namespace Server.Agent.Request
 
         private void AgentActionFinish(RequestReceivedContext context, string runningActionId)
         {
+            _serverAgentActionManager.RemoveRunningAction(runningActionId);
             _logger.Log("Request finish, id : " + runningActionId);
         }
     }
