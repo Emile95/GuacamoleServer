@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
+﻿using Newtonsoft.Json.Linq;
 using Server.AgentAction;
 using Common.Sockets;
 using Server.Application;
@@ -10,7 +8,7 @@ using API.Agent;
 
 namespace Server.Agent
 {
-    public class AgentRequestHandler
+    public class AgentRequestHandler : SocketRequestHandler
     {
         private readonly API.Logger.ILogger _logger;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -25,13 +23,8 @@ namespace Server.Agent
             _agentManager = agentManager;
         }
 
-        public void ProcessRequest(SocketRequestContext context)
+        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
         {
-            JsonSerializerSettings setting = new JsonSerializerSettings();
-            setting.TypeNameHandling = TypeNameHandling.All;
-
-            SocketRequest agentRequest = JsonConvert.DeserializeObject<SocketRequest>(Encoding.ASCII.GetString(context.Data), setting);
-
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
                 JObject jObject = (JObject)agentRequest.Data;

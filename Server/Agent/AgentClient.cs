@@ -58,12 +58,12 @@ namespace Server.Agent
 
         public void InstallAgentApplication(AgentApplicationLoaded agentApplicationLoaded)
         {
-            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
+            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
         }
 
         public void ProcessAction(string actionId, string runningActionId)
         {
-            _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(actionId, runningActionId));
+            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(actionId, runningActionId));
         }
     }
 }

@@ -3,12 +3,9 @@ using Agent.Application;
 using Common;
 using Common.Request;
 using Common.Sockets;
-using Newtonsoft.Json;
-using System.Text;
-
 namespace Agent.ServerApplication.Request
 {
-    public class ServerRequestHandler
+    public class ServerRequestHandler : SocketRequestHandler
     {
         private readonly AgentActionManager _clientAgentActionManager;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -19,20 +16,15 @@ namespace Agent.ServerApplication.Request
             _agentApplicationManager = agentApplicationManager;
         }
 
-        public void ProcessRequest(SocketRequestContext context)
+        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
         {
-            JsonSerializerSettings setting = new JsonSerializerSettings();
-            setting.TypeNameHandling = TypeNameHandling.All;
-
-            SocketRequest agentRequest = JsonConvert.DeserializeObject<SocketRequest>(Encoding.ASCII.GetString(context.Data), setting);
-
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
                 InstallModule(context, agentRequest.Data as AgentApplicationLoaded);
                 return;
             }
 
-            if(_clientAgentActionManager.IsValidActionId(agentRequest.RequestId))
+            if (_clientAgentActionManager.IsValidActionId(agentRequest.RequestId))
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as string);
         }
 

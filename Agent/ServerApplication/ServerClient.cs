@@ -15,7 +15,7 @@ namespace Agent.ServerApplication
 
         public void FinishAction(string agentActionId)
         {
-            byte[] bytes = RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONFINISHQUESTID, agentActionId);
+            byte[] bytes = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONFINISHQUESTID, agentActionId);
             _socket.Send(bytes);
         }
     }

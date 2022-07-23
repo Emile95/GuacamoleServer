@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Common.Request
 {
-    public static class RequestDataBytesBuilder
+    public static class SocketRequestDataBytesBuilder
     {
 
         public static byte[] BuildRequestDataBytes(string requestId, object data)
