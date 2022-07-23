@@ -43,7 +43,6 @@ namespace Server.Agent
         private void ConnectAgent(SocketRequestContext context, AgentDefinition agentDefinition)
         {
             AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
-            _logger.Log("Agent " + agentDefinition.Name + " connected");
 
             foreach(AgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
                 agentClient.InstallAgentApplication(serverAgentApplicationLoaded);

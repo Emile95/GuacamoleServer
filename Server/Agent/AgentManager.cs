@@ -26,6 +26,7 @@ namespace Server.Agent
                     _agentClientsByLabels.Add(label, new List<AgentClient>());
                 _agentClientsByLabels[label].Add(agentClient);
             }
+            _logger.Log("Agent " + agentDefinition.Name + " connected, id : " + agentDefinition.Id);
             return agentClient;
         }
 
@@ -66,6 +67,7 @@ namespace Server.Agent
             if (agentId == null) return;
 
             RemoveAgent(agentId);
+            _logger.Log("Lost unexpectly agent, id : " + agentId);
         }
 
         public AgentClient GetAvailableAgentByLabel(string label)

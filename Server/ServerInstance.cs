@@ -5,7 +5,6 @@ using Server.AgentAction;
 using Server.Config;
 using API.Server.EventHandler;
 using Server.Application;
-using System.Diagnostics;
 
 namespace Server
 {
@@ -31,8 +30,6 @@ namespace Server
 
         public ServerInstance(ServerConfig serverConfig)
         {
-            Debugger.Launch();
-
             _config = serverConfig;
 
             _logger = new ConsoleLogger();
