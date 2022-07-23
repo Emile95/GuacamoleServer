@@ -1,6 +1,7 @@
 ﻿namespace API.AgentAction
 {
-    public class RunningAgentActionLogs
+    public class RunningAgentActionLogs : Dictionary<RunningAgentActionLogType,List<RunningAgentActionLog>>
     {
+        
     }
 }

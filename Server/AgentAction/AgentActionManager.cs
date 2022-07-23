@@ -3,6 +3,7 @@ using API.AgentAction;
 using Common;
 using Server.Agent;
 using API.Agent.Configuration.Application.AgentAction;
+using API.AgentAction;
 
 namespace Server.AgentAction
 {
@@ -44,10 +45,15 @@ namespace Server.AgentAction
 
             AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
             if (agentClient == null) return;
-            
 
             string runningAgentActionId = UniqueIdGenerator.Generate(_runningAgentActions.Keys);
-            _runningAgentActions.Add(runningAgentActionId, new RunningAgentActionLogs());
+            RunningAgentActionLogs runningAgentActionLogs = new RunningAgentActionLogs();
+            runningAgentActionLogs.Add(RunningAgentActionLogType.Fatal, new List<RunningAgentActionLog>());
+            runningAgentActionLogs.Add(RunningAgentActionLogType.Info, new List<RunningAgentActionLog>());
+            runningAgentActionLogs.Add(RunningAgentActionLogType.Error, new List<RunningAgentActionLog>());
+            runningAgentActionLogs.Add(RunningAgentActionLogType.Warning, new List<RunningAgentActionLog>());
+            runningAgentActionLogs.Add(RunningAgentActionLogType.Succeed, new List<RunningAgentActionLog>());
+            _runningAgentActions.Add(runningAgentActionId, runningAgentActionLogs);
 
             agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId);
         }
@@ -55,6 +61,17 @@ namespace Server.AgentAction
         public void RemoveRunningAction(string runningActionId)
         {
             _runningAgentActions.Remove(runningActionId);
+        }
+
+        public void LogRunningAgentAction(RunningAgentActionLog runningAgentActionLog)
+        {
+            _runningAgentActions[runningAgentActionLog.RunningAgentActionId][runningAgentActionLog.RunningAgentActionLogType].Add(runningAgentActionLog);
+
+            if(runningAgentActionLog.RunningAgentActionLogType == RunningAgentActionLogType.Succeed)
+            {
+                _runningAgentActions.Remove(runningAgentActionLog.RunningAgentActionId);
+                _logger.Log(runningAgentActionLog.Message);
+            }
         }
 
         private string GetNewID()

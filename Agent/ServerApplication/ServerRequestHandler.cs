@@ -1,8 +1,9 @@
-﻿using AgentAction;
-using Agent.Application;
+﻿using Agent.Application;
 using Common;
 using Common.Request;
 using Common.Sockets;
+using Agent.AgentAction;
+
 namespace Agent.ServerApplication.Request
 {
     public class ServerRequestHandler : SocketRequestHandler

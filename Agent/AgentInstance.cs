@@ -1,10 +1,11 @@
-﻿using AgentAction;
-using Agent.Application;
+﻿using Agent.Application;
 using Agent.Config;
 using Agent.ServerApplication;
 using Agent.ServerApplication.Request;
 using API.Agent;
 using System.Net.Sockets;
+using Agent.AgentAction;
+using API.Server;
 
 namespace Agent
 {
@@ -15,7 +16,7 @@ namespace Agent
         private readonly AgentApplicationManager _agentApplicationManager;
         private readonly ServerSocketHandler _serverSocketHandler;
         private readonly AgentActionManager _agentActionManager;
-        private readonly ServerClient _serverClient;
+        private readonly ServerOperations _serverOperations;
         private readonly ServerRequestHandler _serverRequestReceivedHandler;
         private readonly Socket _serverSocket;
 
@@ -33,9 +34,9 @@ namespace Agent
 
             _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
 
-            _serverClient = new ServerClient(_serverSocket);
+            _serverOperations = new ServerOperations(_serverSocket);
 
-            _agentActionManager = new AgentActionManager(_serverClient);
+            _agentActionManager = new AgentActionManager(_serverOperations);
 
             _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
 

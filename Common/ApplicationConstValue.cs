@@ -9,6 +9,6 @@
         //Agent Requests
         public readonly static string INSTALLMODULERAGENTREQUESTID = "InstallModule";
         public readonly static string CONNECTAGENTREQUESTID = "AgentConnect";
-        public readonly static string AGENTACTIONFINISHQUESTID = "AgentActionFinish";
+        public readonly static string AGENTACTIONLOGREQUESTID = "AgentActionLog";
     }
 }

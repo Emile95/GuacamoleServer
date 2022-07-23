@@ -5,6 +5,7 @@ using Server.Application;
 using Common;
 using Common.Request;
 using API.Agent;
+using API.AgentAction;
 
 namespace Server.Agent
 {
@@ -32,9 +33,9 @@ namespace Server.Agent
                 return;
             }
 
-            if (agentRequest.RequestId == ApplicationConstValue.AGENTACTIONFINISHQUESTID)
+            if (agentRequest.RequestId == ApplicationConstValue.AGENTACTIONLOGREQUESTID)
             {
-                AgentActionFinish(context, agentRequest.Data as string);
+                RunningAgentActionLog(context, agentRequest.Data as RunningAgentActionLog);
                 return;
             }
         }
@@ -48,10 +49,9 @@ namespace Server.Agent
                 agentClient.InstallAgentApplication(serverAgentApplicationLoaded);
         }
 
-        private void AgentActionFinish(SocketRequestContext context, string runningActionId)
+        private void RunningAgentActionLog(SocketRequestContext context, RunningAgentActionLog runningAgentActionLog)
         {
-            _serverAgentActionManager.RemoveRunningAction(runningActionId);
-            _logger.Log("Request finish, id : " + runningActionId);
+            _serverAgentActionManager.LogRunningAgentAction(runningAgentActionLog);
         }
     }
 }

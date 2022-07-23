@@ -1,17 +1,17 @@
-﻿using Agent.ServerApplication;
+﻿using API.Server;
 using API.AgentAction;
 
-namespace AgentAction
+namespace Agent.AgentAction
 {
     public class AgentActionManager
     {
-        private readonly ServerClient _serverClient;
+        private readonly ServerOperations _serverOperations;
 
         protected readonly Dictionary<string, Action<AgentActionContext>> _agentActionsLoaded;
 
-        public AgentActionManager(ServerClient serverClient)
+        public AgentActionManager(ServerOperations serverOperations)
         {
-            _serverClient = serverClient;
+            _serverOperations = serverOperations;
             _agentActionsLoaded = new Dictionary<string, Action<AgentActionContext>>();
         }
 
@@ -21,11 +21,12 @@ namespace AgentAction
             return true;
         }
 
-        public void ProcessAction(string actionId, string agentActionId)
+        public void ProcessAction(string actionId, string runningAgentActionId)
         {
             AgentActionContext agentActionContext = new AgentActionContext();
+            agentActionContext.ServerOperations = _serverOperations;
+            agentActionContext.RunningAgentActionId = runningAgentActionId;
             _agentActionsLoaded[actionId].Invoke(agentActionContext);
-            _serverClient.FinishAction(agentActionId);
         }
 
         public bool IsValidActionId(string id)

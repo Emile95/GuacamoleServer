@@ -1,4 +1,4 @@
-﻿using AgentAction;
+﻿using Agent.AgentAction;
 using API.Agent.Application;
 using API.Agent.Configuration.Application.AgentAction;
 using API.Agent.EventHandler;
