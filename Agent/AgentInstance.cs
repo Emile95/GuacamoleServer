@@ -5,7 +5,6 @@ using Agent.ServerApplication;
 using Agent.ServerApplication.Request;
 using API.Agent;
 using System.Net.Sockets;
-using System.Diagnostics;
 
 namespace Agent
 {
@@ -22,8 +21,6 @@ namespace Agent
 
         public AgentInstance(AgentConfig config)
         {
-            Debugger.Launch();
-
             _config = config;
 
             _agentDefinition = new AgentDefinition

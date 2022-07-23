@@ -1,5 +1,5 @@
 ﻿using Server.DataModel;
-using API.Agent.Action;
+using API.AgentAction;
 using Common;
 using Server.Agent;
 using API.Agent.Configuration.Application.AgentAction;
