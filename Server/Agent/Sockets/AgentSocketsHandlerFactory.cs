@@ -1,11 +1,10 @@
-﻿using Server.Agent.Request;
-using Server.Config;
+﻿using Server.Config;
 
 namespace Server.Agent.Sockets
 {
     public static class AgentSocketsHandlerFactory
     {
-        public static AgentSocketsHandler CreateAgentSocketsHandler(AgentsSocketConfig agentSocketsConfig, Library.Logger.ILogger logger, AgentReceivedHandler requestReceivedHandler)
+        public static AgentSocketsHandler CreateAgentSocketsHandler(AgentsSocketConfig agentSocketsConfig, Library.Logger.ILogger logger, AgentRequestHandler requestReceivedHandler)
         {
             switch(agentSocketsConfig.Protocol)
             {

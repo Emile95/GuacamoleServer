@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Agent.ServerApplication.Request
 {
-    public class ServerRequestReceivedHandler
+    public class ServerRequestHandler
     {
         private readonly AgentActionManager _clientAgentActionManager;
         private readonly AgentApplicationManager _agentApplicationManager;
 
-        public ServerRequestReceivedHandler(AgentActionManager clientAgentActionManager, AgentApplicationManager agentApplicationManager)
+        public ServerRequestHandler(AgentActionManager clientAgentActionManager, AgentApplicationManager agentApplicationManager)
         {
             _clientAgentActionManager = clientAgentActionManager;
             _agentApplicationManager = agentApplicationManager;

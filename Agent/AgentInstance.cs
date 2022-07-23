@@ -15,7 +15,7 @@ namespace Agent
         private readonly ServerSocketHandler _serverSocketHandler;
         private readonly AgentActionManager _agentActionManager;
         private readonly ServerClient _serverClient;
-        private readonly ServerRequestReceivedHandler _serverRequestReceivedHandler;
+        private readonly ServerRequestHandler _serverRequestReceivedHandler;
         private readonly Socket _serverSocket;
 
         public AgentInstance(AgentConfig config)
@@ -38,7 +38,7 @@ namespace Agent
 
             _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
 
-            _serverRequestReceivedHandler = new ServerRequestReceivedHandler(_agentActionManager, _agentApplicationManager);
+            _serverRequestReceivedHandler = new ServerRequestHandler(_agentActionManager, _agentApplicationManager);
 
             _serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }

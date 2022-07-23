@@ -1,5 +1,4 @@
-﻿using Server.Agent.Request;
-using Library.Sockets;
+﻿using Library.Sockets;
 using System.Net;
 using System.Net.Sockets;
 
@@ -9,13 +8,13 @@ namespace Server.Agent.Sockets
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly AgentReceivedHandler _agentRequestReceivedHandler;
+        private readonly AgentRequestHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentRequestHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];

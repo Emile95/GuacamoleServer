@@ -11,11 +11,10 @@ namespace Agent.ServerApplication
 {
     public class ServerSocketHandler
     {
-        private readonly int _port;
         private readonly Socket _serverSocket;
-        private readonly ServerRequestReceivedHandler _serverRequestReceivedHandler;
+        private readonly ServerRequestHandler _serverRequestReceivedHandler;
 
-        public ServerSocketHandler(Socket serverSocket, ServerRequestReceivedHandler serverRequestReceivedHandler)
+        public ServerSocketHandler(Socket serverSocket, ServerRequestHandler serverRequestReceivedHandler)
         {
             _serverSocket = serverSocket;
             _serverRequestReceivedHandler = serverRequestReceivedHandler;

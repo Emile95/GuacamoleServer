@@ -1,7 +1,6 @@
 ﻿using Server.Agent;
 using Server.Logger;
 using Server.Agent.Sockets;
-using Server.Agent.Request;
 using Server.Agent.Action;
 using Server.Config;
 using Server;
@@ -24,7 +23,7 @@ public class ServerInstance
 
     private readonly AgentManager _agentManager;
     private readonly ServerAgentActionManager _serverAgentActionManager;
-    private readonly AgentReceivedHandler _agentRequestReceivedHandler;
+    private readonly AgentRequestHandler _agentRequestReceivedHandler;
 
     private readonly AgentSocketsHandler _agentSocketsHandler;
 
@@ -48,7 +47,7 @@ public class ServerInstance
 
         _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
 
-        _agentRequestReceivedHandler = new AgentReceivedHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
+        _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
 
         _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentRequestReceivedHandler);
     }

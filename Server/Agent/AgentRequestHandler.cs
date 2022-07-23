@@ -7,16 +7,16 @@ using Library;
 using Server.Agent.Action;
 using Library.Sockets;
 
-namespace Server.Agent.Request
+namespace Server.Agent
 {
-    public class AgentReceivedHandler
+    public class AgentRequestHandler
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentApplicationManager _agentApplicationManager;
         private readonly ServerAgentActionManager _serverAgentActionManager;
         private readonly AgentManager _agentManager;
 
-        public AgentReceivedHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, ServerAgentActionManager serverAgentActionManager, AgentManager agentManager)
+        public AgentRequestHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, ServerAgentActionManager serverAgentActionManager, AgentManager agentManager)
         {
             _logger = logger;
             _agentApplicationManager = agentApplicationManager;
