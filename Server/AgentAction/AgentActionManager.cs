@@ -31,7 +31,7 @@ namespace Server.AgentAction
                 ParameterType = agentAction.ParameterType
             };
             _agentActionsLoaded.Add(agentActionLoaded.ActionId, agentActionLoaded);
-            _logger.Log("new action named " + agentActionLoaded.DisplayName + ", id " + agentActionLoaded.ActionId);
+            _logger.Log("Added action named " + agentActionLoaded.DisplayName + ", id " + agentActionLoaded.ActionId);
             return agentActionLoaded.ActionId;
         }
 

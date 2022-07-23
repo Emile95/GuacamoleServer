@@ -29,6 +29,7 @@ namespace Server.Agent.Sockets
         public void Start()
         {
             _socket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
+            _logger.Log("Socket listening at " + _hostIpAddress.ToString() + ":" + _port);
         }
 
         public void Stop()
