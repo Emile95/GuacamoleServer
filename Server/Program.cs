@@ -8,6 +8,8 @@ try
 
     serverInstance.LoadServerApplications();
 
+    serverInstance.LoadAgentApplications();
+
     serverInstance.StartSockets();
 
     serverInstance.RunWebApp(args);
