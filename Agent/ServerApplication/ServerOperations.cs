@@ -44,7 +44,7 @@ namespace Agent.ServerApplication
             {
                 RunningAgentActionId = runningAgentActionId,
                 Message = message,
-                RunningAgentActionLogType = RunningAgentActionLogType.runningAgentActionLogType
+                RunningAgentActionLogType = runningAgentActionLogType
             };
             byte[] bytes = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONLOGREQUESTID, log);
             _socket.Send(bytes);

@@ -5,7 +5,7 @@ namespace Agent.ServerApplication
 {
     public static class ServerSocketFactory
     {
-        public static Socket CreateServerSocket(string protocol, int port)
+        public static Socket CreateServerSocket(string host, string protocol, int port)
         {
             ProtocolType protocolType = 0;
             switch(protocol)
@@ -14,15 +14,19 @@ namespace Agent.ServerApplication
                 default: throw new Exception("need to provide a valid protocol for socket, you provde '" + protocol + "'");
             }
 
-            IPAddress host = Dns.GetHostAddresses(Dns.GetHostName())[0];
+            IPAddress hostIpAddress = IPAddress.Parse(host);
+
+#if DEBUG
+            hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
+#endif
 
             Socket serverSocket = new Socket(
-                host.AddressFamily,
+                hostIpAddress.AddressFamily,
                 SocketType.Stream,
                 protocolType
             );
 
-            serverSocket.Connect(new IPEndPoint(host, port));
+            serverSocket.Connect(new IPEndPoint(hostIpAddress, port));
 
             return serverSocket;
         }

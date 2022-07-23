@@ -32,7 +32,7 @@ namespace Agent
                 ConcurrentRun = _config.ConcurrentRun
             };
 
-            _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
+            _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Host ,_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
 
             _serverOperations = new ServerOperations(_serverSocket);
 

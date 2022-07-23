@@ -4,6 +4,7 @@
   "labels": [ "ubuntu18" ],
   "concurrentRun": 5,
   "serverSocketConfig": {
+    "host": "127.0.0.1",
     "Protocol": "tcp",
     "Port": 1000
   }
