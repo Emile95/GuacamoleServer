@@ -1,5 +1,5 @@
 ﻿using API.Agent.Application;
-using API.Agent.Configuration.Application.AgentAction;
+using API.AgentAction.Configuration;
 using Common;
 using Server.AgentAction;
 using System.Reflection;

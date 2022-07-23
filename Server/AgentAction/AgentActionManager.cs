@@ -2,7 +2,10 @@
 using API.AgentAction;
 using Common;
 using Server.Agent;
-using API.Agent.Configuration.Application.AgentAction;
+using API.AgentAction.Configuration;
+using System.Reflection;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Server.AgentAction
 {
@@ -39,9 +42,10 @@ namespace Server.AgentAction
         {
             if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) throw new Exception("there is no agent action with id : " + processActionDataModel.ActionId);
             AgentActionLoaded agentActionLoaded = _agentActionsLoaded[processActionDataModel.ActionId];
+            object agentActionParameter = null;
             if (agentActionLoaded.ParameterType != null)
-                ValidateAgentActionParameter(agentActionLoaded.ParameterType, processActionDataModel.Parameter);
-
+                agentActionParameter = ResolveAgentActionParameter(agentActionLoaded.ParameterType, processActionDataModel.Parameter);
+            
             AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
             if (agentClient == null) throw new Exception("there is no available agent of label : " + processActionDataModel.AgentLabel);
 
@@ -54,7 +58,7 @@ namespace Server.AgentAction
             runningAgentActionLogs.Add(RunningAgentActionLogType.Succeed, new List<RunningAgentActionLog>());
             _runningAgentActions.Add(runningAgentActionId, runningAgentActionLogs);
 
-            agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId);
+            agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId, agentActionParameter);
 
             _logger.Log("Run agent action " + agentActionLoaded.DisplayName + ", running id : " + runningAgentActionId);
 
@@ -100,9 +104,28 @@ namespace Server.AgentAction
             return UniqueIdGenerator.Generate(_agentActionsLoaded.Keys);
         }
 
-        private void ValidateAgentActionParameter(Type agentActionParameterType, object parameter)
+        private object ResolveAgentActionParameter(Type agentActionParameterType, object parameter)
         {
             if (parameter == null) throw new Exception("need to provide parameter to your action : " + agentActionParameterType.GetProperties().ToString());
+
+            object result = Activator.CreateInstance(agentActionParameterType);
+
+            parameter = JsonConvert.DeserializeObject(((JsonElement)parameter).GetRawText(), agentActionParameterType);
+
+            PropertyInfo[] props = agentActionParameterType.GetProperties();
+            foreach(PropertyInfo prop in props)
+            {
+                ParameterMemberAttriubte parameterMemberAttriubte = prop.GetCustomAttribute<ParameterMemberAttriubte>();
+                if (parameterMemberAttriubte == null) continue;
+                object propResult = prop.GetValue(parameter);
+                if(parameterMemberAttriubte.IsRequired && propResult == null)
+                    throw new Exception("Parameter member '" + prop.Name + "' is required");
+                if (propResult == null)
+                    propResult = parameterMemberAttriubte.DefaultValue;
+                prop.SetValue(result, propResult);
+            }
+
+            return result;
         }
     }
 }

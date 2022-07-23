@@ -7,5 +7,6 @@
         public Action<string> LogInfoAgentAction { get; set; }
         public Action<string> LogWarningAgentAction { get; set; }
         public Action<string> LogErrorAgentAction { get; set; }
+        public object Parameter { get; set; }
     }
 }

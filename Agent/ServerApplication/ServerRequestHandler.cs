@@ -26,7 +26,7 @@ namespace Agent.ServerApplication.Request
             }
 
             if (_clientAgentActionManager.IsValidActionId(agentRequest.RequestId))
-                _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as string);
+                _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as Tuple<string,object>);
         }
 
         private void InstallModule(SocketRequestContext context, AgentApplicationLoaded serverAgentApplicationLoaded)

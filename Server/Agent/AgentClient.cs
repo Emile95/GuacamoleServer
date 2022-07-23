@@ -61,9 +61,9 @@ namespace Server.Agent
             _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
         }
 
-        public void ProcessAction(string actionId, string runningActionId)
+        public void ProcessAction(string actionId, string runningActionId, object parameter)
         {
-            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(actionId, runningActionId));
+            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(actionId, new Tuple<string, object>(runningActionId, parameter)));
         }
     }
 }

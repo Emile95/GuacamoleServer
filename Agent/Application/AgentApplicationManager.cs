@@ -1,7 +1,7 @@
 ﻿using Agent.AgentAction;
 using API.Agent.Application;
-using API.Agent.Configuration.Application.AgentAction;
 using API.Agent.EventHandler;
+using API.AgentAction.Configuration;
 using System.Reflection;
 
 namespace Agent.Application

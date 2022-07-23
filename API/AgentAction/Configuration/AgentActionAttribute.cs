@@ -1,5 +1,5 @@
-﻿namespace API.Agent.Configuration.Application.AgentAction
-{
+﻿namespace API.AgentAction.Configuration
+{ 
     public class AgentActionAttribute : Attribute
     {
         public string DisplayName { get; set; }
