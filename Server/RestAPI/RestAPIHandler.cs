@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Server.RestAPI
 {
     public class RestAPIHandler
     {
+        private readonly API.Logger.ILogger _logger;
         private readonly WebApplication _webApp;
 
-        public RestAPIHandler()
+        public RestAPIHandler(API.Logger.ILogger logger)
         {
+            _logger = logger;
+
             var builder = WebApplication.CreateBuilder();
 
             builder.Services.AddCors(options =>
@@ -38,7 +43,15 @@ namespace Server.RestAPI
 
         public void Run()
         {
-            _webApp.RunAsync();
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    string ipStr = "http://"+ ip.ToString() + ":5000";
+                    _webApp.RunAsync(ipStr);
+                }
+            }
         }
 
         public void Stop()
