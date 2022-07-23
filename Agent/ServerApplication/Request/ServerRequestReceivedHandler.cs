@@ -1,10 +1,8 @@
 ﻿using Agent.Action;
 using Library;
-using Library.Agent.Application;
-using Library.Agent.Configuration.Application.AgentAction;
 using Library.Agent.Request;
+using Library.Sockets;
 using Newtonsoft.Json;
-using System.Reflection;
 using System.Text;
 
 namespace Agent.ServerApplication.Request
@@ -20,7 +18,7 @@ namespace Agent.ServerApplication.Request
             _agentApplicationManager = agentApplicationManager;
         }
 
-        public void ProcessRequest(ServerRequestReceivedContext context)
+        public void ProcessRequest(SocketRequestContext context)
         {
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
@@ -29,7 +27,7 @@ namespace Agent.ServerApplication.Request
 
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
-                InstallModule(agentRequest.Data as ServerAgentApplicationLoaded, context);
+                InstallModule(context, agentRequest.Data as ServerAgentApplicationLoaded);
                 return;
             }
 
@@ -37,7 +35,7 @@ namespace Agent.ServerApplication.Request
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as string);
         }
 
-        private void InstallModule(ServerAgentApplicationLoaded serverAgentApplicationLoaded, ServerRequestReceivedContext context)
+        private void InstallModule(SocketRequestContext context, ServerAgentApplicationLoaded serverAgentApplicationLoaded)
         {
             string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
             File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);

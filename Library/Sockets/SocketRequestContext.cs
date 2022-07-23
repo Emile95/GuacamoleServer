@@ -1,8 +1,8 @@
 ﻿using System.Net.Sockets;
 
-namespace Server.Agent.Request
+namespace Library.Sockets
 {
-    public class RequestReceivedContext
+    public class SocketRequestContext
     {
         public Socket SourceSocket { get; set; }
         public byte[] Data { get; set; }

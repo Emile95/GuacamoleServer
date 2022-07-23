@@ -3,7 +3,6 @@ using Agent.Config;
 using Agent.ServerApplication;
 using Agent.ServerApplication.Request;
 using Library.Agent;
-using System.Diagnostics;
 using System.Net.Sockets;
 
 namespace Agent
@@ -30,7 +29,6 @@ namespace Agent
                 Labels = _config.Labels,
                 ConcurrentRun = _config.ConcurrentRun
             };
-
 
             _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
 

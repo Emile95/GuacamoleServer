@@ -6,7 +6,7 @@ namespace Server.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(Library.Logger.ILogger logger, int port, RequestReceivedHandler agentRequestReceivedHandler)
+        public TCPAgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentReceivedHandler agentRequestReceivedHandler)
         : base(logger, port, agentRequestReceivedHandler) {}
 
         protected override Socket GetSocket()

@@ -9,13 +9,13 @@ namespace Server.Agent.Sockets
     {
         private readonly Library.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
-        private readonly RequestReceivedHandler _agentRequestReceivedHandler;
+        private readonly AgentReceivedHandler _agentRequestReceivedHandler;
 
         protected readonly IPAddress _hostIpAddress;
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, RequestReceivedHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentReceivedHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -65,7 +65,7 @@ namespace Server.Agent.Sockets
                 return;
             }
 
-            RequestReceivedContext context = new RequestReceivedContext();
+            SocketRequestContext context = new SocketRequestContext();
             context.SourceSocket = clientSocket;
 
             context.Data = new byte[bytesRead];
