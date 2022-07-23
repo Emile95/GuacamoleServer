@@ -2,5 +2,6 @@
   "AgentSocketsConfig": {
     "Protocol": "tcp",
     "Port": 1000
-  }
+  },
+  "WebPort" : 5000
 }

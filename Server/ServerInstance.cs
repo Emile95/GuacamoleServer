@@ -54,7 +54,7 @@ namespace Server
 
             _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _agentRequestReceivedHandler);
 
-            _restAPIHandler = new RestAPIHandler(_logger);
+            _restAPIHandler = new RestAPIHandler(_logger, _config.WebPort);
         }
 
         public void LoadServerApplications()

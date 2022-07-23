@@ -9,13 +9,15 @@ namespace Server.RestAPI
         private readonly API.Logger.ILogger _logger;
         private WebApplication _webApp;
         private readonly Dictionary<HttpRequestMethod, Dictionary<string,Delegate>> _mappedRequests;
+        private readonly int _port;
 
-        public RestAPIHandler(API.Logger.ILogger logger)
+        public RestAPIHandler(API.Logger.ILogger logger, int port)
         {
             _logger = logger;
             _mappedRequests = new Dictionary<HttpRequestMethod, Dictionary<string, Delegate>>();
             _mappedRequests.Add(HttpRequestMethod.POST, new Dictionary<string, Delegate>());
             _mappedRequests.Add(HttpRequestMethod.GET, new Dictionary<string, Delegate>());
+            _port = port;
         }
 
         public void MapPost<Body>(string pattern, Func<Body,object> action)
@@ -60,7 +62,7 @@ namespace Server.RestAPI
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    string ipStr = "http://"+ ip.ToString() + ":5000";
+                    string ipStr = "http://"+ ip.ToString() + ":" + _port;
                     _webApp.RunAsync(ipStr);
                 }
             }
