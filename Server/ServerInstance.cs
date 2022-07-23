@@ -39,8 +39,6 @@ public class ServerInstance
     {
         _config = serverConfig;
 
-        
-
         _eventHandlerManager = new ServerEventHandlerManager();
         _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
         

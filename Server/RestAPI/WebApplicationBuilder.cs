@@ -35,7 +35,13 @@ namespace Server.RestAPI
 
             webApplication.MapPost("action/process", ([FromBody] ProcessActionDataModel processActionDataModel) =>
             {
-                agentActionManager.ProcessAgentAction(processActionDataModel);
+                try
+                {
+                    agentActionManager.ProcessAgentAction(processActionDataModel);
+                } catch (Exception ex)
+                {
+                    return ex.Message;
+                }
                 return "hoho";
             });
 
