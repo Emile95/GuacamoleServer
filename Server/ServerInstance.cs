@@ -1,10 +1,9 @@
 ﻿using Server.Agent;
 using Server.Logger;
 using Server.Agent.Sockets;
-using Server.Agent.Action;
+using Server.AgentAction;
 using Server.Config;
-using Library.Server.Application;
-using Library.Server.EventHandler;
+using API.Server.EventHandler;
 using Server.Application;
 
 namespace Server
@@ -13,14 +12,14 @@ namespace Server
     {
         private readonly ServerConfig _config;
 
-        private Library.Logger.ILogger _logger;
+        private API.Logger.ILogger _logger;
 
         private readonly ServerEventHandlerManager _eventHandlerManager;
         private readonly ServerApplicationResolver _applicationResolver;
         private readonly ServerApplicationManager _serverApplicationManager;
 
         private readonly AgentManager _agentManager;
-        private readonly ServerAgentActionManager _serverAgentActionManager;
+        private readonly AgentActionManager _serverAgentActionManager;
 
         private readonly AgentApplicationManager _agentApplicationManager;
 
@@ -45,7 +44,7 @@ namespace Server
 
             _agentManager = new AgentManager(_logger);
 
-            _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
+            _serverAgentActionManager = new AgentActionManager(_logger, _agentManager);
 
             _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
 

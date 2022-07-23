@@ -1,4 +1,4 @@
-﻿namespace Library.Server.Application.ConfigurationMember
+﻿namespace API.Server.Application.ConfigurationMember
 {
     public class ServerConfigurationMember : Attribute
     {

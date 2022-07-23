@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
-namespace Library.Agent.Request
+namespace Common.Request
 {
     public static class RequestDataBytesBuilder
     {
@@ -12,7 +12,7 @@ namespace Library.Agent.Request
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
 
-            AgentRequest agentRequestData = new AgentRequest
+            SocketRequest agentRequestData = new SocketRequest
             {
                 RequestId = requestId,
                 Data = data

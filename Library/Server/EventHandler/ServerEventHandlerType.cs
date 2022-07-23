@@ -1,4 +1,4 @@
-﻿namespace Library.Server.EventHandler
+﻿namespace API.Server.EventHandler
 {
     public enum ServerEventHandlerType
     {

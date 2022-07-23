@@ -1,7 +1,7 @@
-﻿using Library.Agent.Application;
-using Library.Storage;
+﻿using API.Agent.Application;
+using Common.Storage;
 
-namespace Library.Agent.Configuration.Application
+namespace API.Agent.Configuration.Application
 {
     public abstract class AgentConfigurableApplication<Configuration> : AgentApplicationBase
         where Configuration : class, new()

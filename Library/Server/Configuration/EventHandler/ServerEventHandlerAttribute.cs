@@ -1,8 +1,8 @@
 ﻿
 
-using Library.Server.EventHandler;
+using API.Server.EventHandler;
 
-namespace Library.Server.Configuration.EventHandler
+namespace API.Server.Configuration.EventHandler
 {
     public class ServerEventHandlerAttribute : Attribute
     {

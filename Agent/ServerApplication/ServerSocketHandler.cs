@@ -1,8 +1,8 @@
 ﻿using Agent.ServerApplication.Request;
-using Library;
-using Library.Agent;
-using Library.Agent.Request;
-using Library.Sockets;
+using API.Agent;
+using Common;
+using Common.Request;
+using Common.Sockets;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
@@ -22,7 +22,7 @@ namespace Agent.ServerApplication
 
         public void Start(AgentDefinition agentDefinition)
         {
-            AgentRequest data = new AgentRequest
+            SocketRequest data = new SocketRequest
             {
                 RequestId = ApplicationConstValue.CONNECTAGENTREQUESTID,
                 Data = agentDefinition

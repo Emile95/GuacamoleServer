@@ -1,5 +1,5 @@
-﻿using Library;
-using Library.Agent.Request;
+﻿using Common;
+using Common.Request;
 using System.Net.Sockets;
 
 namespace Agent.ServerApplication

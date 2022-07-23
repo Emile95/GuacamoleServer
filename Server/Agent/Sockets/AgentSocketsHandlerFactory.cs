@@ -4,7 +4,7 @@ namespace Server.Agent.Sockets
 {
     public static class AgentSocketsHandlerFactory
     {
-        public static AgentSocketsHandler CreateAgentSocketsHandler(AgentsSocketConfig agentSocketsConfig, Library.Logger.ILogger logger, AgentRequestHandler requestReceivedHandler)
+        public static AgentSocketsHandler CreateAgentSocketsHandler(AgentsSocketConfig agentSocketsConfig, API.Logger.ILogger logger, AgentRequestHandler requestReceivedHandler)
         {
             switch(agentSocketsConfig.Protocol)
             {

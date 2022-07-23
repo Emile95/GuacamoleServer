@@ -1,4 +1,6 @@
-﻿namespace Library.Agent.Application
+﻿using Common;
+
+namespace API.Agent.Application
 {
     public class AgentApplicationContext : IDisposable
     {

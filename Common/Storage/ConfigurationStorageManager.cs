@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Library.Storage
+namespace Common.Storage
 {
     public class ConfigurationStorageManager<Configuration>
     {

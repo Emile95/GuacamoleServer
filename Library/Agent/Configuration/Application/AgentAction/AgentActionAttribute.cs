@@ -1,6 +1,6 @@
-﻿namespace Library.Agent.Configuration.Application.AgentAction
+﻿namespace API.Agent.Configuration.Application.AgentAction
 {
-    public class AgentAction : Attribute
+    public class AgentActionAttribute : Attribute
     {
         public string DisplayName { get; set; }
         public Type ParameterType { get; set; }

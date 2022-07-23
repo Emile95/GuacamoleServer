@@ -1,6 +1,6 @@
-﻿using Library.Server.EventHandler;
+﻿using API.Server.EventHandler;
 
-namespace Library.Server.Application
+namespace API.Server.Application
 {
     public abstract class ServerApplicationBase
     {

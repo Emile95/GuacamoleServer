@@ -1,26 +1,26 @@
-﻿using Library;
-using Library.Agent.Application;
-using Library.Agent.Configuration.Application.AgentAction;
-using Server.Agent.Action;
+﻿using API.Agent.Application;
+using API.Agent.Configuration.Application.AgentAction;
+using Common;
+using Server.AgentAction;
 using System.Reflection;
 
 namespace Server.Application
 {
     public class AgentApplicationManager
     {
-        private readonly Dictionary<string, ServerAgentApplicationLoaded> _applications;
-        private readonly ServerAgentActionManager _serverAgentActionManager;
+        private readonly Dictionary<string, AgentApplicationLoaded> _applications;
+        private readonly AgentActionManager _serverAgentActionManager;
 
-        public AgentApplicationManager(ServerAgentActionManager serverAgentActionManager)
+        public AgentApplicationManager(AgentActionManager serverAgentActionManager)
         {
-            _applications = new Dictionary<string, ServerAgentApplicationLoaded>();
+            _applications = new Dictionary<string, AgentApplicationLoaded>();
             _serverAgentActionManager = serverAgentActionManager;
         }
 
         public void AddAgentApplication(string filePath, byte[] fileBin, List<string> agentActionIds)
         {
             string id = CreateNewId();
-            ServerAgentApplicationLoaded agentApplicationLoaded = new ServerAgentApplicationLoaded
+            AgentApplicationLoaded agentApplicationLoaded = new AgentApplicationLoaded
             {
                 Id = id,
                 ActionIds = agentActionIds,
@@ -30,7 +30,7 @@ namespace Server.Application
             _applications.Add(id, agentApplicationLoaded);
         }
 
-        public List<ServerAgentApplicationLoaded> GetAgentApplicationLoadeds()
+        public List<AgentApplicationLoaded> GetAgentApplicationLoadeds()
         {
             return _applications.Values.ToList();
         }
@@ -56,7 +56,7 @@ namespace Server.Application
                         MethodInfo[] methods = agentApplication.GetType().GetMethods();
                         foreach (MethodInfo method in methods)
                         {
-                            AgentAction agentAction = method.GetCustomAttribute<AgentAction>();
+                            AgentActionAttribute agentAction = method.GetCustomAttribute<AgentActionAttribute>();
                             if (agentAction == null) continue;
                             agentActionIds.Add(_serverAgentActionManager.AddAgentAction(agentAction));
                         }

@@ -1,4 +1,4 @@
-﻿namespace Library
+﻿namespace Common
 {
     public static class UniqueIdGenerator
     {

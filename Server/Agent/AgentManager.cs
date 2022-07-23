@@ -1,15 +1,15 @@
 ﻿using System.Net.Sockets;
-using Library.Agent;
+using API.Agent;
 
 namespace Server.Agent
 {
     public class AgentManager
     {
-        private readonly Library.Logger.ILogger _logger;
+        private readonly API.Logger.ILogger _logger;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
 
-        public AgentManager(Library.Logger.ILogger logger)
+        public AgentManager(API.Logger.ILogger logger)
         {
             _logger = logger;
             _agentClients = new Dictionary<string, AgentClient>();

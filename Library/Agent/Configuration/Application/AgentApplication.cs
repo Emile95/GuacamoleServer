@@ -1,6 +1,6 @@
-﻿using Library.Agent.Application;
+﻿using API.Agent.Application;
 
-namespace Library.Agent.Configuration.Application
+namespace API.Agent.Configuration.Application
 {
     public abstract class AgentApplication : AgentApplicationBase
     {

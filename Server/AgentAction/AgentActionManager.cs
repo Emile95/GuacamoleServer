@@ -1,19 +1,20 @@
-﻿using Library;
-using Server.DataModel;
-using Library.Agent.Action;
-using Library.Agent.Configuration.Application.AgentAction;
+﻿using Server.DataModel;
+using API.Agent.Action;
+using Common;
+using Server.Agent;
+using API.Agent.Configuration.Application.AgentAction;
 
-namespace Server.Agent.Action
+namespace Server.AgentAction
 {
-    public class ServerAgentActionManager
+    public class AgentActionManager
     {
-        private readonly Library.Logger.ILogger _logger;
+        private readonly API.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
 
         private readonly Dictionary<string, AgentActionLoaded> _agentActionsLoaded;
         private readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
 
-        public ServerAgentActionManager(Library.Logger.ILogger logger, AgentManager agentManager)
+        public AgentActionManager(API.Logger.ILogger logger, AgentManager agentManager)
         {
             _logger = logger;
             _agentManager = agentManager;
@@ -21,7 +22,7 @@ namespace Server.Agent.Action
             _agentActionsLoaded = new Dictionary<string, AgentActionLoaded>();
         }
 
-        public string AddAgentAction(AgentAction agentAction)
+        public string AddAgentAction(AgentActionAttribute agentAction)
         {
             AgentActionLoaded agentActionLoaded = new AgentActionLoaded
             {

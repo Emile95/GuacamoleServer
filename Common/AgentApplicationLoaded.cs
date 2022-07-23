@@ -1,6 +1,6 @@
-﻿namespace Library
+﻿namespace Common
 {
-    public class ServerAgentApplicationLoaded
+    public class AgentApplicationLoaded
     {
         public string Id { get; set; }
         public string FilePath { get; set; }

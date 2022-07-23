@@ -1,6 +1,6 @@
-﻿using Library.Storage;
+﻿using Common.Storage;
 
-namespace Library.Server.Application
+namespace API.Server.Application
 {
     public abstract class ServerConfigurableApplication<Configuration> : ServerApplicationBase
         where Configuration : class, new()

@@ -1,9 +1,9 @@
-﻿using Agent.Action;
+﻿using AgentAction;
 using Agent.Application;
 using Agent.Config;
 using Agent.ServerApplication;
 using Agent.ServerApplication.Request;
-using Library.Agent;
+using API.Agent;
 using System.Net.Sockets;
 
 namespace Agent

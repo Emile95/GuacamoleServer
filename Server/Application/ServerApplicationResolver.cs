@@ -1,6 +1,6 @@
-﻿using Library.Server.Application;
-using Library.Server.Configuration.EventHandler;
-using Library.Server.EventHandler;
+﻿using API.Server.Application;
+using API.Server.Configuration.EventHandler;
+using API.Server.EventHandler;
 using System.Reflection;
 
 namespace Server.Application

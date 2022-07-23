@@ -1,7 +1,7 @@
-﻿using Agent.Action;
-using Library.Agent.Application;
-using Library.Agent.Configuration.Application.AgentAction;
-using Library.Agent.EventHandler;
+﻿using AgentAction;
+using API.Agent.Application;
+using API.Agent.Configuration.Application.AgentAction;
+using API.Agent.EventHandler;
 using System.Reflection;
 
 namespace Agent.Application
@@ -45,7 +45,7 @@ namespace Agent.Application
             int agentAcitonIdIndex = 0;
             foreach (MethodInfo method in methods)
             {
-                AgentAction agentAction = method.GetCustomAttribute<AgentAction>();
+                AgentActionAttribute agentAction = method.GetCustomAttribute<AgentActionAttribute>();
                 if (agentAction == null) continue;
                 _agentActionManager.AddAgentAction(agentActionIds[agentAcitonIdIndex], (context) => method.Invoke(application,new object[] { context }));
                 agentAcitonIdIndex++;

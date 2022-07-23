@@ -1,7 +1,7 @@
 ﻿using Agent.ServerApplication;
-using Library.Agent.Action;
+using API.Agent.Action;
 
-namespace Agent.Action
+namespace AgentAction
 {
     public class AgentActionManager
     {

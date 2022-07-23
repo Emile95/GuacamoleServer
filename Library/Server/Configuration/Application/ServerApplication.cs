@@ -1,4 +1,4 @@
-﻿namespace Library.Server.Application
+﻿namespace API.Server.Application
 {
     public abstract class ServerApplication : ServerApplicationBase
     {

@@ -1,6 +1,6 @@
-﻿using Library.Agent.EventHandler;
+﻿using API.Agent.EventHandler;
 
-namespace Library.Agent.Application
+namespace API.Agent.Application
 {
     public abstract class AgentApplicationBase
     {

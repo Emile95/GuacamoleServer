@@ -1,4 +1,4 @@
-﻿namespace Library.Logger
+﻿namespace API.Logger
 {
     public interface ILogger
     {

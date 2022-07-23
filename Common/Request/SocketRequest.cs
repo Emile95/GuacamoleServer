@@ -1,6 +1,6 @@
-﻿namespace Library.Agent.Request
+﻿namespace Common.Request
 {
-    public class AgentRequest
+    public class SocketRequest
     {
         public string RequestId { get; set; }
         public object Data { get; set; }

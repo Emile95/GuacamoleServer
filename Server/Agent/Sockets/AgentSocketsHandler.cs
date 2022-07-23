@@ -1,4 +1,4 @@
-﻿using Library.Sockets;
+﻿using Common.Sockets;
 using System.Net;
 using System.Net.Sockets;
 
@@ -6,7 +6,7 @@ namespace Server.Agent.Sockets
 {
     public abstract class AgentSocketsHandler
     {
-        private readonly Library.Logger.ILogger _logger;
+        private readonly API.Logger.ILogger _logger;
         private readonly AgentManager _agentManager;
         private readonly AgentRequestHandler _agentRequestReceivedHandler;
 
@@ -14,7 +14,7 @@ namespace Server.Agent.Sockets
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(Library.Logger.ILogger logger, int port, AgentRequestHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(API.Logger.ILogger logger, int port, AgentRequestHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];

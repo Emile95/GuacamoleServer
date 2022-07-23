@@ -1,23 +1,23 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
-using Library.Agent;
-using Library.Agent.Request;
-using Library;
-using Server.Agent.Action;
-using Library.Sockets;
+using Server.AgentAction;
+using Common.Sockets;
 using Server.Application;
+using Common;
+using Common.Request;
+using API.Agent;
 
 namespace Server.Agent
 {
     public class AgentRequestHandler
     {
-        private readonly Library.Logger.ILogger _logger;
+        private readonly API.Logger.ILogger _logger;
         private readonly AgentApplicationManager _agentApplicationManager;
-        private readonly ServerAgentActionManager _serverAgentActionManager;
+        private readonly AgentActionManager _serverAgentActionManager;
         private readonly AgentManager _agentManager;
 
-        public AgentRequestHandler(Library.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, ServerAgentActionManager serverAgentActionManager, AgentManager agentManager)
+        public AgentRequestHandler(API.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, AgentActionManager serverAgentActionManager, AgentManager agentManager)
         {
             _logger = logger;
             _agentApplicationManager = agentApplicationManager;
@@ -30,7 +30,7 @@ namespace Server.Agent
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
 
-            AgentRequest agentRequest = JsonConvert.DeserializeObject<AgentRequest>(Encoding.ASCII.GetString(context.Data), setting);
+            SocketRequest agentRequest = JsonConvert.DeserializeObject<SocketRequest>(Encoding.ASCII.GetString(context.Data), setting);
 
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
@@ -51,7 +51,7 @@ namespace Server.Agent
             AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
             _logger.Log("Agent " + agentDefinition.Name + " connected");
 
-            foreach(ServerAgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
+            foreach(AgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
                 agentClient.InstallAgentApplication(serverAgentApplicationLoaded);
         }
 

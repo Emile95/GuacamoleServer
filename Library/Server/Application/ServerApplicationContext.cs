@@ -1,4 +1,6 @@
-﻿namespace Library.Server.Application
+﻿using Common;
+
+namespace API.Server.Application
 {
     public class ServerApplicationContext : IDisposable
     {

@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-namespace Library.Sockets
+namespace Common.Sockets
 {
     public class StateObject
     {

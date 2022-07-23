@@ -1,4 +1,4 @@
-﻿namespace Library.Agent.EventHandler
+﻿namespace API.Agent.EventHandler
 {
     public enum AgentEventHandlerType
     {

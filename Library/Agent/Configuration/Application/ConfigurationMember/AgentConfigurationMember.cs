@@ -1,4 +1,4 @@
-﻿namespace Library.Agent.Configuration.Application.ConfigurationMember
+﻿namespace API.Agent.Configuration.Application.ConfigurationMember
 {
     public class AgentConfigurationMember : Attribute
     {

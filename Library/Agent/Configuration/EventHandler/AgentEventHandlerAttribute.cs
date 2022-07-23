@@ -1,6 +1,6 @@
-﻿using Library.Agent.EventHandler;
+﻿using API.Agent.EventHandler;
 
-namespace Library.Agent.Configuration.EventHandler
+namespace API.Agent.Configuration.EventHandler
 {
     public class AgentEventHandlerAttribute : Attribute
     {

@@ -1,6 +1,6 @@
-﻿using Library.Server.Configuration.EventHandler;
+﻿using API.Server.Configuration.EventHandler;
 
-namespace Library.Server.EventHandler
+namespace API.Server.EventHandler
 {
     public class ServerEventHandlerManager
     {

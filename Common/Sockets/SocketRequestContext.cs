@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace Library.Sockets
+namespace Common.Sockets
 {
     public class SocketRequestContext
     {

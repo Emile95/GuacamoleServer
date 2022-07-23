@@ -1,6 +1,6 @@
-﻿using Library.Agent.Application;
-using Library.Agent.Configuration.EventHandler;
-using Library.Agent.EventHandler;
+﻿using API.Agent.Application;
+using API.Agent.Configuration.EventHandler;
+using API.Agent.EventHandler;
 using System.Reflection;
 
 namespace Agent.Application

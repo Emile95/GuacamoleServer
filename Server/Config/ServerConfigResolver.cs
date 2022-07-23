@@ -1,4 +1,4 @@
-﻿using Library;
+﻿using Common;
 using Newtonsoft.Json;
 
 namespace Server.Config

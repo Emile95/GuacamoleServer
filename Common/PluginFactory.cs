@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Library
+namespace Common
 {
     public static class PluginFactory
     {

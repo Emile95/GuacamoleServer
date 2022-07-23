@@ -1,6 +1,6 @@
-﻿using Library;
-using Library.Agent;
-using Library.Agent.Request;
+﻿using API.Agent;
+using Common;
+using Common.Request;
 using System.Net.Sockets;
 
 namespace Server.Agent
@@ -9,11 +9,11 @@ namespace Server.Agent
     {
         private readonly AgentDefinition _agentDefinition;
         private readonly Socket _socket;
-        private readonly Library.Logger.ILogger _logger;
+        private readonly API.Logger.ILogger _logger;
         private bool _locked;
         private int _actionRunning;
 
-        public AgentClient(AgentDefinition agentDefinition, Socket socket, Library.Logger.ILogger logger)
+        public AgentClient(AgentDefinition agentDefinition, Socket socket, API.Logger.ILogger logger)
         {
             _agentDefinition = agentDefinition;
             _socket = socket;
@@ -56,7 +56,7 @@ namespace Server.Agent
             return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void InstallAgentApplication(ServerAgentApplicationLoaded agentApplicationLoaded)
+        public void InstallAgentApplication(AgentApplicationLoaded agentApplicationLoaded)
         {
             _socket.Send(RequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
         }
