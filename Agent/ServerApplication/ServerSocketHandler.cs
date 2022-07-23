@@ -54,6 +54,7 @@ namespace Agent.ServerApplication
 
             SocketRequestContext context = new SocketRequestContext();
             context.SourceSocket = socket;
+            context.NbByteReceived = bytesRead;
 
             context.Data = new byte[bytesRead];
             for (int i = 0; i < bytesRead; i++)
