@@ -1,8 +1,9 @@
-﻿using Library.Agent.Configuration.EventHandler;
+﻿using Library.Agent.Application;
+using Library.Agent.Configuration.EventHandler;
 using Library.Agent.EventHandler;
 using System.Reflection;
 
-namespace Library.Agent.Application
+namespace Agent.Application
 {
     public class AgentApplicationResolver
     {

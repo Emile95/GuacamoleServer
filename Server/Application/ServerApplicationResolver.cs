@@ -1,8 +1,9 @@
-﻿using Library.Server.Configuration.EventHandler;
+﻿using Library.Server.Application;
+using Library.Server.Configuration.EventHandler;
 using Library.Server.EventHandler;
 using System.Reflection;
 
-namespace Library.Server.Application
+namespace Server.Application
 {
     public class ServerApplicationResolver
     {

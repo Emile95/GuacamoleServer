@@ -4,7 +4,7 @@ using Library.Agent.Configuration.Application.AgentAction;
 using Server.Agent.Action;
 using System.Reflection;
 
-namespace Server
+namespace Server.Application
 {
     public class AgentApplicationManager
     {

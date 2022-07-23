@@ -3,74 +3,79 @@ using Server.Logger;
 using Server.Agent.Sockets;
 using Server.Agent.Action;
 using Server.Config;
-using Server;
 using Library.Server.Application;
 using Library.Server.EventHandler;
+using Server.Application;
 
-public class ServerInstance
+namespace Server
 {
-    private readonly ServerConfig _config;
-
-    private Library.Logger.ILogger _logger;
-
-    private readonly ServerApplicationManager _serverApplicationManager;
-    private readonly ServerApplicationResolver _applicationResolver;
-    private readonly ServerEventHandlerManager _eventHandlerManager;
-
-    private readonly AgentApplicationManager _agentApplicationManager;
-
-    private WebApplication _webApplication;
-
-    private readonly AgentManager _agentManager;
-    private readonly ServerAgentActionManager _serverAgentActionManager;
-    private readonly AgentRequestHandler _agentRequestReceivedHandler;
-
-    private readonly AgentSocketsHandler _agentSocketsHandler;
-
-    public ServerInstance(ServerConfig serverConfig)
+    public class ServerInstance
     {
-        _config = serverConfig;
+        private readonly ServerConfig _config;
 
-        _eventHandlerManager = new ServerEventHandlerManager();
-        _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
-        
-        _serverApplicationManager = new ServerApplicationManager(
-            _applicationResolver,
-            _eventHandlerManager
-        );
+        private Library.Logger.ILogger _logger;
 
-        _logger = new ConsoleLogger();
+        private readonly ServerEventHandlerManager _eventHandlerManager;
+        private readonly ServerApplicationResolver _applicationResolver;
+        private readonly ServerApplicationManager _serverApplicationManager;
 
-        _agentManager = new AgentManager(_logger);
+        private readonly AgentManager _agentManager;
+        private readonly ServerAgentActionManager _serverAgentActionManager;
 
-        _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
+        private readonly AgentApplicationManager _agentApplicationManager;
 
-        _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
+        private readonly AgentRequestHandler _agentRequestReceivedHandler;
+        private readonly AgentSocketsHandler _agentSocketsHandler;
 
-        _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
+        private WebApplication _webApplication;
 
-        _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentRequestReceivedHandler);
-    }
+        public ServerInstance(ServerConfig serverConfig)
+        {
+            _config = serverConfig;
 
-    public void LoadServerApplications()
-    {
-        _serverApplicationManager.LoadApplications();
-    }
+            _logger = new ConsoleLogger();
 
-    public void LoadAgentApplications()
-    {
-        _agentApplicationManager.LoadApplications();
-    }
+            _eventHandlerManager = new ServerEventHandlerManager();
+            _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
 
-    public void RunWebApp(string[] args)
-    {
-        _webApplication = Server.RestAPI.WebApplicationBuilder.BuildWebApplication(_serverApplicationManager, _agentManager, _serverAgentActionManager);
-        _webApplication.RunAsync();
-    }
+            _serverApplicationManager = new ServerApplicationManager(
+                _applicationResolver,
+                _eventHandlerManager
+            );
 
-    public void StartSockets()
-    {
-        _agentSocketsHandler.Start();
+            _agentManager = new AgentManager(_logger);
+
+            _serverAgentActionManager = new ServerAgentActionManager(_logger, _agentManager);
+
+            _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
+
+            _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
+
+            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentRequestReceivedHandler);
+        }
+
+        public void LoadServerApplications()
+        {
+            _serverApplicationManager.LoadApplications();
+        }
+
+        public void LoadAgentApplications()
+        {
+            _agentApplicationManager.LoadApplications();
+        }
+
+        public void RunWebApp(string[] args)
+        {
+            _webApplication = Server.RestAPI.WebApplicationBuilder.BuildWebApplication(_serverApplicationManager, _agentManager, _serverAgentActionManager);
+            _webApplication.RunAsync();
+        }
+
+        public void StartSockets()
+        {
+            _agentSocketsHandler.Start();
+        }
     }
 }
+
+
 
