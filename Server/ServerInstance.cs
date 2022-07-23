@@ -5,6 +5,8 @@ using Server.AgentAction;
 using Server.Config;
 using API.Server.EventHandler;
 using Server.Application;
+using Server.RestAPI;
+using Server.DataModel;
 
 namespace Server
 {
@@ -19,7 +21,7 @@ namespace Server
         private readonly ServerApplicationManager _serverApplicationManager;
 
         private readonly AgentManager _agentManager;
-        private readonly AgentActionManager _serverAgentActionManager;
+        private readonly AgentActionManager _agentActionManager;
 
         private readonly AgentApplicationManager _agentApplicationManager;
 
@@ -27,6 +29,8 @@ namespace Server
         private readonly AgentSocketsHandler _agentSocketsHandler;
 
         private WebApplication _webApplication;
+
+        private readonly RestAPIHandler _restAPIHandler;
 
         public ServerInstance(ServerConfig serverConfig)
         {
@@ -44,13 +48,15 @@ namespace Server
 
             _agentManager = new AgentManager(_logger);
 
-            _serverAgentActionManager = new AgentActionManager(_logger, _agentManager);
+            _agentActionManager = new AgentActionManager(_logger, _agentManager);
 
-            _agentApplicationManager = new AgentApplicationManager(_serverAgentActionManager);
+            _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
 
-            _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
+            _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _agentActionManager, _agentManager);
 
             _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _agentRequestReceivedHandler);
+
+            _restAPIHandler = new RestAPIHandler();
         }
 
         public void LoadServerApplications()
@@ -65,13 +71,22 @@ namespace Server
 
         public void RunWebApp(string[] args)
         {
-            _webApplication = Server.RestAPI.WebApplicationBuilder.BuildWebApplication(_serverApplicationManager, _agentManager, _serverAgentActionManager);
-            _webApplication.RunAsync();
+            _restAPIHandler.Run();
+        }
+
+        public void StopWebApp()
+        {
+            _restAPIHandler.Stop();
         }
 
         public void StartSockets()
         {
             _agentSocketsHandler.Start();
+        }
+
+        public void MapRestAPIRequest()
+        {
+            _restAPIHandler.MapPost<ProcessActionDataModel>("action/process", (body) => _agentActionManager.ProcessAgentAction(body));
         }
     }
 }

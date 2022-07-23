@@ -35,15 +35,15 @@ namespace Server.AgentAction
             return agentActionLoaded.ActionId;
         }
 
-        public void ProcessAgentAction(ProcessActionDataModel processActionDataModel)
+        public string ProcessAgentAction(ProcessActionDataModel processActionDataModel)
         {
-            if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) return;
+            if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) throw new Exception("there is no agent action with id : " + processActionDataModel.ActionId);
             AgentActionLoaded agentActionLoaded = _agentActionsLoaded[processActionDataModel.ActionId];
             if (agentActionLoaded.ParameterType != null)
                 ValidateAgentActionParameter(agentActionLoaded.ParameterType, processActionDataModel.Parameter);
 
             AgentClient agentClient = _agentManager.GetAvailableAgentByLabel(processActionDataModel.AgentLabel);
-            if (agentClient == null) return;
+            if (agentClient == null) throw new Exception("there is no available agent of label : " + processActionDataModel.AgentLabel);
 
             string runningAgentActionId = UniqueIdGenerator.Generate(_runningAgentActions.Keys);
             RunningAgentActionLogs runningAgentActionLogs = new RunningAgentActionLogs();
@@ -55,6 +55,10 @@ namespace Server.AgentAction
             _runningAgentActions.Add(runningAgentActionId, runningAgentActionLogs);
 
             agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId);
+
+            _logger.Log("Run agent action " + agentActionLoaded.DisplayName + ", running id : " + runningAgentActionId);
+
+            return runningAgentActionId;
         }
 
         public void RemoveRunningAction(string runningActionId)

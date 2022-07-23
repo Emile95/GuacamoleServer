@@ -13,6 +13,8 @@ try
 
     serverInstance.StartSockets();
 
+    serverInstance.MapRestAPIRequest();
+
     serverInstance.RunWebApp(args);
 
     string? line;
