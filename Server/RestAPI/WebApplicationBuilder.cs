@@ -23,16 +23,6 @@ namespace Server.RestAPI
 
             webApplication.UseCors("prelude");
 
-            webApplication.MapGet("applications/", () =>
-            {
-                return applicationManager.GetApplicationsDescriptive();
-            });
-
-            webApplication.MapGet("applications/is-valid-guid/{guid}", (string guid) =>
-            {
-                return applicationManager.IsValidGuid(guid);
-            });
-
             webApplication.MapPost("action/process", ([FromBody] ProcessActionDataModel processActionDataModel) =>
             {
                 try
@@ -42,7 +32,7 @@ namespace Server.RestAPI
                 {
                     return ex.Message;
                 }
-                return "hoho";
+                return "action started";
             });
 
             return webApplication;
