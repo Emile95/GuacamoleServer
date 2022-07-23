@@ -14,7 +14,7 @@ namespace Server.Agent.Sockets
         protected readonly int _port;
         protected readonly Socket _socket;
 
-        public AgentSocketsHandler(API.Logger.ILogger logger, int port, AgentRequestHandler agentRequestReceivedHandler)
+        public AgentSocketsHandler(API.Logger.ILogger logger, int port, AgentManager agentManager, AgentRequestHandler agentRequestReceivedHandler)
         {
             _port = port;
             _hostIpAddress = Dns.GetHostAddresses(Dns.GetHostName())[0];
@@ -22,6 +22,7 @@ namespace Server.Agent.Sockets
             _socket.Bind(GetEndpoint());
             _socket.Listen(100);
             _logger = logger;
+            _agentManager= agentManager;
             _agentRequestReceivedHandler = agentRequestReceivedHandler;
         }
 

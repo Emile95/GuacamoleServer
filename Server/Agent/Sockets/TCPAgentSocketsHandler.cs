@@ -5,8 +5,8 @@ namespace Server.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(API.Logger.ILogger logger, int port, AgentRequestHandler agentRequestReceivedHandler)
-        : base(logger, port, agentRequestReceivedHandler) {}
+        public TCPAgentSocketsHandler(API.Logger.ILogger logger, int port, AgentManager agentManager ,AgentRequestHandler agentRequestReceivedHandler)
+        : base(logger, port, agentManager, agentRequestReceivedHandler) {}
 
         protected override Socket GetSocket()
         {

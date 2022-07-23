@@ -5,6 +5,7 @@ using Server.AgentAction;
 using Server.Config;
 using API.Server.EventHandler;
 using Server.Application;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -30,6 +31,8 @@ namespace Server
 
         public ServerInstance(ServerConfig serverConfig)
         {
+            Debugger.Launch();
+
             _config = serverConfig;
 
             _logger = new ConsoleLogger();
@@ -50,7 +53,7 @@ namespace Server
 
             _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _serverAgentActionManager, _agentManager);
 
-            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentRequestReceivedHandler);
+            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _agentRequestReceivedHandler);
         }
 
         public void LoadServerApplications()
