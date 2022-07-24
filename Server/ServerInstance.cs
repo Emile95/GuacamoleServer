@@ -92,7 +92,8 @@ namespace Server
 
         public void MapRestAPIRequest()
         {
-            _restAPIHandler.MapPost<ProcessActionDataModel>("action/process", (body) => _agentActionManager.ProcessAgentAction(body));
+            _restAPIHandler.MapPost<ProcessActionDataModel>("actions/run", (body) => _agentActionManager.ProcessAgentAction(body));
+            _restAPIHandler.MapGet("actions", () => _agentActionManager.GetAgentActionLoaded());
         }
     }
 }

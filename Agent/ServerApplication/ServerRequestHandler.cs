@@ -26,7 +26,7 @@ namespace Agent.ServerApplication.Request
 
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
-                InstallModule(context, agentRequest.Data as AgentApplicationLoaded);
+                InstallModule(context, agentRequest.Data as List<AgentApplicationLoaded>);
                 return;
             }
 
@@ -34,11 +34,14 @@ namespace Agent.ServerApplication.Request
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as Tuple<string,object>);
         }
 
-        private void InstallModule(SocketRequestContext context, AgentApplicationLoaded serverAgentApplicationLoaded)
+        private void InstallModule(SocketRequestContext context, List<AgentApplicationLoaded> serverAgentApplicationLoadeds)
         {
-            string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
-            File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);
-            _agentApplicationManager.InstallApplication(newDllPath, serverAgentApplicationLoaded.ActionIds);
+            foreach(AgentApplicationLoaded serverAgentApplicationLoaded in serverAgentApplicationLoadeds)
+            {
+                string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
+                File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);
+                _agentApplicationManager.InstallApplication(newDllPath, serverAgentApplicationLoaded.ActionIds);
+            }
         }
     }
 }

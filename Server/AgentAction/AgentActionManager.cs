@@ -39,6 +39,11 @@ namespace Server.AgentAction
             return agentActionLoaded.ActionId;
         }
 
+        public IEnumerable<AgentActionLoaded> GetAgentActionLoaded()
+        {
+            return _agentActionsLoaded.Values;
+        }
+
         public string ProcessAgentAction(ProcessActionDataModel processActionDataModel)
         {
             if (_agentActionsLoaded.ContainsKey(processActionDataModel.ActionId) == false) throw new Exception("there is no agent action with id : " + processActionDataModel.ActionId);

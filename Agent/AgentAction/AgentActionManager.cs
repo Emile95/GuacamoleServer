@@ -28,14 +28,18 @@ namespace Agent.AgentAction
         public void ProcessAction(string actionId, Tuple<string, object> runningAgentActionData)
         {
             AgentActionContext agentActionContext = new AgentActionContext();
-            agentActionContext.FinishAgentAction = (message) => _serverOperations.FinishRunningAgentAction(runningAgentActionData.Item1, message);
+            agentActionContext.FinishAgentAction = (message) =>
+            {
+                _serverOperations.FinishRunningAgentAction(runningAgentActionData.Item1, message);
+                _agentActionLoggers.Log("running agent action id : " + runningAgentActionData.Item1 + " finish");
+            };
             agentActionContext.LogInfoAgentAction = (message) => _serverOperations.LogInfoRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.LogWarningAgentAction = (message) => _serverOperations.LogWarningRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.LogErrorAgentAction = (message) => _serverOperations.LogErrorRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.FatalAgentAction = (message) => _serverOperations.FatalRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.Parameter = runningAgentActionData.Item2;
-            _agentActionsLoaded[actionId].Invoke(agentActionContext);
             _agentActionLoggers.Log("Run agent action, running id : " + runningAgentActionData.Item1);
+            _agentActionsLoaded[actionId].Invoke(agentActionContext);
         }
 
         public bool IsValidActionId(string id)

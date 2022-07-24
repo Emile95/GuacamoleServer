@@ -60,6 +60,9 @@ namespace Server.Agent.Sockets
             try
             {
                 bytesRead  = clientSocket.EndReceive(ar);
+                StateObject newStateObject = new StateObject();
+                newStateObject.workSocket = clientSocket;
+                clientSocket.BeginReceive(newStateObject.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), newStateObject);
             }
             catch (Exception e)
             {
@@ -75,11 +78,10 @@ namespace Server.Agent.Sockets
             for (int i = 0; i < bytesRead; i++)
                 context.Data[i] = state.buffer[i];
 
+            state = new StateObject();
+            state.workSocket = clientSocket;
+
             _agentRequestReceivedHandler.ProcessRequest(context);
-
-            state.ClearBuffer();
-
-            clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }
 
         protected abstract Socket GetSocket();

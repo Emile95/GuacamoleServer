@@ -45,6 +45,9 @@ namespace Agent.ServerApplication
             try
             {
                 bytesRead = socket.EndReceive(ar);
+                StateObject newStateObject = new StateObject();
+                newStateObject.workSocket = socket;
+                socket.BeginReceive(newStateObject.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), newStateObject);
             }
             catch (Exception e)
             {
@@ -59,11 +62,10 @@ namespace Agent.ServerApplication
             for (int i = 0; i < bytesRead; i++)
                 context.Data[i] = state.buffer[i];
 
+            state = new StateObject();
+            state.workSocket = socket;
+
             _serverRequestReceivedHandler.ProcessRequest(context);
-
-            state.ClearBuffer();
-
-            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), state);
         }
     }
 }

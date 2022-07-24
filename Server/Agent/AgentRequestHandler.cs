@@ -29,6 +29,8 @@ namespace Server.Agent
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
+            Console.WriteLine(context.NbByteReceived.ToString());
+
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
                 JObject jObject = (JObject)agentRequest.Data;
@@ -46,9 +48,7 @@ namespace Server.Agent
         private void ConnectAgent(SocketRequestContext context, AgentDefinition agentDefinition)
         {
             AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
-
-            foreach(AgentApplicationLoaded serverAgentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
-                agentClient.InstallAgentApplication(serverAgentApplicationLoaded);
+            agentClient.InstallAgentApplications(_agentApplicationManager.GetAgentApplicationLoadeds());
         }
 
         private void RunningAgentActionLog(SocketRequestContext context, RunningAgentActionLog runningAgentActionLog)
