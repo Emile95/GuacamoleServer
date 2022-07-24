@@ -6,7 +6,7 @@ namespace Common.Sockets
     public class StateObject
     {
         // Size of receive buffer.  
-        public const int BufferSize = 10000;
+        public const int BufferSize = 100000;
 
         // Receive buffer.  
         public byte[] buffer = new byte[BufferSize];
