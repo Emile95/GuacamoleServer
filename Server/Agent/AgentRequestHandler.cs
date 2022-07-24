@@ -6,19 +6,20 @@ using Common;
 using Common.Request;
 using API.Agent;
 using API.AgentAction;
+using API.Logging;
 
 namespace Server.Agent
 {
     public class AgentRequestHandler : SocketRequestHandler
     {
-        private readonly API.Logger.ILogger _logger;
+        private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentApplicationManager _agentApplicationManager;
         private readonly AgentActionManager _serverAgentActionManager;
         private readonly AgentManager _agentManager;
 
-        public AgentRequestHandler(API.Logger.ILogger logger, AgentApplicationManager agentApplicationManager, AgentActionManager serverAgentActionManager, AgentManager agentManager)
+        public AgentRequestHandler(SocketRequestLoggers socketRequestLoggers, AgentApplicationManager agentApplicationManager, AgentActionManager serverAgentActionManager, AgentManager agentManager)
         {
-            _logger = logger;
+            _socketRequestLoggers = socketRequestLoggers;
             _agentApplicationManager = agentApplicationManager;
             _serverAgentActionManager = serverAgentActionManager;
             _agentManager = agentManager;
@@ -26,6 +27,8 @@ namespace Server.Agent
 
         protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
         {
+            _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
+
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
                 JObject jObject = (JObject)agentRequest.Data;

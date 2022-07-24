@@ -1,4 +1,5 @@
 ﻿using API.Agent;
+using API.Logging;
 using Common;
 using Common.Request;
 using System.Net.Sockets;
@@ -9,15 +10,15 @@ namespace Server.Agent
     {
         private readonly AgentDefinition _agentDefinition;
         private readonly Socket _socket;
-        private readonly API.Logger.ILogger _logger;
+        private readonly AgentLoggers _agentLoggers;
         private bool _locked;
         private int _actionRunning;
 
-        public AgentClient(AgentDefinition agentDefinition, Socket socket, API.Logger.ILogger logger)
+        public AgentClient(AgentDefinition agentDefinition, Socket socket, AgentLoggers agentLoggers)
         {
             _agentDefinition = agentDefinition;
             _socket = socket;
-            _logger = logger;
+            _agentLoggers = agentLoggers;
             _actionRunning = 0;
         }
 

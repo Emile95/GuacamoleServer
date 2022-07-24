@@ -5,12 +5,16 @@ using Agent.ServerApplication.Request;
 using API.Agent;
 using System.Net.Sockets;
 using Agent.AgentAction;
-using API.Server;
+using API.Logging;
 
 namespace Agent
 {
     public class AgentInstance
     {
+        private readonly SocketLoggers _socketLoggers;
+        private readonly SocketRequestLoggers _socketRequestLoggers;
+        private readonly AgentActionLoggers _agentActionLoggers;
+
         private readonly AgentConfig _config;
         private readonly AgentDefinition _agentDefinition;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -32,15 +36,19 @@ namespace Agent
                 ConcurrentRun = _config.ConcurrentRun
             };
 
-            _serverSocket = ServerSocketFactory.CreateServerSocket(_config.ServerSocketConfig.Host ,_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
+            _socketLoggers = new SocketLoggers();
+            _socketRequestLoggers = new SocketRequestLoggers();
+            _agentActionLoggers = new AgentActionLoggers();
+
+            _serverSocket = ServerSocketFactory.CreateServerSocket(_socketLoggers, _config.ServerSocketConfig.Host ,_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
 
             _serverOperations = new ServerOperations(_serverSocket);
 
-            _agentActionManager = new AgentActionManager(_serverOperations);
+            _agentActionManager = new AgentActionManager(_agentActionLoggers, _serverOperations);
 
             _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
 
-            _serverRequestReceivedHandler = new ServerRequestHandler(_agentActionManager, _agentApplicationManager);
+            _serverRequestReceivedHandler = new ServerRequestHandler(_socketRequestLoggers, _agentActionManager, _agentApplicationManager);
 
             _serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }

@@ -6,20 +6,21 @@ using API.AgentAction.Configuration;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Text.Json;
+using API.Logging;
 
 namespace Server.AgentAction
 {
     public class AgentActionManager
     {
-        private readonly API.Logger.ILogger _logger;
+        private readonly AgentActionLoggers _agentActionLoggers;
         private readonly AgentManager _agentManager;
 
         private readonly Dictionary<string, AgentActionLoaded> _agentActionsLoaded;
         private readonly Dictionary<string, RunningAgentActionLogs> _runningAgentActions;
 
-        public AgentActionManager(API.Logger.ILogger logger, AgentManager agentManager)
+        public AgentActionManager(AgentActionLoggers agentActionLoggers, AgentManager agentManager)
         {
-            _logger = logger;
+            _agentActionLoggers = agentActionLoggers;
             _agentManager = agentManager;
             _runningAgentActions = new Dictionary<string, RunningAgentActionLogs>();
             _agentActionsLoaded = new Dictionary<string, AgentActionLoaded>();
@@ -34,7 +35,7 @@ namespace Server.AgentAction
                 ParameterType = agentAction.ParameterType
             };
             _agentActionsLoaded.Add(agentActionLoaded.ActionId, agentActionLoaded);
-            _logger.Log("Added action named " + agentActionLoaded.DisplayName + ", id " + agentActionLoaded.ActionId);
+            _agentActionLoggers.Log("Added action named " + agentActionLoaded.DisplayName + ", id " + agentActionLoaded.ActionId);
             return agentActionLoaded.ActionId;
         }
 
@@ -60,7 +61,7 @@ namespace Server.AgentAction
 
             agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId, agentActionParameter);
 
-            _logger.Log("Run agent action " + agentActionLoaded.DisplayName + ", running id : " + runningAgentActionId);
+            _agentActionLoggers.Log("Run agent action " + agentActionLoaded.DisplayName + ", running id : " + runningAgentActionId);
 
             return runningAgentActionId;
         }
@@ -96,7 +97,7 @@ namespace Server.AgentAction
                     break;
             }
 
-            _logger.Log(logType + " -- Running Agent Action '" + runningAgentActionLog.RunningAgentActionId + "', message : " + runningAgentActionLog.Message);
+            _agentActionLoggers.Log(logType + " -- Running Agent Action '" + runningAgentActionLog.RunningAgentActionId + "', message : " + runningAgentActionLog.Message);
         }
 
         private string GetNewID()

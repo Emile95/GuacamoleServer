@@ -1,12 +1,13 @@
-﻿using System.Net;
+﻿using API.Logging;
+using System.Net;
 using System.Net.Sockets;
 
 namespace Server.Agent.Sockets
 {
     public class TCPAgentSocketsHandler : AgentSocketsHandler
     {
-        public TCPAgentSocketsHandler(API.Logger.ILogger logger, int port, AgentManager agentManager ,AgentRequestHandler agentRequestReceivedHandler)
-        : base(logger, port, agentManager, agentRequestReceivedHandler) {}
+        public TCPAgentSocketsHandler(SocketLoggers socketLoggers, int port, AgentManager agentManager ,AgentRequestHandler agentRequestReceivedHandler)
+        : base(socketLoggers, port, agentManager, agentRequestReceivedHandler) {}
 
         protected override Socket GetSocket()
         {

@@ -1,6 +1,6 @@
-﻿namespace Server.Logger
+﻿namespace API.Logging
 {
-    public class ConsoleLogger : API.Logger.ILogger
+    public class ConsoleLogger : IAppLogger
     {
         public void Log(string message)
         {

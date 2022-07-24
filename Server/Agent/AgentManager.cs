@@ -1,24 +1,25 @@
 ﻿using System.Net.Sockets;
 using API.Agent;
+using API.Logging;
 
 namespace Server.Agent
 {
     public class AgentManager
     {
-        private readonly API.Logger.ILogger _logger;
+        private readonly AgentLoggers _agentLoggers;
         private readonly Dictionary<string, AgentClient> _agentClients;
         private readonly Dictionary<string, List<AgentClient>> _agentClientsByLabels;
 
-        public AgentManager(API.Logger.ILogger logger)
+        public AgentManager(AgentLoggers agentLoggers)
         {
-            _logger = logger;
+            _agentLoggers = agentLoggers;
             _agentClients = new Dictionary<string, AgentClient>();
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
         }
 
         public AgentClient AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
-            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _logger);
+            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _agentLoggers);
             _agentClients.Add(agentDefinition.Id, agentClient);
             foreach(string label in agentDefinition.Labels)
             {
@@ -26,7 +27,7 @@ namespace Server.Agent
                     _agentClientsByLabels.Add(label, new List<AgentClient>());
                 _agentClientsByLabels[label].Add(agentClient);
             }
-            _logger.Log("Agent " + agentDefinition.Name + " connected, id : " + agentDefinition.Id);
+            _agentLoggers.Log("Agent " + agentDefinition.Name + " connected, id : " + agentDefinition.Id);
             return agentClient;
         }
 
@@ -67,7 +68,7 @@ namespace Server.Agent
             if (agentId == null) return;
 
             RemoveAgent(agentId);
-            _logger.Log("Lost unexpectly agent, id : " + agentId);
+            _agentLoggers.Log("Lost unexpectly agent, id : " + agentId);
         }
 
         public AgentClient GetAvailableAgentByLabel(string label)

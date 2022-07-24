@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Logging;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Sockets;
 
@@ -6,14 +7,14 @@ namespace Server.RestAPI
 {
     public class RestAPIHandler
     {
-        private readonly API.Logger.ILogger _logger;
+        private readonly HttpRequestLoggers _httpRequestLoggers;
         private WebApplication _webApp;
         private readonly Dictionary<HttpRequestMethod, Dictionary<string,Delegate>> _mappedRequests;
         private readonly int _port;
 
-        public RestAPIHandler(API.Logger.ILogger logger, int port)
+        public RestAPIHandler(HttpRequestLoggers httpRequestLoggers, int port)
         {
-            _logger = logger;
+            _httpRequestLoggers = httpRequestLoggers;
             _mappedRequests = new Dictionary<HttpRequestMethod, Dictionary<string, Delegate>>();
             _mappedRequests.Add(HttpRequestMethod.POST, new Dictionary<string, Delegate>());
             _mappedRequests.Add(HttpRequestMethod.GET, new Dictionary<string, Delegate>());
@@ -34,7 +35,7 @@ namespace Server.RestAPI
                 }
             });
 
-            _logger.Log("Http POST request mapped, pattern : '" + pattern + "'");
+            _httpRequestLoggers.Log("Http POST request mapped, pattern : '" + pattern + "'");
         }
 
         public void MapGet(string pattern, Func<object> action)
@@ -51,7 +52,7 @@ namespace Server.RestAPI
                 }
             });
 
-            _logger.Log("Http GET request mapped, pattern : '" + pattern + "'");
+            _httpRequestLoggers.Log("Http GET request mapped, pattern : '" + pattern + "'");
         }
 
         public void Run()

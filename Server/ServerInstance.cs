@@ -1,5 +1,4 @@
 ﻿using Server.Agent;
-using Server.Logger;
 using Server.Agent.Sockets;
 using Server.AgentAction;
 using Server.Config;
@@ -7,6 +6,7 @@ using API.Server.EventHandler;
 using Server.Application;
 using Server.RestAPI;
 using Server.DataModel;
+using API.Logging;
 
 namespace Server
 {
@@ -14,7 +14,11 @@ namespace Server
     {
         private readonly ServerConfig _config;
 
-        private API.Logger.ILogger _logger;
+        private readonly SocketLoggers _socketLoggers;
+        private readonly SocketRequestLoggers _socketRequestLoggers;
+        private readonly HttpRequestLoggers _httpRequestLoggers;
+        private readonly AgentLoggers _agentLoggers;
+        private readonly AgentActionLoggers _agentActionLoggers;
 
         private readonly ServerEventHandlerManager _eventHandlerManager;
         private readonly ServerApplicationResolver _applicationResolver;
@@ -34,7 +38,11 @@ namespace Server
         {
             _config = serverConfig;
 
-            _logger = new ConsoleLogger();
+            _socketLoggers = new SocketLoggers();
+            _socketRequestLoggers = new SocketRequestLoggers();
+            _httpRequestLoggers = new HttpRequestLoggers();
+            _agentLoggers = new AgentLoggers();
+            _agentActionLoggers = new AgentActionLoggers();
 
             _eventHandlerManager = new ServerEventHandlerManager();
             _applicationResolver = new ServerApplicationResolver(_eventHandlerManager);
@@ -44,17 +52,17 @@ namespace Server
                 _eventHandlerManager
             );
 
-            _agentManager = new AgentManager(_logger);
+            _agentManager = new AgentManager(_agentLoggers);
 
-            _agentActionManager = new AgentActionManager(_logger, _agentManager);
+            _agentActionManager = new AgentActionManager(_agentActionLoggers, _agentManager);
 
             _agentApplicationManager = new AgentApplicationManager(_agentActionManager);
 
-            _agentRequestReceivedHandler = new AgentRequestHandler(_logger, _agentApplicationManager, _agentActionManager, _agentManager);
+            _agentRequestReceivedHandler = new AgentRequestHandler(_socketRequestLoggers, _agentApplicationManager, _agentActionManager, _agentManager);
 
-            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _logger, _agentManager, _agentRequestReceivedHandler);
+            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _socketLoggers, _agentManager, _agentRequestReceivedHandler);
 
-            _restAPIHandler = new RestAPIHandler(_logger, _config.WebPort);
+            _restAPIHandler = new RestAPIHandler(_httpRequestLoggers, _config.WebPort);
         }
 
         public void LoadServerApplications()

@@ -1,16 +1,19 @@
 ﻿using API.AgentAction;
 using Agent.ServerApplication;
+using API.Logging;
 
 namespace Agent.AgentAction
 {
     public class AgentActionManager
     {
+        private readonly AgentActionLoggers _agentActionLoggers;
         private readonly ServerOperations _serverOperations;
 
         protected readonly Dictionary<string, Action<AgentActionContext>> _agentActionsLoaded;
 
-        public AgentActionManager(ServerOperations serverOperations)
+        public AgentActionManager(AgentActionLoggers agentActionLoggers, ServerOperations serverOperations)
         {
+            _agentActionLoggers = agentActionLoggers;
             _serverOperations = serverOperations;
             _agentActionsLoaded = new Dictionary<string, Action<AgentActionContext>>();
         }
@@ -18,6 +21,7 @@ namespace Agent.AgentAction
         public bool AddAgentAction(string id, Action<AgentActionContext> action)
         {
             _agentActionsLoaded.Add(id, action);
+            _agentActionLoggers.Log("Added action, id : " + id);
             return true;
         }
 
@@ -31,6 +35,7 @@ namespace Agent.AgentAction
             agentActionContext.FatalAgentAction = (message) => _serverOperations.FatalRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.Parameter = runningAgentActionData.Item2;
             _agentActionsLoaded[actionId].Invoke(agentActionContext);
+            _agentActionLoggers.Log("Run agent action, running id : " + runningAgentActionData.Item1);
         }
 
         public bool IsValidActionId(string id)

@@ -1,11 +1,12 @@
-﻿using System.Net;
+﻿using API.Logging;
+using System.Net;
 using System.Net.Sockets;
 
 namespace Agent.ServerApplication
 {
     public static class ServerSocketFactory
     {
-        public static Socket CreateServerSocket(string host, string protocol, int port)
+        public static Socket CreateServerSocket(SocketLoggers socketLoggers, string host, string protocol, int port)
         {
             ProtocolType protocolType = 0;
             switch(protocol)
@@ -27,6 +28,8 @@ namespace Agent.ServerApplication
             );
 
             serverSocket.Connect(new IPEndPoint(hostIpAddress, port));
+
+            socketLoggers.Log("connected to server at " + hostIpAddress.ToString() + ":" + port);
 
             return serverSocket;
         }

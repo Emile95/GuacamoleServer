@@ -3,22 +3,27 @@ using Common;
 using Common.Request;
 using Common.Sockets;
 using Agent.AgentAction;
+using API.Logging;
 
 namespace Agent.ServerApplication.Request
 {
     public class ServerRequestHandler : SocketRequestHandler
     {
+        private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentActionManager _clientAgentActionManager;
         private readonly AgentApplicationManager _agentApplicationManager;
 
-        public ServerRequestHandler(AgentActionManager clientAgentActionManager, AgentApplicationManager agentApplicationManager)
+        public ServerRequestHandler(SocketRequestLoggers socketRequestLoggers, AgentActionManager clientAgentActionManager, AgentApplicationManager agentApplicationManager)
         {
+            _socketRequestLoggers = socketRequestLoggers;
             _clientAgentActionManager = clientAgentActionManager;
             _agentApplicationManager = agentApplicationManager;
         }
 
         protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
         {
+            _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
+
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
                 InstallModule(context, agentRequest.Data as AgentApplicationLoaded);
