@@ -29,8 +29,6 @@ namespace Server.Agent
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
-            Console.WriteLine(context.NbByteReceived.ToString());
-
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
                 JObject jObject = (JObject)agentRequest.Data;
