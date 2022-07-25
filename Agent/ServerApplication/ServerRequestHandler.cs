@@ -7,7 +7,7 @@ using API.Logging;
 
 namespace Agent.ServerApplication.Request
 {
-    public class ServerRequestHandler : SocketRequestHandler
+    public class ServerRequestHandler : SocketRequestHandler<ServerSocketHandler>
     {
         private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentActionManager _clientAgentActionManager;
@@ -20,13 +20,13 @@ namespace Agent.ServerApplication.Request
             _agentApplicationManager = agentApplicationManager;
         }
 
-        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
+        protected override void ResolveSocketRequest(SocketRequestContext<ServerSocketHandler> context, SocketRequest agentRequest)
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
             if (agentRequest.RequestId == ApplicationConstValue.INSTALLMODULERAGENTREQUESTID)
             {
-                InstallModule(context, agentRequest.Data as List<AgentApplicationLoaded>);
+                InstallModule(context, agentRequest.Data as AgentApplicationLoaded);
                 return;
             }
 
@@ -34,14 +34,18 @@ namespace Agent.ServerApplication.Request
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as Tuple<string,object>);
         }
 
-        private void InstallModule(SocketRequestContext context, List<AgentApplicationLoaded> serverAgentApplicationLoadeds)
+        private void InstallModule(SocketRequestContext<ServerSocketHandler> context, AgentApplicationLoaded serverAgentApplicationLoaded)
         {
-            foreach(AgentApplicationLoaded serverAgentApplicationLoaded in serverAgentApplicationLoadeds)
+            string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
+            File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);
+            _agentApplicationManager.InstallApplication(newDllPath, serverAgentApplicationLoaded.ActionIds);
+
+            /*foreach (AgentApplicationLoaded serverAgentApplicationLoaded in serverAgentApplicationLoadeds)
             {
                 string newDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "agentApps", Path.GetFileName(serverAgentApplicationLoaded.FilePath));
                 File.WriteAllBytes(newDllPath, serverAgentApplicationLoaded.FileBinary);
                 _agentApplicationManager.InstallApplication(newDllPath, serverAgentApplicationLoaded.ActionIds);
-            }
+            }*/
         }
     }
 }

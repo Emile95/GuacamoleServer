@@ -17,6 +17,11 @@ namespace Server.Agent
             _agentClientsByLabels = new Dictionary<string, List<AgentClient>>();
         }
 
+        public AgentClient GetAgentClientById(string id)
+        {
+            return _agentClients[id];
+        }
+
         public AgentClient AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
         {
             AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _agentLoggers);

@@ -39,31 +39,36 @@ namespace Agent.ServerApplication
         private void ReadCallBack(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
-            Socket socket = state.workSocket;
+            Socket serverSocket = state.workSocket;
 
             int bytesRead = 0;
             try
             {
-                bytesRead = socket.EndReceive(ar);
+                bytesRead = serverSocket.EndReceive(ar);
                 StateObject newStateObject = new StateObject();
-                newStateObject.workSocket = socket;
-                socket.BeginReceive(newStateObject.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), newStateObject);
+                newStateObject.workSocket = serverSocket;
+                serverSocket.BeginReceive(newStateObject.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallBack), newStateObject);
+
+                SocketRequest socketRequest = new SocketRequest();
+                socketRequest.RequestId = ApplicationConstValue.LIBERATESOCKETSENDREQUESTSID;
+                socketRequest.Data = AgentDefinitionValues.AgentId;
+                string requestJson = JsonConvert.SerializeObject(socketRequest);
+                serverSocket.Send(Encoding.ASCII.GetBytes(requestJson));
+
             }
             catch (Exception e)
             {
                 return;
             }
 
-            SocketRequestContext context = new SocketRequestContext();
-            context.SourceSocket = socket;
+            SocketRequestContext<ServerSocketHandler> context = new SocketRequestContext<ServerSocketHandler>();
+            context.SourceSocket = serverSocket;
             context.NbByteReceived = bytesRead;
+            context.SocketHandler = this;
 
             context.Data = new byte[bytesRead];
-            for (int i = 0; i < bytesRead; i++)
+            for (int i = 0;i < bytesRead; i++)
                 context.Data[i] = state.buffer[i];
-
-            state = new StateObject();
-            state.workSocket = socket;
 
             _serverRequestReceivedHandler.ProcessRequest(context);
         }

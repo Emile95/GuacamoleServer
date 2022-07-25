@@ -7,10 +7,11 @@ using Common.Request;
 using API.Agent;
 using API.AgentAction;
 using API.Logging;
+using Server.Agent.Sockets;
 
 namespace Server.Agent
 {
-    public class AgentRequestHandler : SocketRequestHandler
+    public class AgentRequestHandler : SocketRequestHandler<AgentSocketsHandler>
     {
         private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -25,7 +26,7 @@ namespace Server.Agent
             _agentManager = agentManager;
         }
 
-        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
+        protected override void ResolveSocketRequest(SocketRequestContext<AgentSocketsHandler> context, SocketRequest agentRequest)
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
@@ -41,15 +42,28 @@ namespace Server.Agent
                 RunningAgentActionLog(context, agentRequest.Data as RunningAgentActionLog);
                 return;
             }
+
+            if (agentRequest.RequestId == ApplicationConstValue.LIBERATESOCKETSENDREQUESTSID)
+            {
+                LiberateAgentRequestSend(context, agentRequest.Data as string);
+                return;
+            }
         }
 
-        private void ConnectAgent(SocketRequestContext context, AgentDefinition agentDefinition)
+        private void LiberateAgentRequestSend(SocketRequestContext<AgentSocketsHandler> context, string agentId)
+        {
+            AgentClient agentClient  = _agentManager.GetAgentClientById(agentId);
+            agentClient.LiberateRequestSend();
+        }
+
+        private void ConnectAgent(SocketRequestContext<AgentSocketsHandler> context, AgentDefinition agentDefinition)
         {
             AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
-            agentClient.InstallAgentApplications(_agentApplicationManager.GetAgentApplicationLoadeds());
+            foreach(AgentApplicationLoaded agentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
+                agentClient.InstallAgentApplication(agentApplicationLoaded);
         }
 
-        private void RunningAgentActionLog(SocketRequestContext context, RunningAgentActionLog runningAgentActionLog)
+        private void RunningAgentActionLog(SocketRequestContext<AgentSocketsHandler> context, RunningAgentActionLog runningAgentActionLog)
         {
             _serverAgentActionManager.LogRunningAgentAction(runningAgentActionLog);
         }

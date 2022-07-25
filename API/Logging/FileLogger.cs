@@ -11,7 +11,19 @@
 
         public void Log(string message)
         {
-            File.AppendAllText(_filePath, message + Environment.NewLine);
+            Task.Run(() => {
+
+                bool logDone = false;
+                while(logDone)
+                {
+                    try
+                    {
+                        File.AppendAllText(_filePath, message + Environment.NewLine);
+                        logDone = true;
+                    }
+                    catch (Exception e) { }
+                }
+            });
         }
     }
 }

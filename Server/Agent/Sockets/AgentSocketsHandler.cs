@@ -70,16 +70,14 @@ namespace Server.Agent.Sockets
                 return;
             }
 
-            SocketRequestContext context = new SocketRequestContext();
+            SocketRequestContext<AgentSocketsHandler> context = new SocketRequestContext<AgentSocketsHandler>();
             context.SourceSocket = clientSocket;
             context.NbByteReceived = bytesRead;
+            context.SocketHandler = this;
 
             context.Data = new byte[bytesRead];
             for (int i = 0; i < bytesRead; i++)
                 context.Data[i] = state.buffer[i];
-
-            state = new StateObject();
-            state.workSocket = clientSocket;
 
             _agentRequestReceivedHandler.ProcessRequest(context);
         }

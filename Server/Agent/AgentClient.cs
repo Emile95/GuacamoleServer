@@ -13,6 +13,7 @@ namespace Server.Agent
         private readonly AgentLoggers _agentLoggers;
         private bool _locked;
         private int _actionRunning;
+        private Requests _pendingRequests;
 
         public AgentClient(AgentDefinition agentDefinition, Socket socket, AgentLoggers agentLoggers)
         {
@@ -20,6 +21,7 @@ namespace Server.Agent
             _socket = socket;
             _agentLoggers = agentLoggers;
             _actionRunning = 0;
+            _pendingRequests = new Requests();
         }
 
         public bool IsEqualBySocket(Socket socket)
@@ -57,14 +59,36 @@ namespace Server.Agent
             return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void InstallAgentApplications(List<AgentApplicationLoaded> agentApplicationLoadeds)
+        public void InstallAgentApplication(AgentApplicationLoaded agentApplicationLoaded)
         {
-            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoadeds));
+            SendRequest(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
         }
 
         public void ProcessAction(string actionId, string runningActionId, object parameter)
         {
-            _socket.Send(SocketRequestDataBytesBuilder.BuildRequestDataBytes(actionId, new Tuple<string, object>(runningActionId, parameter)));
+            SendRequest(SocketRequestDataBytesBuilder.BuildRequestDataBytes(actionId, new Tuple<string, object>(runningActionId, parameter)));
+        }
+
+        public void LiberateRequestSend()
+        {
+            if(_pendingRequests.PendingRequestDatas.Count > 0)
+            {
+                _socket.Send(_pendingRequests.PendingRequestDatas[0]);
+                _pendingRequests.PendingRequestDatas.RemoveAt(0);
+                return;
+            }
+            _pendingRequests.IsRequestBeingSend = false;
+        }
+
+        private void SendRequest(byte[] bytes)
+        {
+            if(_pendingRequests.IsRequestBeingSend == false)
+            {
+                _pendingRequests.IsRequestBeingSend = true;
+                _socket.Send(bytes);
+                return;
+            }
+            _pendingRequests.PendingRequestDatas.Add(bytes);
         }
     }
 }

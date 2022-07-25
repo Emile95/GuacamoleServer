@@ -2,10 +2,11 @@
 
 namespace Common.Sockets
 {
-    public class SocketRequestContext
+    public class SocketRequestContext<SocketHandlerType>
     {
+        public SocketHandlerType SocketHandler { get; set; }
         public Socket SourceSocket { get; set; }
         public byte[] Data { get; set; }
-        public int NbByteReceived = 0;
+        public int NbByteReceived { get; set; } = 0;
     }
 }

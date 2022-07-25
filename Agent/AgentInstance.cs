@@ -36,6 +36,8 @@ namespace Agent
                 ConcurrentRun = _config.ConcurrentRun
             };
 
+            AgentDefinitionValues.AgentId = _config.Id;
+
             _socketLoggers = new SocketLoggers();
             _socketRequestLoggers = new SocketRequestLoggers();
             _agentActionLoggers = new AgentActionLoggers();

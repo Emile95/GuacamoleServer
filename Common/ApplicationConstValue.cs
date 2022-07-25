@@ -18,5 +18,6 @@
         public readonly static string INSTALLMODULERAGENTREQUESTID = "InstallModule";
         public readonly static string CONNECTAGENTREQUESTID = "AgentConnect";
         public readonly static string AGENTACTIONLOGREQUESTID = "AgentActionLog";
+        public readonly static string LIBERATESOCKETSENDREQUESTSID = "LiberateSocketRequestSend";
     }
 }
