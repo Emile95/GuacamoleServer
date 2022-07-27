@@ -59,8 +59,7 @@ namespace Server.Agent
         private void ConnectAgent(SocketRequestContext<AgentSocketsHandler> context, AgentDefinition agentDefinition)
         {
             AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
-            foreach(AgentApplicationLoaded agentApplicationLoaded in _agentApplicationManager.GetAgentApplicationLoadeds())
-                agentClient.InstallAgentApplication(agentApplicationLoaded);
+            agentClient.InstallAgentApplications(_agentApplicationManager.GetAgentApplicationLoadeds());
         }
 
         private void RunningAgentActionLog(SocketRequestContext<AgentSocketsHandler> context, RunningAgentActionLog runningAgentActionLog)

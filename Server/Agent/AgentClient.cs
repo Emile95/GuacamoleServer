@@ -59,9 +59,9 @@ namespace Server.Agent
             return _locked == false && _actionRunning < _agentDefinition.ConcurrentRun;
         }
 
-        public void InstallAgentApplication(AgentApplicationLoaded agentApplicationLoaded)
+        public void InstallAgentApplications(List<AgentApplicationLoaded> agentApplicationLoadeds)
         {
-            SendRequest(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoaded));
+            SendRequest(SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.INSTALLMODULERAGENTREQUESTID, agentApplicationLoadeds));
         }
 
         public void ProcessAction(string actionId, string runningActionId, object parameter)

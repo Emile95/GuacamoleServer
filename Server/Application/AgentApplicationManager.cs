@@ -45,14 +45,14 @@ namespace Server.Application
 
                 foreach (string dll in dlls)
                 {
+                    List<string> agentActionIds = new List<string>();
+
+                    byte[] fileBinary = File.ReadAllBytes(dll);
+
                     List<AgentApplicationBase> agentApplications = PluginFactory.CreatePluginsFromFile<AgentApplicationBase>(dll);
 
                     foreach (AgentApplicationBase agentApplication in agentApplications)
                     {
-                        byte[] fileBinary = File.ReadAllBytes(dll);
-
-                        List<string> agentActionIds = new List<string>();
-
                         MethodInfo[] methods = agentApplication.GetType().GetMethods();
                         foreach (MethodInfo method in methods)
                         {
@@ -60,9 +60,9 @@ namespace Server.Application
                             if (agentAction == null) continue;
                             agentActionIds.Add(_serverAgentActionManager.AddAgentAction(agentAction));
                         }
-
-                        AddAgentApplication(dll, fileBinary, agentActionIds);
                     }
+
+                    AddAgentApplication(dll, fileBinary, agentActionIds);
                 }
             }
         }

@@ -34,21 +34,24 @@ namespace Agent.Application
             Directory.CreateDirectory(newApplicationDirectoryPath);
             string newApplicationPath = Path.Combine(newApplicationDirectoryPath, applicationFileInfo.Name);
             File.Copy(applicationPath, newApplicationPath);
-            AgentApplicationBase application = GetApplicationImplementation(Assembly.LoadFile(newApplicationPath));
-            application.EventHandlerManager = _eventHandlerManager;
-            using (var context = new AgentApplicationContext(newGuid))
-            {
-                application.Install();
-            }
-
-            MethodInfo[] methods = application.GetType().GetMethods();
+            List<AgentApplicationBase> applications = GetApplicationImplementation(Assembly.LoadFile(newApplicationPath));
             int agentAcitonIdIndex = 0;
-            foreach (MethodInfo method in methods)
+            foreach (AgentApplicationBase application in applications)
             {
-                AgentActionAttribute agentAction = method.GetCustomAttribute<AgentActionAttribute>();
-                if (agentAction == null) continue;
-                _agentActionManager.AddAgentAction(agentActionIds[agentAcitonIdIndex], (context) => method.Invoke(application,new object[] { context }));
-                agentAcitonIdIndex++;
+                application.EventHandlerManager = _eventHandlerManager;
+                using (var context = new AgentApplicationContext(newGuid))
+                {
+                    application.Install();
+                }
+                MethodInfo[] methods = application.GetType().GetMethods();
+                
+                foreach (MethodInfo method in methods)
+                {
+                    AgentActionAttribute agentAction = method.GetCustomAttribute<AgentActionAttribute>();
+                    if (agentAction == null) continue;
+                    _agentActionManager.AddAgentAction(agentActionIds[agentAcitonIdIndex], (context) => method.Invoke(application, new object[] { context }));
+                    agentAcitonIdIndex++;
+                }
             }
         }
 
@@ -60,19 +63,22 @@ namespace Agent.Application
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
                 string path = Directory.GetFiles(directoryPath, "*.dll")[0];
-                AgentApplicationBase application = null;
+                List<AgentApplicationBase> applications = null;
                 try
                 {
-                    application = GetApplicationImplementation(Assembly.LoadFile(path));
+                    applications = GetApplicationImplementation(Assembly.LoadFile(path));
                 }
                 catch (Exception e) { }
-                application.EventHandlerManager = _eventHandlerManager;
-
-                using (var context = new AgentApplicationContext(directoryInfo.Name))
+                foreach (AgentApplicationBase application in applications)
                 {
-                    application.Initialize();
-                    _applications.Add(directoryInfo.Name, application);
-                    _applicationResolver.ResolveAll(application);
+                    application.EventHandlerManager = _eventHandlerManager;
+
+                    using (var context = new AgentApplicationContext(directoryInfo.Name))
+                    {
+                        application.Initialize();
+                        _applications.Add(directoryInfo.Name, application);
+                        _applicationResolver.ResolveAll(application);
+                    }
                 }
             }
         }
@@ -125,21 +131,20 @@ namespace Agent.Application
             return guid;
         }
 
-        private AgentApplicationBase GetApplicationImplementation(Assembly assembly)
+        private List<AgentApplicationBase> GetApplicationImplementation(Assembly assembly)
         {
-            AgentApplicationBase app = null;
+            List<AgentApplicationBase> apps = new List<AgentApplicationBase>();
             Type applicationType = typeof(AgentApplicationBase);
 
             foreach (Type type in assembly.GetTypes())
             {
                 if (applicationType.IsAssignableFrom(type))
                 {
-                    app = Activator.CreateInstance(type) as AgentApplicationBase;
+                    apps.Add(Activator.CreateInstance(type) as AgentApplicationBase);
                 }
             }
                 
-            return app;
+            return apps;
         }
-
     }
 }
