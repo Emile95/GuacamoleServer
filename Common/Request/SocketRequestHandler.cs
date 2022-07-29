@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Common.Request
 {
-    public abstract class SocketRequestHandler<SocketHandlerType>
+    public abstract class SocketRequestHandler
     {
-        public void ProcessRequest(SocketRequestContext<SocketHandlerType> context)
+        public void ProcessRequest(SocketRequestContext context)
         {
             JsonSerializerSettings setting = new JsonSerializerSettings();
             setting.TypeNameHandling = TypeNameHandling.All;
@@ -16,6 +16,6 @@ namespace Common.Request
             ResolveSocketRequest(context, agentRequest);
         }
 
-        protected abstract void ResolveSocketRequest(SocketRequestContext<SocketHandlerType> context, SocketRequest agentRequest);
+        protected abstract void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest);
     }
 }

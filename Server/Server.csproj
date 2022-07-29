@@ -17,4 +17,10 @@
     <ProjectReference Include="..\API\API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SocketHandler">
+      <HintPath>..\..\..\..\SocketHandler\build\1.0.0\SocketHandler.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

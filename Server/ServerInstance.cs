@@ -1,5 +1,4 @@
 ﻿using Server.Agent;
-using Server.Agent.Sockets;
 using Server.AgentAction;
 using Server.Config;
 using API.Server.EventHandler;
@@ -7,6 +6,10 @@ using Server.Application;
 using Server.RestAPI;
 using Server.DataModel;
 using API.Logging;
+using Server.Sockets;
+using Common.Sockets;
+using System.Net.Sockets;
+using System.Net;
 
 namespace Server
 {
@@ -30,7 +33,7 @@ namespace Server
         private readonly AgentApplicationManager _agentApplicationManager;
 
         private readonly AgentRequestHandler _agentRequestReceivedHandler;
-        private readonly AgentSocketsHandler _agentSocketsHandler;
+        private readonly ServerAgentsSocketHandler _serverAgentsSocketHandler;
 
         private readonly RestAPIHandler _restAPIHandler;
 
@@ -60,7 +63,9 @@ namespace Server
 
             _agentRequestReceivedHandler = new AgentRequestHandler(_socketRequestLoggers, _agentApplicationManager, _agentActionManager, _agentManager);
 
-            _agentSocketsHandler = AgentSocketsHandlerFactory.CreateAgentSocketsHandler(_config.AgentSocketsConfig, _socketLoggers, _agentManager, _agentRequestReceivedHandler);
+            Socket socket = SocketFactory.CreateSocket(_config.AgentSocketsConfig.Protocol);
+
+            _serverAgentsSocketHandler = new ServerAgentsSocketHandler(socket, 100000, _agentRequestReceivedHandler, _agentManager);
 
             _restAPIHandler = new RestAPIHandler(_httpRequestLoggers, _config.WebPort);
         }
@@ -87,7 +92,8 @@ namespace Server
 
         public void StartSockets()
         {
-            _agentSocketsHandler.Start();
+            //_agentSocketsHandler.Start();
+            _serverAgentsSocketHandler.Initialize(Dns.GetHostAddresses(Dns.GetHostName())[0],_config.AgentSocketsConfig.Port);
         }
 
         public void MapRestAPIRequest()

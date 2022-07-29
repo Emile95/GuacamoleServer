@@ -7,8 +7,8 @@ using API.Logging;
 
 namespace Agent.ServerApplication.Request
 {
-    public class ServerRequestHandler : SocketRequestHandler<ServerSocketHandler>
-    {
+    public class ServerRequestHandler : SocketRequestHandler
+    { 
         private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentActionManager _clientAgentActionManager;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -20,7 +20,7 @@ namespace Agent.ServerApplication.Request
             _agentApplicationManager = agentApplicationManager;
         }
 
-        protected override void ResolveSocketRequest(SocketRequestContext<ServerSocketHandler> context, SocketRequest agentRequest)
+        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
@@ -34,7 +34,7 @@ namespace Agent.ServerApplication.Request
                 _clientAgentActionManager.ProcessAction(agentRequest.RequestId, agentRequest.Data as Tuple<string,object>);
         }
 
-        private void InstallModule(SocketRequestContext<ServerSocketHandler> context, List<AgentApplicationLoaded> serverAgentApplicationLoadeds)
+        private void InstallModule(SocketRequestContext context, List<AgentApplicationLoaded> serverAgentApplicationLoadeds)
         {
             foreach (AgentApplicationLoaded serverAgentApplicationLoaded in serverAgentApplicationLoadeds)
             {

@@ -61,10 +61,9 @@ namespace Agent.ServerApplication
                 return;
             }
 
-            SocketRequestContext<ServerSocketHandler> context = new SocketRequestContext<ServerSocketHandler>();
+            SocketRequestContext context = new SocketRequestContext();
             context.SourceSocket = serverSocket;
             context.NbByteReceived = bytesRead;
-            context.SocketHandler = this;
 
             context.Data = new byte[bytesRead];
             for (int i = 0;i < bytesRead; i++)
