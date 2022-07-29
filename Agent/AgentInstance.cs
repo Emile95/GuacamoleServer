@@ -6,6 +6,10 @@ using API.Agent;
 using System.Net.Sockets;
 using Agent.AgentAction;
 using API.Logging;
+using Common.Sockets;
+using Agent.Sockets;
+using System.Net;
+using System.Diagnostics;
 
 namespace Agent
 {
@@ -18,14 +22,17 @@ namespace Agent
         private readonly AgentConfig _config;
         private readonly AgentDefinition _agentDefinition;
         private readonly AgentApplicationManager _agentApplicationManager;
-        private readonly ServerSocketHandler _serverSocketHandler;
+        //private readonly ServerSocketHandler _serverSocketHandler;
+        private readonly ClientServerSocketHandler _clientServerSocketHandler;
         private readonly AgentActionManager _agentActionManager;
         private readonly ServerOperations _serverOperations;
         private readonly ServerRequestHandler _serverRequestReceivedHandler;
-        private readonly Socket _serverSocket;
+        //private readonly Socket _serverSocket;
 
         public AgentInstance(AgentConfig config)
         {
+            Debugger.Launch();
+
             _config = config;
 
             _agentDefinition = new AgentDefinition
@@ -42,9 +49,11 @@ namespace Agent
             _socketRequestLoggers = new SocketRequestLoggers();
             _agentActionLoggers = new AgentActionLoggers();
 
-            _serverSocket = ServerSocketFactory.CreateServerSocket(_socketLoggers, _config.ServerSocketConfig.Host ,_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
+            //_serverSocket = ServerSocketFactory.CreateServerSocket(_socketLoggers, _config.ServerSocketConfig.Host ,_config.ServerSocketConfig.Protocol, _config.ServerSocketConfig.Port);
 
-            _serverOperations = new ServerOperations(_serverSocket);
+            Socket socket = SocketFactory.CreateSocket(_config.ServerSocketConfig.Protocol);
+
+            _serverOperations = new ServerOperations(socket);
 
             _agentActionManager = new AgentActionManager(_agentActionLoggers, _serverOperations);
 
@@ -52,12 +61,15 @@ namespace Agent
 
             _serverRequestReceivedHandler = new ServerRequestHandler(_socketRequestLoggers, _agentActionManager, _agentApplicationManager);
 
-            _serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
+            _clientServerSocketHandler = new ClientServerSocketHandler(socket, 100000, _serverRequestReceivedHandler, _agentDefinition);
+
+            //_serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }
 
         public void StartSocket()
         {
-            _serverSocketHandler.Start(_agentDefinition);
+            _clientServerSocketHandler.Initialize(_config.ServerSocketConfig.Port);
+            //_serverSocketHandler.Start(_agentDefinition);
         }
     }
 }

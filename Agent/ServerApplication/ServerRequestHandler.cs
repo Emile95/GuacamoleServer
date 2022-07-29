@@ -7,7 +7,7 @@ using API.Logging;
 
 namespace Agent.ServerApplication.Request
 {
-    public class ServerRequestHandler : SocketRequestHandler
+    public class ServerRequestHandler : SocketRequestHandler<SocketRequestContext>
     { 
         private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentActionManager _clientAgentActionManager;

@@ -22,17 +22,17 @@ namespace Server.Agent
             return _agentClients[id];
         }
 
-        public AgentClient AddAgent(AgentDefinition agentDefinition, Socket agentSocket)
+        public AgentClient AddAgent(string id, AgentDefinition agentDefinition, Action<byte[]> sendToSocketAction)
         {
-            AgentClient agentClient = new AgentClient(agentDefinition, agentSocket, _agentLoggers);
-            _agentClients.Add(agentDefinition.Id, agentClient);
+            AgentClient agentClient = new AgentClient(agentDefinition, _agentLoggers, sendToSocketAction);
+            _agentClients.Add(id, agentClient);
             foreach(string label in agentDefinition.Labels)
             {
                 if (_agentClientsByLabels.ContainsKey(label) == false)
                     _agentClientsByLabels.Add(label, new List<AgentClient>());
                 _agentClientsByLabels[label].Add(agentClient);
             }
-            _agentLoggers.Log("Agent " + agentDefinition.Name + " connected, id : " + agentDefinition.Id);
+            _agentLoggers.Log("Agent " + agentDefinition.Name + " connected, id : " + id);
             return agentClient;
         }
 
@@ -61,19 +61,10 @@ namespace Server.Agent
             _agentClients.Remove(id);
         }
 
-        public void LostUnexpeclyAgentSocket(Socket agentSockect)
+        public void LostUnexpeclyAgentSocket(string id)
         {
-            string agentId = null;
-            foreach (KeyValuePair<string, AgentClient> set in _agentClients)
-            {
-                if(set.Value.IsEqualBySocket(agentSockect))
-                    agentId = set.Key;
-            }
-
-            if (agentId == null) return;
-
-            RemoveAgent(agentId);
-            _agentLoggers.Log("Lost unexpectly agent, id : " + agentId);
+            RemoveAgent(id);
+            _agentLoggers.Log("Lost unexpectly agent, id : " + id);
         }
 
         public AgentClient GetAvailableAgentByLabel(string label)

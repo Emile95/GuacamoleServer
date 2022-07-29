@@ -93,7 +93,7 @@ namespace Server
         public void StartSockets()
         {
             //_agentSocketsHandler.Start();
-            _serverAgentsSocketHandler.Initialize(Dns.GetHostAddresses(Dns.GetHostName())[0],_config.AgentSocketsConfig.Port);
+            _serverAgentsSocketHandler.Initialize(_config.AgentSocketsConfig.Port);
         }
 
         public void MapRestAPIRequest()

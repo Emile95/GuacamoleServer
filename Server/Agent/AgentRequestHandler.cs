@@ -7,10 +7,11 @@ using Common.Request;
 using API.Agent;
 using API.AgentAction;
 using API.Logging;
+using Server.Sockets;
 
 namespace Server.Agent
 {
-    public class AgentRequestHandler : SocketRequestHandler
+    public class AgentRequestHandler : SocketRequestHandler<AgentSocketRequestContext>
     {
         private readonly SocketRequestLoggers _socketRequestLoggers;
         private readonly AgentApplicationManager _agentApplicationManager;
@@ -25,14 +26,13 @@ namespace Server.Agent
             _agentManager = agentManager;
         }
 
-        protected override void ResolveSocketRequest(SocketRequestContext context, SocketRequest agentRequest)
+        protected override void ResolveSocketRequest(AgentSocketRequestContext context, SocketRequest agentRequest)
         {
             _socketRequestLoggers.Log("socket request of type id : " + agentRequest.RequestId);
 
             if (agentRequest.RequestId == ApplicationConstValue.CONNECTAGENTREQUESTID)
             {
-                JObject jObject = (JObject)agentRequest.Data;
-                ConnectAgent(context, jObject.ToObject<AgentDefinition>());
+                ConnectAgent(context, agentRequest.Data as AgentDefinition);
                 return;
             }
 
@@ -41,27 +41,15 @@ namespace Server.Agent
                 RunningAgentActionLog(context, agentRequest.Data as RunningAgentActionLog);
                 return;
             }
-
-            if (agentRequest.RequestId == ApplicationConstValue.LIBERATESOCKETSENDREQUESTSID)
-            {
-                LiberateAgentRequestSend(context, agentRequest.Data as string);
-                return;
-            }
         }
 
-        private void LiberateAgentRequestSend(SocketRequestContext context, string agentId)
+        private void ConnectAgent(AgentSocketRequestContext context, AgentDefinition agentDefinition)
         {
-            AgentClient agentClient  = _agentManager.GetAgentClientById(agentId);
-            agentClient.LiberateRequestSend();
-        }
-
-        private void ConnectAgent(SocketRequestContext context, AgentDefinition agentDefinition)
-        {
-            AgentClient agentClient = _agentManager.AddAgent(agentDefinition, context.SourceSocket);
+            AgentClient agentClient = _agentManager.AddAgent(context.AgentId, agentDefinition, context.sendToSocketAction);
             agentClient.InstallAgentApplications(_agentApplicationManager.GetAgentApplicationLoadeds());
         }
 
-        private void RunningAgentActionLog(SocketRequestContext context, RunningAgentActionLog runningAgentActionLog)
+        private void RunningAgentActionLog(AgentSocketRequestContext context, RunningAgentActionLog runningAgentActionLog)
         {
             _serverAgentActionManager.LogRunningAgentAction(runningAgentActionLog);
         }
