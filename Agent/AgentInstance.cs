@@ -53,7 +53,7 @@ namespace Agent
 
             Socket socket = SocketFactory.CreateSocket(_config.ServerSocketConfig.Protocol);
 
-            _serverOperations = new ServerOperations(socket);
+            _serverOperations = new ServerOperations();
 
             _agentActionManager = new AgentActionManager(_agentActionLoggers, _serverOperations);
 
@@ -61,7 +61,7 @@ namespace Agent
 
             _serverRequestReceivedHandler = new ServerRequestHandler(_socketRequestLoggers, _agentActionManager, _agentApplicationManager);
 
-            _clientServerSocketHandler = new ClientServerSocketHandler(socket, 100000, _serverRequestReceivedHandler, _agentDefinition);
+            _clientServerSocketHandler = new ClientServerSocketHandler(socket, 100000, _serverRequestReceivedHandler, _agentDefinition, _serverOperations);
 
             //_serverSocketHandler = new ServerSocketHandler(_serverSocket, _serverRequestReceivedHandler);
         }

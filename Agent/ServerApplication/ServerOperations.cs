@@ -1,17 +1,16 @@
 ﻿using API.AgentAction;
 using Common;
 using Common.Request;
-using System.Net.Sockets;
 
 namespace Agent.ServerApplication
 {
     public class ServerOperations
     {
-        private Socket _socket;
-
-        public ServerOperations(Socket socket)
+        private Action<byte[]> _sendAction;
+        
+        public void BindSendAction(Action<byte[]> sendAction)
         {
-            _socket = socket;
+            _sendAction = sendAction;
         }
 
         public void FinishRunningAgentAction(string runningActionId, string message)
@@ -47,7 +46,7 @@ namespace Agent.ServerApplication
                 RunningAgentActionLogType = runningAgentActionLogType
             };
             byte[] bytes = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.AGENTACTIONLOGREQUESTID, log);
-            _socket.Send(bytes);
+            _sendAction(bytes);
         }
     }
 }

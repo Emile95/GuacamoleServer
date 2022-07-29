@@ -64,9 +64,8 @@ namespace Server.AgentAction
             runningAgentActionLogs.Add(RunningAgentActionLogType.Succeed, new List<RunningAgentActionLog>());
             _runningAgentActions.Add(runningAgentActionId, runningAgentActionLogs);
 
-            agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId, agentActionParameter);
-
             _agentActionLoggers.Log("Run agent action " + agentActionLoaded.DisplayName + ", running id : " + runningAgentActionId);
+            agentClient.ProcessAction(processActionDataModel.ActionId, runningAgentActionId, agentActionParameter);
 
             return runningAgentActionId;
         }

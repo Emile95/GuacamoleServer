@@ -27,6 +27,8 @@ namespace Agent.AgentAction
 
         public void ProcessAction(string actionId, Tuple<string, object> runningAgentActionData)
         {
+            _agentActionLoggers.Log("Run agent action, running id : " + runningAgentActionData.Item1);
+
             AgentActionContext agentActionContext = new AgentActionContext();
             agentActionContext.FinishAgentAction = (message) =>
             {
@@ -38,7 +40,7 @@ namespace Agent.AgentAction
             agentActionContext.LogErrorAgentAction = (message) => _serverOperations.LogErrorRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.FatalAgentAction = (message) => _serverOperations.FatalRunningAgentAction(runningAgentActionData.Item1, message);
             agentActionContext.Parameter = runningAgentActionData.Item2;
-            _agentActionLoggers.Log("Run agent action, running id : " + runningAgentActionData.Item1);
+            
             _agentActionsLoaded[actionId].Invoke(agentActionContext);
         }
 
