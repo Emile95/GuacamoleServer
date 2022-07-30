@@ -1,9 +1,8 @@
 ﻿using Agent;
-using Agent.Config;
 
-AgentConfig config = AgentConfigResolver.ResolveConfig();
+Configuration.ResolveConfig();
 
-AgentInstance agentInstance = new AgentInstance(config);
+AgentInstance agentInstance = new AgentInstance();
 
 agentInstance.StartSocket();
 

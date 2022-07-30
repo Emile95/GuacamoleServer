@@ -9,7 +9,6 @@ using API.Logging;
 using Server.Sockets;
 using Common.Sockets;
 using System.Net.Sockets;
-using System.Net;
 
 namespace Server
 {

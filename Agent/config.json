@@ -1,11 +1,10 @@
 ﻿{
-  "id": "As56sda234asdwq",
   "name": "Orion",
   "labels": [ "ubuntu18" ],
   "concurrentRun": 5,
   "serverSocketConfig": {
     "host": "10.0.0.181",
-    "Protocol": "tcp",
-    "Port": 1000
+    "protocol": "tcp",
+    "port": 1000
   }
 }

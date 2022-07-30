@@ -11,14 +11,12 @@ namespace Agent.Sockets
     public class ClientServerSocketHandler : ClientSocketHandler
     {
         private readonly ServerRequestHandler _serverRequestHandler;
-        private readonly AgentDefinition _agentDefinition;
         private readonly ServerOperations _serverOperations;
 
-        public ClientServerSocketHandler(System.Net.Sockets.Socket socket, int receivedBufferSize, ServerRequestHandler serverRequestHandler, AgentDefinition agentDefinition, ServerOperations serverOperations) 
+        public ClientServerSocketHandler(System.Net.Sockets.Socket socket, int receivedBufferSize, ServerRequestHandler serverRequestHandler, ServerOperations serverOperations) 
             : base(socket, receivedBufferSize)
         {
             _serverRequestHandler = serverRequestHandler;
-            _agentDefinition = agentDefinition;
             _serverOperations = serverOperations;
         }
 
@@ -29,8 +27,15 @@ namespace Agent.Sockets
 
         protected override void OnConnect(ServerReceivedState state)
         {
+            AgentDefinition agentDefinition = new AgentDefinition
+            {
+                Name = Configuration.AgentName,
+                Labels = Configuration.Labels,
+                ConcurrentRun = (int)Configuration.ConcurrentRun
+            };
+
             _serverOperations.BindSendAction(state.SendHandler.Send);
-            byte[] data = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.CONNECTAGENTREQUESTID, _agentDefinition);
+            byte[] data = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.CONNECTAGENTREQUESTID, agentDefinition);
             state.SendHandler.Send(data);
         }
 
