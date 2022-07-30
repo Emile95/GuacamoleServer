@@ -15,7 +15,7 @@ try
 
     serverInstance.MapRestAPIRequest();
 
-    serverInstance.RunWebApp(args);
+    serverInstance.RunWebApp();
 
     string? line;
     do

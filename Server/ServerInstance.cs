@@ -79,7 +79,7 @@ namespace Server
             _agentApplicationManager.LoadApplications();
         }
 
-        public void RunWebApp(string[] args)
+        public void RunWebApp()
         {
             _restAPIHandler.Run();
         }
@@ -91,13 +91,16 @@ namespace Server
 
         public void StartSockets()
         {
-            //_agentSocketsHandler.Start();
             _serverAgentsSocketHandler.Initialize(_config.AgentSocketsConfig.Port);
         }
 
         public void MapRestAPIRequest()
         {
-            _restAPIHandler.MapPost<ProcessActionDataModel>("actions/run", (body) => _agentActionManager.ProcessAgentAction(body));
+            _restAPIHandler.MapPost<ProcessActionDataModel>("actions/run", (body) => { 
+                for(int i = 0; i < 20; i++)
+                    Task.Run(() => _agentActionManager.ProcessAgentAction(body));
+                return "hoho";
+            });
             _restAPIHandler.MapGet("actions", () => _agentActionManager.GetAgentActionLoaded());
         }
     }
