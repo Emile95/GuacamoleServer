@@ -62,8 +62,6 @@ namespace Server
 
             _agentRequestReceivedHandler = new AgentRequestHandler(_socketRequestLoggers, _agentApplicationManager, _agentActionManager, _agentManager);
 
-            //Socket socket = SocketFactory.CreateSocket(_config.AgentSocketsConfig.Protocol);
-
             _serverAgentsSocketHandler = new ServerAgentsSocketHandler(_agentRequestReceivedHandler, _agentManager);
 
             _restAPIHandler = new RestAPIHandler(_httpRequestLoggers, _config.WebPort);

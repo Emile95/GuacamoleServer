@@ -27,8 +27,6 @@ namespace Agent
             _socketRequestLoggers = new SocketRequestLoggers();
             _agentActionLoggers = new AgentActionLoggers();
 
-            //Socket socket = SocketFactory.CreateSocket(Configuration.ServerProtocol);
-
             _serverOperations = new ServerOperations();
 
             _agentActionManager = new AgentActionManager(_agentActionLoggers, _serverOperations);
