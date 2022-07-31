@@ -1,4 +1,5 @@
-﻿using API.AgentAction;
+﻿using API.Agent;
+using API.AgentAction;
 using Common;
 using Common.Request;
 
@@ -35,6 +36,12 @@ namespace Agent.ServerApplication
         public void FatalRunningAgentAction(string runningActionId, string message)
         {
             RunningAgentActionLog(RunningAgentActionLogType.Fatal, message, runningActionId);
+        }
+
+        public void ConnectAgent(AgentDefinition agentDefinition)
+        {
+            byte[] data = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.CONNECTAGENTREQUESTID, agentDefinition);
+            _sendAction(data);
         }
 
         private void RunningAgentActionLog(RunningAgentActionLogType runningAgentActionLogType, string message, string runningAgentActionId)

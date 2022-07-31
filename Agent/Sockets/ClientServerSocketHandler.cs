@@ -4,17 +4,17 @@ using API.Agent;
 using Common;
 using Common.Request;
 using Common.Sockets;
-using SocketHandler;
+using SocketHandler.State;
+using SocketHandler.Tcp;
 
 namespace Agent.Sockets
 {
-    public class ClientServerSocketHandler : ClientSocketHandler
+    public class ClientServerSocketHandler : TCPClientSocketHandler
     {
         private readonly ServerRequestHandler _serverRequestHandler;
         private readonly ServerOperations _serverOperations;
 
-        public ClientServerSocketHandler(System.Net.Sockets.Socket socket, int receivedBufferSize, ServerRequestHandler serverRequestHandler, ServerOperations serverOperations) 
-            : base(socket, receivedBufferSize)
+        public ClientServerSocketHandler(ServerRequestHandler serverRequestHandler, ServerOperations serverOperations) 
         {
             _serverRequestHandler = serverRequestHandler;
             _serverOperations = serverOperations;
@@ -34,16 +34,15 @@ namespace Agent.Sockets
                 ConcurrentRun = (int)Configuration.ConcurrentRun
             };
 
-            _serverOperations.BindSendAction(state.SendHandler.Send);
-            byte[] data = SocketRequestDataBytesBuilder.BuildRequestDataBytes(ApplicationConstValue.CONNECTAGENTREQUESTID, agentDefinition);
-            state.SendHandler.Send(data);
+            _serverOperations.BindSendAction((data) => Send(state.WorkSocket, data));
+
+            _serverOperations.ConnectAgent(agentDefinition);
         }
 
         protected override void OnReceive(ServerReceivedState receivedState)
         {
             SocketRequestContext context = new SocketRequestContext();
             context.SourceSocket = receivedState.WorkSocket;
-            context.NbByteReceived = receivedState.NbBytesRead;
             context.Data = receivedState.BytesRead;
             _serverRequestHandler.ProcessRequest(context);
         }

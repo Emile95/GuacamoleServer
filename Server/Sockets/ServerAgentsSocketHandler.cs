@@ -1,17 +1,16 @@
 ﻿using Common;
 using Server.Agent;
-using SocketHandler;
-using System.Net.Sockets;
+using SocketHandler.State;
+using SocketHandler.Tcp;
 
 namespace Server.Sockets
 {
-    public class ServerAgentsSocketHandler : ServerSocketHandler<string>
+    public class ServerAgentsSocketHandler : TCPServerSocketHandler<string>
     {
         private readonly AgentRequestHandler _agentRequestHandler;
         private readonly AgentManager _agentManager;
 
-        public ServerAgentsSocketHandler(Socket socket, int receivedBufferSize, AgentRequestHandler agentRequestHandler, AgentManager agentManager) 
-            : base(socket, receivedBufferSize) 
+        public ServerAgentsSocketHandler(AgentRequestHandler agentRequestHandler, AgentManager agentManager) 
         {
             _agentRequestHandler = agentRequestHandler;
             _agentManager = agentManager;
@@ -22,7 +21,10 @@ namespace Server.Sockets
             return UniqueIdGenerator.Generate(currentKeys);
         }
 
-        protected override void OnAccept(ClientReceivedState<string> receivedState) {  }
+        protected override void OnAccept(ClientReceivedState<string> receivedState)
+        {
+            
+        }
 
         protected override void OnLostSocket(ClientReceivedState<string> receivedState)
         {
@@ -33,10 +35,9 @@ namespace Server.Sockets
         {
             AgentSocketRequestContext context = new AgentSocketRequestContext();
             context.SourceSocket = receivedState.WorkSocket;
-            context.NbByteReceived = receivedState.NbBytesRead;
             context.Data = receivedState.BytesRead;
             context.AgentId = receivedState.ClientKey;
-            context.sendToSocketAction = (data) => receivedState.SendHandler.Send(data);
+            context.sendToSocketAction = (data) => Send(receivedState.WorkSocket, data);
             _agentRequestHandler.ProcessRequest(context);
         }
     }

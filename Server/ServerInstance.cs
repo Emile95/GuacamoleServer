@@ -62,9 +62,9 @@ namespace Server
 
             _agentRequestReceivedHandler = new AgentRequestHandler(_socketRequestLoggers, _agentApplicationManager, _agentActionManager, _agentManager);
 
-            Socket socket = SocketFactory.CreateSocket(_config.AgentSocketsConfig.Protocol);
+            //Socket socket = SocketFactory.CreateSocket(_config.AgentSocketsConfig.Protocol);
 
-            _serverAgentsSocketHandler = new ServerAgentsSocketHandler(socket, 100000, _agentRequestReceivedHandler, _agentManager);
+            _serverAgentsSocketHandler = new ServerAgentsSocketHandler(_agentRequestReceivedHandler, _agentManager);
 
             _restAPIHandler = new RestAPIHandler(_httpRequestLoggers, _config.WebPort);
         }
@@ -96,11 +96,7 @@ namespace Server
 
         public void MapRestAPIRequest()
         {
-            _restAPIHandler.MapPost<ProcessActionDataModel>("actions/run", (body) => { 
-                for(int i = 0; i < 20; i++)
-                    Task.Run(() => _agentActionManager.ProcessAgentAction(body));
-                return "hoho";
-            });
+            _restAPIHandler.MapPost<ProcessActionDataModel>("actions/run", (body) => _agentActionManager.ProcessAgentAction(body));
             _restAPIHandler.MapGet("actions", () => _agentActionManager.GetAgentActionLoaded());
         }
     }

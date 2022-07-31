@@ -27,7 +27,7 @@ namespace Agent
             _socketRequestLoggers = new SocketRequestLoggers();
             _agentActionLoggers = new AgentActionLoggers();
 
-            Socket socket = SocketFactory.CreateSocket(Configuration.ServerProtocol);
+            //Socket socket = SocketFactory.CreateSocket(Configuration.ServerProtocol);
 
             _serverOperations = new ServerOperations();
 
@@ -37,7 +37,7 @@ namespace Agent
 
             _serverRequestReceivedHandler = new ServerRequestHandler(_socketRequestLoggers, _agentActionManager, _agentApplicationManager);
 
-            _clientServerSocketHandler = new ClientServerSocketHandler(socket, 100000, _serverRequestReceivedHandler, _serverOperations);
+            _clientServerSocketHandler = new ClientServerSocketHandler(_serverRequestReceivedHandler, _serverOperations);
         }
 
         public void StartSocket()
